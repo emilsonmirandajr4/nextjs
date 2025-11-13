@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.2);
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px !important;
+}
+
+.swiper-pagination-bullet {
+  background: rgba(56, 189, 248, 0.5) !important;
+  width: 12px !important;
+  height: 12px !important;
+  transition: all 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+  background: rgba(56, 189, 248, 1) !important;
+  width: 30px !important;
+  border-radius: 6px !important;
+}
+
+.custom-pagination .swiper-pagination-bullet {
+  background: white !important;
+  border: 2px solid black !important;
+  width: 14px !important;
+  height: 14px !important;
+  opacity: 1 !important;
+}
+
+.custom-pagination .swiper-pagination-bullet-active {
+  background: black !important;
+  border: 2px solid black !important;
+  width: 40px !important;
+}
+
+/* Estilos específicos para o carousel de vídeos */
+.video-swiper {
+  /* padding removido para carousel ficar certinho */
+}
+
+.video-swiper .swiper-slide {
+  opacity: 0.7 !important;
+  transform: scale(0.95);
+  transition: all 0.4s ease;
+}
+
+.video-swiper .swiper-slide-active {
+  opacity: 1 !important;
+  transform: scale(1);
+}
+
+.video-swiper .swiper-slide:hover {
+  opacity: 0.9 !important;
+}
+
+.video-swiper .swiper-wrapper {
+  padding: 10px 0;
+}
+
+/* Efeito fade personalizado */
+.video-swiper .swiper-slide {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Box shadow azul claro nos slides */
+.video-swiper .swiper-slide > div {
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.video-swiper .swiper-slide-active > div {
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.video-swiper .swiper-slide:hover > div {
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.35);
+}
+
+/* Navegação específica para vídeos */
+.video-swiper .swiper-button-next,
+.video-swiper .swiper-button-prev {
+  background: rgba(59, 130, 246, 0.9) !important;
+  backdrop-filter: none;
+}
+
+.video-swiper .swiper-button-next:hover,
+.video-swiper .swiper-button-prev:hover {
+  background: rgba(59, 130, 246, 1) !important;
+}
+
+/* Paginação específica para vídeos */
+.video-swiper .swiper-pagination-bullet {
+  background: rgba(59, 130, 246, 0.4) !important;
+}
+
+.video-swiper .swiper-pagination-bullet-active {
+  background: rgba(59, 130, 246, 0.9) !important;
+}
+
+/* Box shadow vermelho nos slides */
+.video-swiper .swiper-slide > div {
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.video-swiper .swiper-slide-active > div {
+  box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);
+  border-color: rgba(220, 38, 38, 0.4); /* red-600 */
+}
+
+.video-swiper .swiper-slide:hover > div {
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45);
+}
+
+/* Navegação específica para vídeos */
+.video-swiper .swiper-button-next,
+.video-swiper .swiper-button-prev {
+  background: rgba(220, 38, 38, 0.9) !important; /* red */
+  backdrop-filter: none;
+}
+
+.video-swiper .swiper-button-next:hover,
+.video-swiper .swiper-button-prev:hover {
+  background: rgba(220, 38, 38, 1) !important;
+}
+
+/* Paginação específica para vídeos */
+.video-swiper .swiper-pagination-bullet {
+  background: rgba(220, 38, 38, 0.4) !important;
+}
+
+.video-swiper .swiper-pagination-bullet-active {
+  background: rgba(220, 38, 38, 0.9) !important;
+}
+
+/* Paginação do NewsCarousel: fundo branco, borda preta, ativo todo preto */
+.news-carousel-pagination .swiper-pagination-bullet {
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+  border-radius: 50% !important;
+  margin: 0 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+.news-carousel-pagination .swiper-pagination-bullet-active {
+  background: #000000 !important;
+  border-color: #000000 !important;
+  width: 32px !important;
+  height: 12px !important;
+  border-radius: 6px !important;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .video-swiper {
+    /* padding removido */
+  }
+  
+  .video-swiper .swiper-button-next,
+  .video-swiper .swiper-button-prev {
+    display: none !important;
+  }
+}
+
+/* Fundo animado da página inicial */
+.animated-bg {
+  background: linear-gradient(
+    135deg,
+    #f8fafc 0%,
+    #f0f9ff 20%,
+    #f8fbff 40%,
+    #f0f9ff 60%,
+    #f8fafc 80%,
+    #f8fafc 100%
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 50% 100%; }
+  75% { background-position: 0% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Borda animada usada em destaques */
+.animated-border {
+  background: linear-gradient(90deg, #0ea5e9, #3b82f6, #8b5cf6, #ec4899, #f59e0b, #0ea5e9);
+  background-size: 300% 300%;
+  animation: rotate-border 4s ease infinite;
+}
+
+@keyframes rotate-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
