@@ -1,6 +1,6 @@
 export const WORDPRESS_CONFIG = {
-  API_BASE: 'https://cms.primeiranews.com/wp-json/wp/v2',
-  SITE_URL: 'https://primeiranews.com',
+  API_BASE: 'https://primeiranews.com.br/wp-json/wp/v2',
+  SITE_URL: 'https://primeiranews.com.br',
 
   CACHE_TTL: {
     POSTS_LIST: 60 * 60 * 1000, // 1 hora
