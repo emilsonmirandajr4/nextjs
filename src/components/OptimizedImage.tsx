@@ -1,0 +1,103 @@
+import { TwicImg, TwicPicture } from "@twicpics/components/react";
+import React from "react";
+
+interface OptimizedImageProps {
+  src: string;
+  alt: string;
+  ratio?: string | "none";
+  mode?: "contain" | "cover";
+  placeholder?: "preview" | "maincolor" | "meancolor" | "none";
+  className?: string;
+  style?: React.CSSProperties;
+  focus?: "auto" | string;
+  // Prioridade: high = eager + fetchpriority high, normal = lazy loading
+  priority?: "high" | "normal";
+  // Se true, usa TwicPicture para melhor LCP (gera <picture> responsivo)
+  usePicture?: boolean;
+  // Props extras
+  anchor?: string;
+  transition?: "fade" | "zoom" | "none";
+  transitionDuration?: string;
+}
+
+/**
+ * Componente otimizado para imagens com TwicPics
+ * 
+ * - **Lazy loading automático** para imagens não críticas
+ * - **fetchpriority="high"** para imagens críticas (LCP)
+ * - **TwicPicture** para hero images (gera <picture> responsivo)
+ * - **Smart crop com IA** usando focus="auto"
+ * - **LQIP automático** (placeholder baixa qualidade)
+ * 
+ * @example
+ * // Imagem hero/LCP (primeira visível)
+ * <OptimizedImage
+ *   src="/path/image.jpg"
+ *   alt="Hero"
+ *   priority="high"
+ *   usePicture={true}
+ * />
+ * 
+ * @example
+ * // Imagem normal (lazy loading automático)
+ * <OptimizedImage
+ *   src="/path/image.jpg"
+ *   alt="Thumbnail"
+ * />
+ */
+export default function OptimizedImage({
+  src,
+  alt,
+  ratio = "3/4",
+  mode = "cover",
+  placeholder = "preview",
+  className = "",
+  style,
+  focus,
+  priority = "normal",
+  usePicture = false,
+  anchor,
+  transition = "fade",
+  transitionDuration = "300ms",
+}: OptimizedImageProps) {
+  
+  // Remove domínio da URL se necessário
+  const imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
+  
+  // Props comuns para ambos os componentes
+  const commonProps = {
+    src: imagePath,
+    alt,
+    ratio,
+    mode,
+    placeholder,
+    ...(focus && { focus }), // Só adiciona focus se for definido
+    style,
+  };
+
+  // Se prioridade alta, usa eager (desabilita lazy loading)
+  const isEager = priority === "high";
+
+  // TwicPicture para hero images (melhor LCP)
+  if (usePicture) {
+    return (
+      <TwicPicture
+        {...commonProps}
+        eager={isEager || undefined}
+        anchor={anchor}
+      />
+    );
+  }
+
+  // TwicImg para imagens normais
+  return (
+    <TwicImg
+      {...commonProps}
+      eager={isEager}
+      transition={transition}
+      transitionDuration={transitionDuration}
+      anchor={anchor}
+      className={className}
+    />
+  );
+}
