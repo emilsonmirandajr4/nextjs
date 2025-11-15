@@ -1,6 +1,11 @@
 {
   "pages": {},
-  "app": {},
-  "appUsingSizeAdjust": false,
+  "app": {
+    "[project]/app/[slug]/page": [
+      "static/media/RobotoCondensed_Regular-s.p.c31ad458.woff2",
+      "static/media/RobotoCondensed_Bold-s.p.87f5d134.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
   "pagesUsingSizeAdjust": false
 }
