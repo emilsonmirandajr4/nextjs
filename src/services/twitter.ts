@@ -21,6 +21,15 @@ export async function fetchBrazilTrends(): Promise<TrendingTopic[]> {
       return getFallbackTrends();
     }
 
+    const fetchWithTimeout = (url: string, timeout = 10000) => {
+  return Promise.race([
+    fetch(url),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Timeout')), timeout)
+    )
+  ]);
+};
+
     const data = await response.json();
     
     if (data && data[0] && data[0].trends) {
