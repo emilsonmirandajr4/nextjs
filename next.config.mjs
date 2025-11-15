@@ -1,18 +1,24 @@
-/** @type {import('next').NextConfig} */
+// @ts-check
+ 
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
+  experimental: {
+    // Enable filesystem caching for `next dev`
+    turbopackFileSystemCacheForDev: true,
+    // Enable filesystem caching for `next build`
+    turbopackFileSystemCacheForBuild: true,
+  },
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'primeiranews.com',
+        hostname: 'primeiranews.com.br',
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.twic.pics',
+        hostname: 'primeiranews.twic.pics',
       },
     ],
   },
@@ -22,4 +28,6 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+ 
+export default nextConfig
+
