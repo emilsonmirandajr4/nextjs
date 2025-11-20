@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation, EffectFade, Thumbs, FreeMode } from 'swiper/modules';
@@ -48,14 +50,26 @@ export default function NewsCarousel({ posts, onPostClick }: NewsCarouselProps) 
   };
 
   useEffect(() => {
-    setMounted(true);
-  }, [posts]);
+    // Delay mounting to ensure DOM is ready
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
-  if (!mounted || posts.length === 0) {
-    console.log(`[DEBUG] NewsCarousel posts length: ${posts.length}`);
+  // Only render once DOM is ready
+  if (!mounted) {
     return (
       <div className="bg-fundo-destaque rounded-lg h-[320px] animate-pulse flex items-center justify-center shadow-card">
         <p className="text-texto-terciario">Carregando notícias...</p>
+      </div>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <div className="bg-fundo-destaque rounded-lg h-[320px] flex items-center justify-center shadow-card">
+        <p className="text-texto-terciario">Nenhuma notícia disponível</p>
       </div>
     );
   }
@@ -92,11 +106,13 @@ export default function NewsCarousel({ posts, onPostClick }: NewsCarouselProps) 
           spaceBetween={0}
           slidesPerView={1}
           autoplay={{ delay: 8000, disableOnInteraction: false }}
-          pagination={{ clickable: true, el: '.news-carousel-pagination' }}
+          // Usamos a paginação interna do Swiper para evitar acessar um elemento ainda não montado
+          pagination={{ clickable: true }}
           navigation
           loop={false}
           watchOverflow={true}
-          thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
+          // Protege contra instância destruída de thumbsSwiper (evita erros internos do Swiper)
+          thumbs={thumbsSwiper && !thumbsSwiper.destroyed ? { swiper: thumbsSwiper } : undefined}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
           className="h-[420px]"
         >
@@ -159,7 +175,8 @@ export default function NewsCarousel({ posts, onPostClick }: NewsCarouselProps) 
                 className="h-16 w-full overflow-hidden rounded-md transition-all duration-300 group hover:scale-105 hover:z-10 cursor-pointer"
                 onClick={() => {
                   if (mainSwiper) {
-                    mainSwiper.slideToLoop(index, 300);
+                    // Como loop está desativado, usamos slideTo em vez de slideToLoop para evitar erros
+                    mainSwiper.slideTo(index, 300);
                   }
                 }}
               >

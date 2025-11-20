@@ -1,9 +1,0 @@
-{
-  "[project]/src/components/VideoCarousel.tsx [app-client] (ecmascript, next/dynamic entry)": {
-    "id": "[project]/src/components/VideoCarousel.tsx [app-client] (ecmascript, next/dynamic entry)",
-    "files": [
-      "static/chunks/src_components_VideoCarousel_tsx_2c33aa1e._.js",
-      "static/chunks/src_components_VideoCarousel_tsx_6d68076c._.js"
-    ]
-  }
-}

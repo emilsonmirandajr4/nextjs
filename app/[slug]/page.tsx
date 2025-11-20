@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { Suspense, use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OptimizedImage from '../../src/components/OptimizedImage';
 import { WordPressPost } from '../../src/types/wordpress';
@@ -11,6 +11,27 @@ import { Facebook, Twitter, Share2, Clock, ChevronRight, User, Tag, ChevronLeft,
 import { getPostUrl } from '../../src/utils/navigation';
 
 export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  return (
+    <Suspense fallback={<PostLoadingSkeleton />}>
+      <PostContent params={params} />
+    </Suspense>
+  );
+}
+
+function PostLoadingSkeleton() {
+  return (
+    <section className="max-w-7xl mx-auto px-4 py-20">
+      <div className="flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400"></div>
+          <p className="mt-4 text-gray-900">Carregando notícia...</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PostContent({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
   const { slug } = use(params);
   const [post, setPost] = useState<WordPressPost | null>(null);

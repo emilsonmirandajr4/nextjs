@@ -18,10 +18,10 @@ const createCacheControlHeader = (ttlMs: number): string => {
   return `public, s-maxage=${seconds}, stale-while-revalidate=${seconds}`;
 };
 
-async function wpFetchJson<T>(url: string, ttlMs: number): Promise<T> {
+async function wpFetchJson<T>(url: string, ttlMs: number, tag?: string): Promise<T> {
   const seconds = msToSeconds(ttlMs);
 
-  const init: RequestInit & { next?: { revalidate?: number } } = {
+  const init: RequestInit & { next?: { revalidate?: number; tags?: string[] } } = {
     headers: {
       Accept: 'application/json',
     },
@@ -33,6 +33,9 @@ async function wpFetchJson<T>(url: string, ttlMs: number): Promise<T> {
     init.next = {
       revalidate: seconds,
     };
+    if (tag) {
+      init.next.tags = [tag];
+    }
   }
 
   const response = await fetch(url, init);
@@ -68,6 +71,7 @@ export async function getPosts(
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POSTS_LIST,
+    'posts-list', // Cache tag for on-demand revalidation
   );
   return withCategoryNames(data);
 }
@@ -83,6 +87,7 @@ export async function getCategoryIdBySlug(
   const exact = await wpFetchJson<any[]>(
     exactUrl,
     WORDPRESS_CONFIG.CACHE_TTL.CATEGORIES,
+    'categories', // Cache tag
   );
   if (Array.isArray(exact) && exact.length > 0) {
     return exact[0].id ?? null;
@@ -94,6 +99,7 @@ export async function getCategoryIdBySlug(
   const cats = await wpFetchJson<any[]>(
     searchUrl,
     WORDPRESS_CONFIG.CACHE_TTL.CATEGORIES,
+    'categories', // Cache tag
   );
 
   if (!Array.isArray(cats) || cats.length === 0) {
@@ -118,6 +124,7 @@ export async function getPostsByCategoryId(
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POSTS_LIST,
+    'posts-list', // Cache tag
   );
 
   return withCategoryNames(data);
@@ -142,6 +149,7 @@ export async function getPostBySlug(
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POST_SINGLE,
+    `post-${slug}`, // Cache tag with slug
   );
 
   if (!Array.isArray(data) || data.length === 0) {
