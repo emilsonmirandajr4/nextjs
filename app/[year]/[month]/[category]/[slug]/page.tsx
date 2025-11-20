@@ -2,15 +2,18 @@
 
 import { Suspense, use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import OptimizedImage from '../../src/components/OptimizedImage';
-import { WordPressPost } from '../../src/types/wordpress';
-import { fetchPosts, fetchPostBySlug } from '../../src/services/wordpress';
-import { usePostsByCategory } from '../../src/hooks/usePosts';
-import TrendingTopics from '../../src/components/TrendingTopics';
+import OptimizedImage from '../../../../../src/components/OptimizedImage';
+import { WordPressPost } from '../../../../../src/types/wordpress';
+import { fetchPosts, fetchPostBySlug } from '../../../../../src/services/wordpress';
+import { usePostsByCategory } from '../../../../../src/hooks/usePosts';
+import TrendingTopics from '../../../../../src/components/TrendingTopics';
 import { Facebook, Twitter, Share2, Clock, ChevronRight, User, Tag, ChevronLeft, TrendingUp } from 'lucide-react';
-import { getPostUrl } from '../../src/utils/navigation';
+import { getPostUrl } from '../../../../../src/utils/navigation';
+import Header from '../../../../../src/components/Header';
+import Footer from '../../../../../src/components/Footer';
+import Navigation from '../../../../../src/components/Navigation';
 
-export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default function PostPage({ params }: { params: Promise<{ year: string; month: string; category: string; slug: string }> }) {
   return (
     <Suspense fallback={<PostLoadingSkeleton />}>
       <PostContent params={params} />
@@ -31,7 +34,7 @@ function PostLoadingSkeleton() {
   );
 }
 
-function PostContent({ params }: { params: Promise<{ slug: string }> }) {
+function PostContent({ params }: { params: Promise<{ year: string; month: string; category: string; slug: string }> }) {
   const router = useRouter();
   const { slug } = use(params);
   const [post, setPost] = useState<WordPressPost | null>(null);
@@ -46,7 +49,9 @@ function PostContent({ params }: { params: Promise<{ slug: string }> }) {
   useEffect(() => {
     async function loadPost() {
       try {
+        console.log('Buscando post com slug:', slug);
         const data = await fetchPostBySlug(slug);
+        console.log('Post encontrado:', data ? 'Sim' : 'Não');
         
         if (!data) {
           setLoading(false);
@@ -109,7 +114,12 @@ function PostContent({ params }: { params: Promise<{ slug: string }> }) {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen relative overflow-hidden">
+      <div className="animated-bg absolute inset-0 -z-10"></div>
+      <Header />
+      <Navigation />
+      <main className="max-w-7xl mx-auto px-4 py-4">
+        <section className="py-4">
         <nav className="flex items-center gap-2 text-base text-gray-700 mb-8 bg-gray-100 px-5 py-4 rounded-lg border-2 border-black shadow-sm">
           <button onClick={() => router.push('/')} className="hover:text-sky-700 transition-colors font-semibold">
             Início
@@ -313,6 +323,9 @@ function PostContent({ params }: { params: Promise<{ slug: string }> }) {
             )}
           </aside>
         </div>
-    </section>
+        </section>
+      </main>
+      <Footer />
+    </div>
   );
 }

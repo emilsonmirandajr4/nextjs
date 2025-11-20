@@ -61,8 +61,27 @@ export default function OptimizedImage({
   transitionDuration = "300ms",
 }: OptimizedImageProps) {
   
-  // Remove domínio da URL se necessário
-  const imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
+  // Remove domínio apenas para imagens do mesmo domínio (ex: WordPress),
+  // mantendo URLs absolutas externas (ex: thumbs do YouTube)
+  let imagePath = src || '/placeholder.jpg';
+  let useTwic = true;
+
+  if (/^https?:\/\//.test(src)) {
+    try {
+      const url = new URL(src);
+      const host = url.hostname;
+
+      if (host === 'primeiranews.com.br' || host.endsWith('.primeiranews.com.br')) {
+        imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
+      } else {
+        imagePath = src;
+        useTwic = false;
+      }
+    } catch {
+      imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
+      useTwic = false;
+    }
+  }
   
   // Props comuns para ambos os componentes
   const commonProps = {
@@ -78,6 +97,19 @@ export default function OptimizedImage({
 
   // Se prioridade alta, usa eager (desabilita lazy loading)
   const isEager = priority === "high";
+
+  // Para URLs externas (como thumbs do YouTube), renderiza <img> normal
+  // em vez de passar pelo TwicPics, garantindo que a imagem apareça.
+  if (!useTwic) {
+    return (
+      <img
+        src={imagePath}
+        alt={alt}
+        style={style}
+        className={className}
+      />
+    );
+  }
 
   // TwicPicture para hero images (melhor LCP)
   if (usePicture) {

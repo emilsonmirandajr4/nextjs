@@ -30,14 +30,6 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  async rewrites() {
-    return [
-      {
-        source: '/:year(\\d{4})/:month(\\d{2})/:category/:post',
-        destination: '/:post',
-      },
-    ];
-  },
 };
 
  

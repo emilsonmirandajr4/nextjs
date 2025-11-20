@@ -38,9 +38,12 @@ async function wpFetchJson<T>(url: string, ttlMs: number, tag?: string): Promise
     }
   }
 
+  console.log('[wpFetchJson] Fetching:', url);
   const response = await fetch(url, init);
+  console.log('[wpFetchJson] Response status:', response.status);
 
   if (!response.ok) {
+    console.error('[wpFetchJson] Error response:', response.status, response.statusText);
     throw new Error(`WordPress HTTP ${response.status}: ${response.statusText}`);
   }
 
@@ -146,18 +149,23 @@ export async function getPostBySlug(
   slug: string,
 ): Promise<WordPressPost | null> {
   const url = `${WP_API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`;
+  console.log('[WordPress] Fetching post from:', url);
+  
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POST_SINGLE,
     `post-${slug}`, // Cache tag with slug
   );
+  console.log('[WordPress] Response received, posts count:', data?.length || 0);
 
   if (!Array.isArray(data) || data.length === 0) {
+    console.log('[WordPress] No post found for slug:', slug);
     return null;
   }
 
   const [post] = data;
   const [postWithCategories] = withCategoryNames([post]);
+  console.log('[WordPress] Returning post:', postWithCategories.id);
 
   return postWithCategories;
 }

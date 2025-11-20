@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import toast from 'react-hot-toast';
 import OptimizedImage from '../src/components/OptimizedImage';
 import { WordPressPost } from '../src/types/wordpress';
 import { getPostImage, getPostTitle } from '../src/services/wordpress';
@@ -24,15 +23,45 @@ const VideoCarousel = dynamic(() => import('../src/components/VideoCarousel'), {
 
 type HomeVideo = {
   id: number;
+  // Título opcional definido manualmente. Se não for informado,
+  // o título do próprio vídeo do YouTube será usado.
+  title?: string;
+  videoUrl: string;
+};
+
+type EnrichedVideo = HomeVideo & {
   title: string;
   thumbnail: string;
-  videoUrl: string;
   views: number;
   duration: string;
 };
 
+function extractYouTubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+
+    if (u.hostname === 'youtu.be') {
+      return u.pathname.slice(1);
+    }
+
+    const vParam = u.searchParams.get('v');
+    if (vParam) return vParam;
+
+    if (u.hostname.includes('youtube.com') && u.pathname.startsWith('/embed/')) {
+      const parts = u.pathname.split('/');
+      return parts[2] || null;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function LazyVideoCarousel({ videos }: { videos: HomeVideo[] }) {
   const [shouldShow, setShouldShow] = useState(false);
+  const [enrichedVideos, setEnrichedVideos] = useState<EnrichedVideo[]>([]);
+  const [loadingMeta, setLoadingMeta] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -59,12 +88,86 @@ function LazyVideoCarousel({ videos }: { videos: HomeVideo[] }) {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!shouldShow || !videos.length) return;
+
+    let cancelled = false;
+
+    async function loadMetadata() {
+      try {
+        setLoadingMeta(true);
+
+        const res = await fetch('/api/youtube/metadata', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ urls: videos.map((v) => v.videoUrl) }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Falha ao carregar metadados do YouTube');
+        }
+
+        const data = await res.json();
+        const items: Record<
+          string,
+          { thumbnail: string; duration: string; views: number; title?: string }
+        > = data.items || {};
+
+        const nextVideos: EnrichedVideo[] = videos.map((video) => {
+          const id = extractYouTubeId(video.videoUrl);
+          const meta = id ? items[id] : undefined;
+
+          const resolvedTitle = meta?.title || video.title || '';
+
+          return {
+            ...video,
+            title: resolvedTitle,
+            thumbnail: meta?.thumbnail || 'https://img.youtube.com/vi/4VkrctbXrJg/hqdefault.jpg',
+            duration: meta?.duration || '0:00',
+            views: meta?.views ?? 0,
+          };
+        });
+
+        if (!cancelled) {
+          setEnrichedVideos(nextVideos);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          const fallback: EnrichedVideo[] = videos.map((video) => ({
+            ...video,
+            title: video.title ?? '',
+            thumbnail: 'https://img.youtube.com/vi/4VkrctbXrJg/hqdefault.jpg',
+            duration: '0:00',
+            views: 0,
+          }));
+          setEnrichedVideos(fallback);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingMeta(false);
+        }
+      }
+    }
+
+    loadMetadata();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [shouldShow, videos]);
+
   return (
-    <section className="mt-12" ref={ref}>
+    <section className="mt-8" ref={ref}>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-12">
           {shouldShow ? (
-            <VideoCarousel videos={videos} />
+            loadingMeta ? (
+              <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
+            ) : (
+              <VideoCarousel videos={enrichedVideos} />
+            )
           ) : (
             <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
           )}
@@ -85,12 +188,10 @@ export default function HomePage() {
   
   const loading = loadingPosts || loadingNews || loadingEnganadores || loadingOpinion;
   
-  // Feedback de sucesso (só na primeira vez)
   useEffect(() => {
     if (successPosts && successNews && !loading) {
       const totalPosts = newsPosts.length + posts.length;
       if (totalPosts > 0) {
-        toast.success(`${totalPosts} notícias carregadas!`, { duration: 2000 });
       }
     }
   }, [successPosts, successNews, loading, newsPosts.length, posts.length]);
@@ -126,6 +227,15 @@ export default function HomePage() {
   const highlightPosts = (opinionPosts.length > 0 ? opinionPosts : posts.slice(21, 26));
   const bottomPosts = posts.slice(26, 30);
 
+  const judiciaryPosts = posts
+    .filter((post) =>
+      post.categories_names?.some((name) => {
+        const normalized = name.toLowerCase();
+        return normalized.includes('judiciário') || normalized.includes('judiciario');
+      })
+    )
+    .slice(0, 5);
+
   // Preparar dados para o Carousel3DWithPanel
   const carouselItems = enganadoresPosts.map((post, index) => {
     const tags = post._embedded?.['wp:term']?.[1]?.map(tag => tag.name) || [];
@@ -143,87 +253,57 @@ export default function HomePage() {
     post.excerpt?.rendered?.replace(/<[^>]+>/g, '').trim() || getPostTitle(post)
   );
 
-  const featuredVideos = [
+  const featuredVideos: HomeVideo[] = [
     {
       id: 1,
       title: "Últimas notícias sobre política nacional",
-      thumbnail: "/assets/videos/video-1.png",
-      videoUrl: "#video1",
-      views: 12500,
-      duration: "5:23"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 2,
       title: "Entrevista exclusiva com especialista em economia",
-      thumbnail: "/assets/videos/video-2.png",
-      videoUrl: "#video2",
-      views: 8900,
-      duration: "7:45"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 3,
       title: "Cobertura completa do evento esportivo",
-      thumbnail: "/assets/videos/video-3.png",
-      videoUrl: "#video3",
-      views: 15600,
-      duration: "4:12"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 4,
       title: "Análise do mercado internacional",
-      thumbnail: "/assets/videos/video-4.png",
-      videoUrl: "#video4",
-      views: 7200,
-      duration: "6:30"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 5,
       title: "Reportagem especial sobre meio ambiente",
-      thumbnail: "/assets/videos/video-5.png",
-      videoUrl: "#video5",
-      views: 9800,
-      duration: "8:15"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 6,
       title: "Novidades tecnológicas da semana",
-      thumbnail: "/assets/videos/video-6.png",
-      videoUrl: "#video6",
-      views: 11200,
-      duration: "3:47"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 7,
       title: "Cultura e entretenimento em destaque",
-      thumbnail: "/assets/videos/video-7.png",
-      videoUrl: "#video7",
-      views: 8300,
-      duration: "5:55"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 8,
       title: "Saúde e bem-estar: dicas importantes",
-      thumbnail: "/assets/videos/video-8.png",
-      videoUrl: "#video8",
-      views: 14500,
-      duration: "4:40"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 9,
       title: "Educação: tendências e inovações",
-      thumbnail: "/assets/videos/video-9.png",
-      videoUrl: "#video9",
-      views: 6700,
-      duration: "7:20"
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
     },
     {
       id: 10,
       title: "Turismo: destinos imperdíveis",
-      thumbnail: "/assets/videos/video-10.png",
-      videoUrl: "#video10",
-      views: 12300,
-      duration: "6:05"
-    }
+      videoUrl: "https://www.youtube.com/watch?v=4VkrctbXrJg&pp=ygUFZ2F5ZXI%3D",
+    },
   ];
 
   const getImagePath = (post: WordPressPost): string => {
@@ -327,34 +407,46 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6">
             {/* Coluna 1 - Últimas Notícias */}
             <div className="lg:col-span-4">
-              <div className="bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-sm">
-                <div className="bg-blue-600 px-4 py-3 border-b border-blue-700">
-                <h2 className="text-xs font-semibold tracking-wide text-white flex items-center gap-2 uppercase">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Últimas Notícias
-                </h2>
+              <div className="bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-lg shadow-sky-500/40">
+                <div className="relative px-4 py-3 border-b border-slate-900 bg-gradient-to-r from-slate-900 via-slate-950 to-black overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-800 via-slate-900 to-black opacity-80 blur-sm"></div>
+                  <div className="relative flex items-center gap-3">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-sky-500 blur-sm opacity-60"></div>
+                      <div className="relative w-8 h-8 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-sky-500/60">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <h2 className="text-sm font-black text-white tracking-tight flex items-center gap-2 uppercase">
+                      Últimas Notícias
+                    </h2>
+                  </div>
                 </div>
-                <div>
-                  {posts.slice(0, 5).map((post, index) => (
+                <div className="p-3 space-y-2">
+                  {posts.slice(0, 5).map((post) => (
                     <div
                       key={post.id}
                       onClick={() => handlePostClick(post.id)}
-                      className="flex items-center gap-4 p-3 hover:bg-slate-50 transition-colors duration-200 cursor-pointer group border-b border-slate-200 last:border-b-0"
+                      className="flex items-start gap-3 px-1 py-2 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors group"
                     >
                       <div className="flex-shrink-0 w-28 h-20 rounded-lg overflow-hidden">
                         <OptimizedImage
                           src={getImagePath(post)}
                           alt={getPostTitle(post)}
-                          ratio="4/3"
-                          className="group-hover:scale-105 transition-transform duration-300"
+                          ratio="none"
+                          usePicture={false}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
-                      <div className="flex-1 min-w-0 flex items-center">
-                        <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-700 transition-colors line-clamp-2 leading-snug">
+                      <div className="min-w-0">
+                        <h3 className="text-base font-semibold text-gray-900 group-hover:text-sky-700 transition-colors line-clamp-2">
                           {getPostTitle(post)}
                         </h3>
+                        <p className="mt-0.5 text-sm text-slate-600 line-clamp-2">
+                          {getExcerptWords(post, 18)}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -364,34 +456,48 @@ export default function HomePage() {
 
             {/* Coluna 2 - Judiciário */}
             <div className="lg:col-span-5">
-              <div className="bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-sm">
-                <div className="bg-slate-900 px-4 py-3 border-b border-slate-700">
-                <h2 className="text-xs font-semibold tracking-wide text-white flex items-center gap-2 uppercase">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                  </svg>
-                  Judiciário
-                </h2>
+              <div className="bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-lg shadow-sky-500/40">
+                <div className="relative px-4 py-3 border-b border-slate-700 bg-gradient-to-r from-slate-900 via-slate-800 to-zinc-900 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-700 via-slate-800 to-black opacity-70 blur-sm"></div>
+                  <div className="relative flex items-center gap-3">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-red-500 blur-sm opacity-70"></div>
+                      <div className="relative w-8 h-8 bg-gradient-to-br from-red-500 via-red-600 to-rose-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-red-500/60">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                        </svg>
+                      </div>
+                    </div>
+                    <h2 className="text-sm font-black text-white tracking-tight flex items-center gap-2 uppercase">
+                      Judiciário
+                    </h2>
+                  </div>
                 </div>
-                <div>
-                  {posts.slice(10, 15).map((post, index) => (
+                <div className="p-3 space-y-3">
+                  {judiciaryPosts.map((post, index) => (
                     <div
                       key={post.id}
                       onClick={() => handlePostClick(post.id)}
-                      className="flex items-center gap-4 p-3 hover:bg-slate-50 transition-colors duration-200 cursor-pointer group border-b border-slate-200 last:border-b-0"
+                      className="group cursor-pointer rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-100 transition-colors duration-200 shadow-sm"
                     >
-                      <div className="flex-shrink-0 w-28 h-20 rounded-lg overflow-hidden">
-                        <OptimizedImage
-                          src={getImagePath(post)}
-                          alt={getPostTitle(post)}
-                          ratio="4/3"
-                          className="group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0 flex items-center">
-                        <h3 className="text-base font-semibold text-gray-900 group-hover:text-gray-700 transition-colors line-clamp-2 leading-snug">
-                          {getPostTitle(post)}
-                        </h3>
+                      <div className="flex gap-3 p-3">
+                        <div className="flex-shrink-0 w-28 h-20 rounded-lg overflow-hidden">
+                          <OptimizedImage
+                            src={getImagePath(post)}
+                            alt={getPostTitle(post)}
+                            ratio="none"
+                            usePicture={false}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base font-semibold text-gray-900 group-hover:text-red-700 transition-colors line-clamp-2">
+                            {getPostTitle(post)}
+                          </h3>
+                          <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+                            {getExcerptWords(post, 24)}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -401,33 +507,45 @@ export default function HomePage() {
 
             {/* Coluna 3 - Nossa Opinião */}
             <div className="lg:col-span-3">
-              <div className="bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-sm">
-                <div className="bg-red-600 px-4 py-3 border-b border-red-800">
-                <h2 className="text-xs font-semibold tracking-wide text-white flex items-center gap-2 uppercase">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                  Nossa Opinião
-                </h2>
+              <div className="bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-lg shadow-sky-500/40">
+                <div className="relative px-4 py-3 border-b border-red-800 bg-gradient-to-r from-red-600 via-rose-600 to-red-800 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-rose-500 to-red-700 opacity-70 blur-sm"></div>
+                  <div className="relative flex items-center gap-3">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-red-300 blur-sm opacity-80"></div>
+                      <div className="relative w-8 h-8 bg-gradient-to-br from-red-300 via-red-500 to-rose-500 rounded-lg flex items-center justify-center text-red-900 shadow-lg shadow-red-500/60">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <h2 className="text-sm font-black text-white tracking-tight flex items-center gap-2 uppercase">
+                      Nossa Opinião
+                    </h2>
+                  </div>
                 </div>
                 <div className="p-4">
-                  <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700 mb-3">
-                    Opinião da Redação
-                  </span>
-                  {highlightPosts.map((post, index) => (
+                  {highlightPosts[0] && (
                     <div
-                      key={post.id}
-                      onClick={() => handlePostClick(post.id)}
-                      className="flex items-start gap-3 py-3 px-2 hover:bg-slate-50 transition-colors duration-200 cursor-pointer group border-b border-slate-200 last:border-b-0 rounded-lg"
+                      onClick={() => handlePostClick(highlightPosts[0].id)}
+                      className="group cursor-pointer rounded-xl overflow-hidden border border-slate-200 bg-slate-50/60 hover:bg-slate-100 transition-colors duration-200 shadow-sm"
                     >
-                      <span className="flex items-center justify-center text-lg font-bold text-red-600 border-2 border-red-400 rounded-full w-8 h-8 flex-shrink-0">
-                        {index + 1}
-                      </span>
-                      <h4 className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-3">
-                        {post.title.rendered.replace(/<[^>]*>/g, '')}
-                      </h4>
+                      <div className="relative">
+                        <OptimizedImage
+                          src={getImagePath(highlightPosts[0])}
+                          alt={highlightPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
+                          ratio="none"
+                          usePicture={false}
+                          className="w-full h-52 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="px-3 pb-4 pt-3">
+                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors leading-snug line-clamp-3">
+                          {highlightPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
+                        </h3>
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>

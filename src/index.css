@@ -122,12 +122,12 @@ body {
 
 /* Estilos específicos para o carousel de vídeos */
 .video-swiper {
-  /* padding removido para carousel ficar certinho */
+  padding-bottom: 40px; /* espaço para os dots ficarem abaixo dos cards, mas ainda visíveis */
 }
 
 .video-swiper .swiper-slide {
-  opacity: 0.7 !important;
-  transform: scale(0.95);
+  opacity: 1 !important;
+  transform: scale(1);
   transition: all 0.4s ease;
 }
 
@@ -137,7 +137,7 @@ body {
 }
 
 .video-swiper .swiper-slide:hover {
-  opacity: 0.9 !important;
+  opacity: 1 !important;
 }
 
 .video-swiper .swiper-wrapper {
@@ -184,6 +184,10 @@ body {
 
 .video-swiper .swiper-pagination-bullet-active {
   background: rgba(59, 130, 246, 0.9) !important;
+}
+
+.video-swiper .swiper-pagination {
+  position: relative !important;
 }
 
 /* Box shadow vermelho nos slides */
