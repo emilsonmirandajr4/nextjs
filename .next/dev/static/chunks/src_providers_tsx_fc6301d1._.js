@@ -44,7 +44,7 @@ function Providers({ children }) {
         "Providers.useEffect": ()=>{
             (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$twicpics$2f$components$2f$react$2f$module$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["installTwicpics"])({
                 domain: "https://primeiranews.twic.pics",
-                anticipation: 0.2,
+                anticipation: 0.4,
                 step: 5
             });
         }

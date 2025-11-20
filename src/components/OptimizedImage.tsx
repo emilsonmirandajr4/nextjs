@@ -54,8 +54,8 @@ export default function OptimizedImage({
   className = "",
   style,
   focus,
-  priority = "normal",
-  usePicture = false,
+  priority = "high",
+  usePicture = true,
   anchor,
   transition = "fade",
   transitionDuration = "300ms",
@@ -73,6 +73,7 @@ export default function OptimizedImage({
     placeholder,
     ...(focus && { focus }), // Só adiciona focus se for definido
     style,
+    className,
   };
 
   // Se prioridade alta, usa eager (desabilita lazy loading)

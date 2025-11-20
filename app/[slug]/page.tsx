@@ -1,19 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OptimizedImage from '../../src/components/OptimizedImage';
 import { WordPressPost } from '../../src/types/wordpress';
 import { fetchPosts, fetchPostBySlug } from '../../src/services/wordpress';
 import { usePostsByCategory } from '../../src/hooks/usePosts';
-import Header from '../../src/components/Header';
-import Navigation from '../../src/components/Navigation';
-import Footer from '../../src/components/Footer';
 import TrendingTopics from '../../src/components/TrendingTopics';
 import { Facebook, Twitter, Share2, Clock, ChevronRight, User, Tag, ChevronLeft, TrendingUp } from 'lucide-react';
+import { getPostUrl } from '../../src/utils/navigation';
 
-export default function PostPage({ params }: { params: { slug: string } }) {
+export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
+  const { slug } = use(params);
   const [post, setPost] = useState<WordPressPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<WordPressPost[]>([]);
   const [allPosts, setAllPosts] = useState<WordPressPost[]>([]);
@@ -26,7 +25,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
   useEffect(() => {
     async function loadPost() {
       try {
-        const data = await fetchPostBySlug(params.slug);
+        const data = await fetchPostBySlug(slug);
         
         if (!data) {
           setLoading(false);
@@ -53,37 +52,29 @@ export default function PostPage({ params }: { params: { slug: string } }) {
         setLoading(false);
       }
     }
-    if (params.slug) {
+    if (slug) {
       loadPost();
     }
-  }, [params.slug]);
+  }, [slug]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <Navigation />
-        <div className="flex items-center justify-center py-20">
+      <section className="max-w-7xl mx-auto px-4 py-20">
+        <div className="flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400"></div>
             <p className="mt-4 text-gray-900">Carregando notícia...</p>
           </div>
         </div>
-        <Footer />
-      </div>
+      </section>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <Navigation />
-        <div className="max-w-4xl mx-auto px-4 py-20">
-          <h1 className="text-3xl font-bold text-gray-900">Notícia não encontrada</h1>
-        </div>
-        <Footer />
-      </div>
+      <section className="max-w-4xl mx-auto px-4 py-20">
+        <h1 className="text-3xl font-bold text-gray-900">Notícia não encontrada</h1>
+      </section>
     );
   }
 
@@ -97,11 +88,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <Navigation />
-      
-      <main className="max-w-7xl mx-auto px-4 py-8">
+    <section className="max-w-7xl mx-auto px-4 py-8">
         <nav className="flex items-center gap-2 text-base text-gray-700 mb-8 bg-gray-100 px-5 py-4 rounded-lg border-2 border-black shadow-sm">
           <button onClick={() => router.push('/')} className="hover:text-sky-700 transition-colors font-semibold">
             Início
@@ -190,7 +177,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
                   <>
                     {prevPost ? (
                       <button
-                        onClick={() => router.push(`/${prevPost.slug}`)}
+                        onClick={() => router.push(getPostUrl(prevPost))}
                         className="flex items-center gap-2 text-gray-700 hover:text-sky-600 transition-colors"
                       >
                         <ChevronLeft className="w-5 h-5" />
@@ -200,7 +187,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
                     
                     {nextPost ? (
                       <button
-                        onClick={() => router.push(`/${nextPost.slug}`)}
+                        onClick={() => router.push(getPostUrl(nextPost))}
                         className="flex items-center gap-2 text-gray-700 hover:text-sky-600 transition-colors"
                       >
                         <span className="text-sm">Próximo Post</span>
@@ -221,7 +208,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
                 {relatedPosts.slice(0, 4).map((relatedPost) => (
                   <div
                     key={relatedPost.id}
-                    onClick={() => router.push(`/${relatedPost.slug}`)}
+                    onClick={() => router.push(getPostUrl(relatedPost))}
                     className="flex gap-4 bg-white rounded-lg shadow-[0_2px_8px_rgba(14,165,233,0.3)] hover:shadow-[0_4px_16px_rgba(14,165,233,0.5)] transition-all p-4 border border-gray-200 cursor-pointer items-center"
                   >
                     <div className="w-24 h-24 flex-shrink-0 rounded overflow-hidden">
@@ -255,7 +242,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
                 {relatedPosts.map((relatedPost, index) => (
                   <div
                     key={relatedPost.id}
-                    onClick={() => router.push(`/${relatedPost.slug}`)}
+                    onClick={() => router.push(getPostUrl(relatedPost))}
                     className="flex items-start space-x-3 pb-4 mb-4 border-b-2 border-gray-700 last:border-b-0 cursor-pointer group"
                   >
                     <span className="flex items-center justify-center text-sm font-bold text-sky-400 border border-sky-400 rounded-full w-7 h-7 flex-shrink-0">
@@ -285,10 +272,10 @@ export default function PostPage({ params }: { params: { slug: string } }) {
                   </h2>
                 </div>
                 <div className="p-4">
-                  {opinionPosts.map((opinionPost, index) => (
+                {opinionPosts.map((opinionPost, index) => (
                     <div
                       key={opinionPost.id}
-                      onClick={() => router.push(`/${opinionPost.slug}`)}
+                    onClick={() => router.push(getPostUrl(opinionPost))}
                       className="flex items-start gap-3 py-3 hover:bg-blue-50/50 transition-all duration-300 cursor-pointer group border-b-2 border-gray-300 last:border-b-0 rounded-lg px-2"
                     >
                       <span className="flex items-center justify-center text-lg font-bold text-red-600 border-2 border-red-400 rounded-full w-8 h-8 flex-shrink-0">
@@ -305,9 +292,6 @@ export default function PostPage({ params }: { params: { slug: string } }) {
             )}
           </aside>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+    </section>
   );
 }

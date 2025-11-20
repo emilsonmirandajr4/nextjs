@@ -24,7 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     installTwicpics({
       domain: "https://primeiranews.twic.pics",
-      anticipation: 0.2,
+      anticipation: 0.4,
       step: 5,
     });
   }, []);

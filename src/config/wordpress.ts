@@ -3,8 +3,8 @@ export const WORDPRESS_CONFIG = {
   SITE_URL: 'https://primeiranews.com.br',
 
   CACHE_TTL: {
-    POSTS_LIST: 60 * 60 * 1000, // 1 hora
-    POST_SINGLE: 24 * 60 * 60 * 1000, // 24 horas
+    POSTS_LIST: 0, // sem cache - atualiza imediatamente
+    POST_SINGLE: 0, // sem cache - atualiza imediatamente
     CATEGORIES: 7 * 24 * 60 * 60 * 1000, // 7 dias
     TAGS: 7 * 24 * 60 * 60 * 1000, // 7 dias
     MEDIA: 7 * 24 * 60 * 60 * 1000, // 7 dias

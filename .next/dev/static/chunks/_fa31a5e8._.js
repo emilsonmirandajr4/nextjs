@@ -70,8 +70,8 @@ __turbopack_context__.s([
     ()=>__TURBOPACK__default__export__
 ]);
 const WORDPRESS_CONFIG = {
-    API_BASE: 'https://primeiranews.com/wp-json/wp/v2',
-    SITE_URL: 'https://primeiranews.com',
+    API_BASE: 'https://primeiranews.com.br/wp-json/wp/v2',
+    SITE_URL: 'https://primeiranews.com.br',
     CACHE_TTL: {
         POSTS_LIST: 60 * 60 * 1000,
         POST_SINGLE: 24 * 60 * 60 * 1000,
@@ -127,9 +127,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$config$2f$wordpress$2
 const WP_API_URL = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$config$2f$wordpress$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["WORDPRESS_CONFIG"].API_BASE;
 async function fetchPosts(perPage = 10) {
     try {
-        // Adiciona _embed para trazer imagens e categorias em uma única requisição
-        const url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&orderby=date&order=desc`;
-        console.log('Fetching posts from:', url);
+        const url = `/api/posts?perPage=${perPage}&page=1`;
+        console.log('Fetching posts from API:', url);
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -149,8 +148,7 @@ async function fetchPosts(perPage = 10) {
             return [];
         }
         const data = JSON.parse(text);
-        console.log('Successfully fetched posts:', data.length);
-        // Extrai nomes de categorias do _embedded
+        console.log('Successfully fetched posts from API:', data.length);
         return data.map((post)=>{
             const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat)=>cat.name) || [];
             return {
@@ -159,8 +157,8 @@ async function fetchPosts(perPage = 10) {
             };
         });
     } catch (error) {
-        console.error('Error fetching WordPress posts:', error);
-        if (!navigator.onLine) {
+        console.error('Error fetching posts from API:', error);
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error('Sem conexão com a internet.');
         } else {
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error('Falha ao conectar com o servidor.');
@@ -245,10 +243,44 @@ async function fetchCategoryIdBySlug(slug) {
     }
 }
 async function fetchPostsByCategorySlug(slug, perPage = 50) {
-    const catId = await fetchCategoryIdBySlug(slug);
-    if (!catId) return [];
-    // fetchPostsByCategory já retorna com categories_names graças ao _embed
-    return await fetchPostsByCategory(catId, perPage);
+    try {
+        const params = new URLSearchParams({
+            perPage: String(perPage),
+            page: '1',
+            categorySlug: slug
+        });
+        const url = `/api/posts?${params.toString()}`;
+        console.log('Fetching category posts from API:', url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error('Erro ao carregar categoria.');
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const text = await response.text();
+        if (!text) {
+            (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])('Nenhuma notícia encontrada nesta categoria.', {
+                icon: '⚠️'
+            });
+            return [];
+        }
+        const data = JSON.parse(text);
+        return data.map((post)=>{
+            const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat)=>cat.name) || [];
+            return {
+                ...post,
+                categories_names
+            };
+        });
+    } catch (error) {
+        console.error('Error fetching posts by category from API:', error);
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error('Erro ao buscar notícias da categoria.');
+        return [];
+    }
 }
 async function fetchPostsPaginated(perPage = 10, page = 1) {
     try {
@@ -323,36 +355,41 @@ async function fetchPostsByCategorySlugPaginated(slug, perPage = 10, page = 1) {
 }
 async function fetchPostBySlug(slug) {
     try {
-        const url = `${WP_API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`;
-        console.log('Fetching post by slug:', url);
+        const url = `/api/posts/${encodeURIComponent(slug)}`;
+        console.log('Fetching post by slug from API:', url);
         const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
             }
         });
+        if (response.status === 404) {
+            return null;
+        }
         if (!response.ok) {
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error('Erro ao carregar notícia.');
             return null;
         }
         const text = await response.text();
         if (!text) return null;
-        const data = JSON.parse(text);
-        if (!Array.isArray(data) || data.length === 0) {
-            return null;
-        }
-        const post = data[0];
+        const post = JSON.parse(text);
         const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat)=>cat.name) || [];
         return {
             ...post,
             categories_names
         };
     } catch (error) {
-        console.error('Error fetching post by slug:', error);
+        console.error('Error fetching post by slug from API:', error);
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error('Erro ao buscar notícia.');
         return null;
     }
 }
+const fetchWithTimeout = (url, timeout = 10000)=>{
+    return Promise.race([
+        fetch(url),
+        new Promise((_, reject)=>setTimeout(()=>reject(new Error('Timeout')), timeout))
+    ]);
+};
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }
@@ -1444,22 +1481,25 @@ __turbopack_context__.s([
 ]);
 async function fetchBrazilTrends() {
     try {
-        const response = await fetch('/twitter-proxy.php');
+        const response = await fetch('/api/twitter/trends', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        });
         if (!response.ok) {
-            // Silenciosamente usa fallback se proxy PHP não disponível
             return getFallbackTrends();
         }
         const contentType = response.headers.get('content-type');
-        // Se não for JSON, provavelmente é HTML/PHP não processado
         if (!contentType || !contentType.includes('application/json')) {
             return getFallbackTrends();
         }
         const data = await response.json();
-        if (data && data[0] && data[0].trends) {
-            return data[0].trends.slice(0, 7).map((trend)=>({
-                    tag: trend.name,
-                    tweets: formatTweetCount(trend.tweet_volume),
-                    url: `https://twitter.com/search?q=${encodeURIComponent(trend.name)}`
+        if (Array.isArray(data)) {
+            return data.slice(0, 7).map((item)=>({
+                    tag: typeof item.tag === 'string' ? item.tag : String(item.tag ?? ''),
+                    tweets: typeof item.tweets === 'string' ? item.tweets : 'N/A',
+                    url: typeof item.url === 'string' ? item.url : `https://twitter.com/search?q=${encodeURIComponent(String(item.tag ?? ''))}`
                 }));
         }
         return getFallbackTrends();

@@ -81,8 +81,9 @@ export default function HomePage() {
   const { data: posts = [], isLoading: loadingPosts, isSuccess: successPosts } = usePosts(50);
   const { data: newsPosts = [], isLoading: loadingNews, isSuccess: successNews } = usePostsByCategory('noticias', 50);
   const { data: enganadoresPosts = [], isLoading: loadingEnganadores } = usePostsByCategory('enganadores', 3);
+  const { data: opinionPosts = [], isLoading: loadingOpinion } = usePostsByCategory('opiniao', 5);
   
-  const loading = loadingPosts || loadingNews || loadingEnganadores;
+  const loading = loadingPosts || loadingNews || loadingEnganadores || loadingOpinion;
   
   // Feedback de sucesso (só na primeira vez)
   useEffect(() => {
@@ -122,7 +123,7 @@ export default function HomePage() {
   const rightSidebarPosts = sidebarPosts;
   const personagensPosts = posts.slice(5, 15);
   const centerPosts = posts.slice(15, 21);
-  const highlightPosts = posts.slice(21, 26);
+  const highlightPosts = (opinionPosts.length > 0 ? opinionPosts : posts.slice(21, 26));
   const bottomPosts = posts.slice(26, 30);
 
   // Preparar dados para o Carousel3DWithPanel

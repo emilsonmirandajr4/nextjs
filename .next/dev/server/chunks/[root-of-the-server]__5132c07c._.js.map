@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 58, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/jr/Desktop/nextjs/app/favicon.ico/route.ts"],"sourcesContent":["import { NextResponse } from 'next/server';\r\nimport { promises as fs } from 'fs';\r\nimport path from 'path';\r\n\r\nexport async function GET() {\r\n  const iconPath = path.join(process.cwd(), 'public', 'icon.png');\r\n  const file = await fs.readFile(iconPath);\r\n  return new NextResponse(file, {\r\n    headers: {\r\n      'Content-Type': 'image/png',\r\n      'Cache-Control': 'public, max-age=86400, immutable',\r\n    },\r\n  });\r\n}\r\n\r\n"],"names":[],"mappings":";;;;AAAA;AACA;AACA;;;;AAEO,eAAe;IACpB,MAAM,WAAW,4GAAI,CAAC,IAAI,CAAC,QAAQ,GAAG,IAAI,UAAU;IACpD,MAAM,OAAO,MAAM,yGAAE,CAAC,QAAQ,CAAC;IAC/B,OAAO,IAAI,gJAAY,CAAC,MAAM;QAC5B,SAAS;YACP,gBAAgB;YAChB,iBAAiB;QACnB;IACF;AACF"}}]
+}

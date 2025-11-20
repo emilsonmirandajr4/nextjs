@@ -24,17 +24,16 @@ function parseWordPressUrl(link: string): { year: string; month: string; categor
  * Se o slug não existir, usa o ID como fallback
  */
 export function getPostUrl(post: WordPressPost | { id: number; slug?: string; link?: string; date?: string }): string {
-  // Se tem link do WordPress, usa ele diretamente (sem domínio)
+  // Preferimos sempre o slug simples, pois nossa rota dinâmica é /[slug]
+  if (post.slug) {
+    return `/${post.slug}`;
+  }
+
   if ('link' in post && post.link) {
     const parsed = parseWordPressUrl(post.link);
     if (parsed) {
-      return `/${parsed.year}/${parsed.month}/${parsed.category}/${parsed.postname}`;
+      return `/${parsed.postname}`;
     }
-  }
-  
-  // Fallback: se tem slug mas não tem link, usa apenas slug
-  if (post.slug) {
-    return `/${post.slug}`;
   }
   
   // Último recurso: ID

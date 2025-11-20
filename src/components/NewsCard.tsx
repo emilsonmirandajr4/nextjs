@@ -39,7 +39,7 @@ export default function NewsCard({ post, variant = 'large' }: NewsCardProps) {
             src={getImagePath(post)}
             alt={getPostTitle(post)}
             ratio="16/9"
-            transitionDuration="400ms"
+            transitionDuration="600ms"
             className="group-hover:scale-105 transition-transform duration-300"
           />
           <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-white text-xs font-medium ${getCategoriaClass(categoria)}`}>

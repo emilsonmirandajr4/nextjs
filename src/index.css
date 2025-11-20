@@ -2,6 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Roboto Condensed';
+  src: url('/fonts/roboto-condensed/RobotoCondensed-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  src: url('/fonts/roboto-condensed/RobotoCondensed-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-primary: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: #111827;
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.header-pn {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+}
+
+.logo-icon-pn {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  animation: shine 3s infinite;
+  flex-shrink: 0;
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+.logo-icon-pn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0%, 100% { box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 15px 4px rgba(59, 130, 246, 0.6); }
+}
+
 .swiper-button-next,
 .swiper-button-prev {
   color: white !important;

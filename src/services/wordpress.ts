@@ -6,9 +6,8 @@ const WP_API_URL = WORDPRESS_CONFIG.API_BASE;
 
 export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]> {
   try {
-    // Adiciona _embed para trazer imagens e categorias em uma única requisição
-    const url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&orderby=date&order=desc`;
-    console.log('Fetching posts from:', url);
+    const url = `/api/posts?perPage=${perPage}&page=1`;
+    console.log('Fetching posts from API:', url);
 
     const response = await fetch(url, {
       method: 'GET',
@@ -29,10 +28,9 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
       return [];
     }
 
-    const data = JSON.parse(text);
-    console.log('Successfully fetched posts:', data.length);
+    const data = JSON.parse(text) as WordPressPost[];
+    console.log('Successfully fetched posts from API:', data.length);
 
-    // Extrai nomes de categorias do _embedded
     return data.map((post: WordPressPost) => {
       const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat: any) => cat.name) || [];
       return {
@@ -41,8 +39,8 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
       };
     });
   } catch (error) {
-    console.error('Error fetching WordPress posts:', error);
-    if (!navigator.onLine) {
+    console.error('Error fetching posts from API:', error);
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
       toast.error('Sem conexão com a internet.');
     } else {
       toast.error('Falha ao conectar com o servidor.');
@@ -136,11 +134,47 @@ export async function fetchCategoryIdBySlug(slug: string): Promise<number | null
 }
 
 export async function fetchPostsByCategorySlug(slug: string, perPage: number = 50): Promise<WordPressPost[]> {
-  const catId = await fetchCategoryIdBySlug(slug);
-  if (!catId) return [];
-  
-  // fetchPostsByCategory já retorna com categories_names graças ao _embed
-  return await fetchPostsByCategory(catId, perPage);
+  try {
+    const params = new URLSearchParams({
+      perPage: String(perPage),
+      page: '1',
+      categorySlug: slug,
+    });
+    const url = `/api/posts?${params.toString()}`;
+    console.log('Fetching category posts from API:', url);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      toast.error('Erro ao carregar categoria.');
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const text = await response.text();
+    if (!text) {
+      toast('Nenhuma notícia encontrada nesta categoria.', { icon: '⚠️' });
+      return [];
+    }
+
+    const data = JSON.parse(text) as WordPressPost[];
+
+    return data.map((post: WordPressPost) => {
+      const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat: any) => cat.name) || [];
+      return {
+        ...post,
+        categories_names,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching posts by category from API:', error);
+    toast.error('Erro ao buscar notícias da categoria.');
+    return [];
+  }
 }
 
 // Função para buscar posts com paginação (para infinite scroll)
@@ -242,8 +276,8 @@ export async function fetchPostsByCategorySlugPaginated(
 // Função para buscar um post pelo slug
 export async function fetchPostBySlug(slug: string): Promise<WordPressPost | null> {
   try {
-    const url = `${WP_API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`;
-    console.log('Fetching post by slug:', url);
+    const url = `/api/posts/${encodeURIComponent(slug)}`;
+    console.log('Fetching post by slug from API:', url);
 
     const response = await fetch(url, {
       method: 'GET',
@@ -251,6 +285,10 @@ export async function fetchPostBySlug(slug: string): Promise<WordPressPost | nul
         'Accept': 'application/json',
       },
     });
+
+    if (response.status === 404) {
+      return null;
+    }
 
     if (!response.ok) {
       toast.error('Erro ao carregar notícia.');
@@ -260,13 +298,7 @@ export async function fetchPostBySlug(slug: string): Promise<WordPressPost | nul
     const text = await response.text();
     if (!text) return null;
 
-    const data = JSON.parse(text);
-    
-    if (!Array.isArray(data) || data.length === 0) {
-      return null;
-    }
-
-    const post = data[0];
+    const post = JSON.parse(text) as WordPressPost;
     const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat: any) => cat.name) || [];
     
     return {
@@ -274,7 +306,7 @@ export async function fetchPostBySlug(slug: string): Promise<WordPressPost | nul
       categories_names,
     };
   } catch (error) {
-    console.error('Error fetching post by slug:', error);
+    console.error('Error fetching post by slug from API:', error);
     toast.error('Erro ao buscar notícia.');
     return null;
   }

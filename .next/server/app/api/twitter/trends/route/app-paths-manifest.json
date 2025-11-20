@@ -1,0 +1,3 @@
+{
+  "/api/twitter/trends/route": "app/api/twitter/trends/route.js"
+}

@@ -298,10 +298,6 @@ img, video {
   visibility: visible;
 }
 
-.collapse {
-  visibility: collapse;
-}
-
 .static {
   position: static;
 }
@@ -1621,6 +1617,10 @@ img, video {
   text-align: justify;
 }
 
+.font-sans {
+  font-family: Roboto Condensed, sans-serif;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1825,6 +1825,11 @@ img, video {
 
 .text-white\/80 {
   color: #fffc;
+}
+
+.antialiased {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .placeholder-gray-500::placeholder {
@@ -2049,6 +2054,81 @@ img, video {
 
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, .2, 1);
+}
+
+@font-face {
+  font-family: Roboto Condensed;
+  src: url("/fonts/roboto-condensed/RobotoCondensed-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Roboto Condensed;
+  src: url("/fonts/roboto-condensed/RobotoCondensed-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-primary: "Roboto Condensed", "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background-color: #fff;
+}
+
+.header-pn {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px #0ea5e94d;
+}
+
+.logo-icon-pn {
+  color: #fff;
+  width: 80px;
+  height: 80px;
+  font-size: 36px;
+  font-weight: bold;
+  font-family: var(--font-primary);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 12px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  animation: 3s infinite shine;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px #3b82f64d;
+}
+
+.logo-icon-pn:before {
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(45deg, #0000, #ffffff1a, #0000);
+  width: 200%;
+  height: 200%;
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  transform: rotate(45deg);
+}
+
+@keyframes shine {
+  0%, 100% {
+    box-shadow: 0 4px 20px #3b82f64d;
+  }
+
+  50% {
+    box-shadow: 0 0 15px 4px #3b82f699;
+  }
 }
 
 .swiper-button-next, .swiper-button-prev {

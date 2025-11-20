@@ -7,36 +7,35 @@ interface TrendingTopic {
 
 export async function fetchBrazilTrends(): Promise<TrendingTopic[]> {
   try {
-    const response = await fetch('/twitter-proxy.php');
+    const response = await fetch('/api/twitter/trends', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
 
     if (!response.ok) {
-      // Silenciosamente usa fallback se proxy PHP não disponível
       return getFallbackTrends();
     }
 
     const contentType = response.headers.get('content-type');
-    
-    // Se não for JSON, provavelmente é HTML/PHP não processado
+
     if (!contentType || !contentType.includes('application/json')) {
       return getFallbackTrends();
     }
 
-    const fetchWithTimeout = (url: string, timeout = 10000) => {
-  return Promise.race([
-    fetch(url),
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Timeout')), timeout)
-    )
-  ]);
-};
-
     const data = await response.json();
-    
-    if (data && data[0] && data[0].trends) {
-      return data[0].trends.slice(0, 7).map((trend: any) => ({
-        tag: trend.name,
-        tweets: formatTweetCount(trend.tweet_volume),
-        url: `https://twitter.com/search?q=${encodeURIComponent(trend.name)}`,
+
+    if (Array.isArray(data)) {
+      return data.slice(0, 7).map((item: any) => ({
+        tag: typeof item.tag === 'string' ? item.tag : String(item.tag ?? ''),
+        tweets: typeof item.tweets === 'string' ? item.tweets : 'N/A',
+        url:
+          typeof item.url === 'string'
+            ? item.url
+            : `https://twitter.com/search?q=${encodeURIComponent(
+                String(item.tag ?? ''),
+              )}`,
       }));
     }
 

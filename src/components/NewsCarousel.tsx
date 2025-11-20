@@ -110,10 +110,11 @@ export default function NewsCarousel({ posts, onPostClick }: NewsCarouselProps) 
                 <OptimizedImage
                   src={getImagePath(post)}
                   alt={getPostTitle(post)}
-                  ratio="16/9"
+                  ratio="none"
                   priority="high"
                   usePicture={true}
-                  style={{ filter: 'brightness(120%)' }}
+                  style={{ filter: 'brightness(120%)', width: '100%', height: '100%' }}
+                  className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                 {/* Category Badge */}
