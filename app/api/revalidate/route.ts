@@ -1,4 +1,4 @@
-import { updateTag } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 /**
  * Webhook endpoint to revalidate cached content on-demand
@@ -55,8 +55,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update the cache tag (Next.js v16 way)
-    updateTag(tag);
+    // Revalidate cache tag
+    revalidateTag(tag, '/');
 
     console.log(`✅ Cache updated for tag: ${tag}`);
 
