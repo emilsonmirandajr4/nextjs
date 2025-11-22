@@ -14,6 +14,7 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
       headers: {
         'Accept': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -73,6 +74,7 @@ export async function fetchPostsByCategory(categoryId: number, perPage: number =
       headers: {
         'Accept': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -111,13 +113,13 @@ function normalizeText(s: string): string {
 export async function fetchCategoryIdBySlug(slug: string): Promise<number | null> {
   try {
     // Try exact slug first
-    const exact = await fetch(`${WP_API_URL}/categories?slug=${encodeURIComponent(slug)}`);
+    const exact = await fetch(`${WP_API_URL}/categories?slug=${encodeURIComponent(slug)}`, { cache: 'no-store' });
     if (exact.ok) {
       const arr = await exact.json();
       if (Array.isArray(arr) && arr.length > 0) return arr[0].id;
     }
     // Fallback: search and pick best match by name/slug
-    const res = await fetch(`${WP_API_URL}/categories?search=${encodeURIComponent(slug)}`);
+    const res = await fetch(`${WP_API_URL}/categories?search=${encodeURIComponent(slug)}`, { cache: 'no-store' });
     if (!res.ok) return null;
     const cats = await res.json();
     if (!Array.isArray(cats) || cats.length === 0) {
@@ -148,6 +150,7 @@ export async function fetchPostsByCategorySlug(slug: string, perPage: number = 5
       headers: {
         'Accept': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -188,6 +191,7 @@ export async function fetchPostsPaginated(perPage: number = 10, page: number = 1
       headers: {
         'Accept': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -232,6 +236,7 @@ export async function fetchPostsByCategoryPaginated(
       headers: {
         'Accept': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -284,6 +289,7 @@ export async function fetchPostBySlug(slug: string): Promise<WordPressPost | nul
       headers: {
         'Accept': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (response.status === 404) {

@@ -1,0 +1,14 @@
+# robots.txt para Primeira News
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://primeiranews.com/sitemap.xml
+
+# Crawl-delay para bots mais agressivos
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 1

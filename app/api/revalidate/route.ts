@@ -15,10 +15,10 @@ import { updateTag } from 'next/cache';
  *   -d '{"tag":"posts-list"}'
  */
 
-const REVALIDATE_SECRET = process.env.NEXT_PUBLIC_REVALIDATE_SECRET;
+const REVALIDATE_SECRET = process.env.WEBHOOK_SECRET;
 
 if (!REVALIDATE_SECRET) {
-  console.warn('⚠️ NEXT_PUBLIC_REVALIDATE_SECRET not set. On-demand revalidation disabled.');
+  console.warn('⚠️ WEBHOOK_SECRET not set. On-demand revalidation disabled.');
 }
 
 export async function POST(request: Request) {

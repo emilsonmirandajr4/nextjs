@@ -28,9 +28,9 @@ export default function PersonagensCarousel({ posts, onPostClick }: PersonagensC
       keyboard: true,
       spaceBetween: 0,
       slidesPerView: 'auto',
-      speed: 300,
+      speed: 3000,
       autoplay: {
-        delay: 3000,
+        delay: 8000,
         disableOnInteraction: false,
       },
       coverflowEffect: {

@@ -22,4 +22,9 @@ dist-ssr
 *.sw?
 .env
 .vercel
-.env*.local
+
+# PWA
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/worker-*.js

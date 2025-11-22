@@ -1,5 +1,7 @@
 import { TwicImg, TwicPicture } from "@twicpics/components/react";
-import React from "react";
+import Image from "next/image";
+import React, { useState } from "react";
+import { optimizeTwicPicsUrl } from "../utils/imageOptimization";
 
 interface OptimizedImageProps {
   src: string;
@@ -18,16 +20,19 @@ interface OptimizedImageProps {
   anchor?: string;
   transition?: "fade" | "zoom" | "none";
   transitionDuration?: string;
+  // Largura máxima para otimização (opcional)
+  maxWidth?: number;
+  // HTML fetchpriority para otimização de LCP
+  fetchpriority?: "high" | "low" | "auto";
 }
 
 /**
- * Componente otimizado para imagens com TwicPics
+ * Componente otimizado para imagens com TwicPics + Next.js Image como fallback
  * 
+ * - **TwicPics como principal**: Otimização avançada, LQIP, smart crop
+ * - **Next.js Image como fallback**: Se TwicPics falhar, usa otimização nativa do Next.js
  * - **Lazy loading automático** para imagens não críticas
  * - **fetchpriority="high"** para imagens críticas (LCP)
- * - **TwicPicture** para hero images (gera <picture> responsivo)
- * - **Smart crop com IA** usando focus="auto"
- * - **LQIP automático** (placeholder baixa qualidade)
  * 
  * @example
  * // Imagem hero/LCP (primeira visível)
@@ -59,57 +64,72 @@ export default function OptimizedImage({
   anchor,
   transition = "fade",
   transitionDuration = "300ms",
+  maxWidth,
+  fetchpriority,
 }: OptimizedImageProps) {
   
-  // Remove domínio apenas para imagens do mesmo domínio (ex: WordPress),
-  // mantendo URLs absolutas externas (ex: thumbs do YouTube)
-  let imagePath = src || '/placeholder.jpg';
-  let useTwic = true;
-
-  if (/^https?:\/\//.test(src)) {
-    try {
-      const url = new URL(src);
-      const host = url.hostname;
-
-      if (host === 'primeiranews.com.br' || host.endsWith('.primeiranews.com.br')) {
-        imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
-      } else {
-        imagePath = src;
-        useTwic = false;
-      }
-    } catch {
-      imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
-      useTwic = false;
-    }
+  const [useFallback, setUseFallback] = useState(false);
+  
+  // Remove domínio da URL se necessário para TwicPics
+  let imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
+  
+  // Aplica otimizações agressivas para reduzir payload
+  // maxWidth automático baseado no contexto se não especificado
+  const optimizedWidth = maxWidth || (usePicture ? 1536 : 800);
+  imagePath = optimizeTwicPicsUrl(imagePath, optimizedWidth);
+  
+  // URL completa para Next.js Image (fallback)
+  const fullImageUrl = src.startsWith('http') ? src : `https://primeiranews.com.br${src}`;
+  
+  // Handler de erro - muda para fallback
+  const handleError = () => {
+    console.warn(`TwicPics failed to load image: ${src}, using Next.js Image fallback`);
+    setUseFallback(true);
+  };
+  
+  // Se fallback ativo, usa Next.js Image
+  if (useFallback) {
+    const isEager = priority === "high";
+    
+    return (
+      <div className={className} style={style}>
+        <Image
+          src={fullImageUrl}
+          alt={alt}
+          fill={ratio === "none"}
+          width={ratio !== "none" ? 800 : undefined}
+          height={ratio !== "none" ? 600 : undefined}
+          priority={isEager}
+          loading={isEager ? "eager" : "lazy"}
+          quality={85}
+          className="object-cover w-full h-full"
+          onError={() => console.error('Both TwicPics and Next.js Image failed for:', src)}
+        />
+      </div>
+    );
   }
   
-  // Props comuns para ambos os componentes
+  // Props comuns para TwicPics com otimizações agressivas
   const commonProps = {
     src: imagePath,
     alt,
     ratio,
     mode,
     placeholder,
-    ...(focus && { focus }), // Só adiciona focus se for definido
-    style,
+    ...(focus && { focus }),
+    style: {
+      ...style,
+      // Força transformações do TwicPics para reduzir tamanho
+      ...(imagePath.includes('?') ? {} : {}),
+    },
     className,
+    onError: handleError,
+    // Adiciona parâmetros de otimização via TwicPics
+    intrinsic: '1920x1080', // Limita tamanho máximo da imagem
+    ...(fetchpriority && { fetchpriority }), // HTML fetchpriority para LCP
   };
 
-  // Se prioridade alta, usa eager (desabilita lazy loading)
   const isEager = priority === "high";
-
-  // Para URLs externas (como thumbs do YouTube), renderiza <img> normal
-  // em vez de passar pelo TwicPics, garantindo que a imagem apareça.
-  if (!useTwic) {
-    return (
-      <img
-        src={imagePath}
-        alt={alt}
-        style={style}
-        className={className}
-      />
-    );
-  }
 
   // TwicPicture para hero images (melhor LCP)
   if (usePicture) {

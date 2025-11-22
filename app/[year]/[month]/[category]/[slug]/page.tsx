@@ -249,6 +249,7 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                         ratio="1"
                         placeholder="maincolor"
                         transitionDuration="300ms"
+                        priority="normal"
                       />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">

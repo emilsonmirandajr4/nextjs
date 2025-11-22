@@ -4,6 +4,9 @@ import {
   getPostSingleCacheControl,
 } from '../../../../src/server/wordpress';
 
+// Nota: Edge Runtime removido devido a conflito com cacheComponents
+// O cache já está otimizado via cacheComponents no next.config.mjs
+
 export async function GET(
   _request: any,
   { params }: { params: Promise<{ slug: string }> },

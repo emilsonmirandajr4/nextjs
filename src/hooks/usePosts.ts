@@ -23,7 +23,7 @@ export function usePosts(perPage: number = 30) {
   return useQuery({
     queryKey: postsKeys.list(perPage),
     queryFn: () => fetchPosts(perPage),
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    // Usa config global (staleTime: 0) para atualização em tempo real
   });
 }
 
@@ -38,7 +38,7 @@ export function usePostsByCategory(slug: string, perPage: number = 100, enabled:
     queryKey: postsKeys.category(slug, perPage),
     queryFn: () => fetchPostsByCategorySlug(slug, perPage),
     enabled: enabled && !!slug, // Só busca se slug existe e enabled=true
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    // Usa config global (staleTime: 0) para atualização em tempo real
   });
 }
 
@@ -81,7 +81,7 @@ export function useInfinitePosts(perPage: number = 10) {
       if (lastPage.length < perPage) return undefined;
       return allPages.length + 1;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    // Usa config global (staleTime: 0) para atualização em tempo real
   });
 }
 
@@ -105,7 +105,7 @@ export function useInfinitePostsByCategory(
       return allPages.length + 1;
     },
     enabled: enabled && !!slug,
-    staleTime: 1000 * 60 * 5,
+    // Usa config global (staleTime: 0) para atualização em tempo real
   });
 }
 

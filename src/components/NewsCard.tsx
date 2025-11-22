@@ -39,6 +39,7 @@ export default function NewsCard({ post, variant = 'large' }: NewsCardProps) {
             src={getImagePath(post)}
             alt={getPostTitle(post)}
             ratio="16/9"
+            priority="normal"
             transitionDuration="600ms"
             className="group-hover:scale-105 transition-transform duration-300"
           />

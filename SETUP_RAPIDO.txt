@@ -1,0 +1,135 @@
+═══════════════════════════════════════════════════════════
+🚀 SETUP WEBHOOK - COLA E COLA (5 MINUTOS)
+═══════════════════════════════════════════════════════════
+
+📋 CHECKLIST:
+□ Passo 1: Copiar token (30s)
+□ Passo 2: Configurar Vercel (2 min)
+□ Passo 3: Instalar no WordPress (2 min)
+□ Passo 4: Testar (30s)
+
+═══════════════════════════════════════════════════════════
+🔑 PASSO 1: SEU TOKEN (JÁ CRIADO!)
+═══════════════════════════════════════════════════════════
+
+Copie este token (Ctrl+C):
+
+primeiranews2024webhook789secure456token123xyz
+
+✅ Token já está no .env.local
+⚠️  Você PRECISA adicionar na Vercel também!
+
+═══════════════════════════════════════════════════════════
+🌐 PASSO 2: ADICIONAR NA VERCEL
+═══════════════════════════════════════════════════════════
+
+1. Acesse: https://vercel.com/dashboard
+2. Clique no projeto "nextjs"
+3. Vá em: Settings → Environment Variables
+4. Clique em "Add New"
+5. Preencha:
+   
+   Name:  WEBHOOK_SECRET
+   
+   Value: primeiranews2024webhook789secure456token123xyz
+   
+   Environments: ✓ Production  ✓ Preview  ✓ Development
+
+6. Clique "Save"
+7. Faça um deploy:
+   
+   git add .
+   git commit -m "Add webhook"
+   git push
+   
+   (ou use: vercel --prod)
+
+═══════════════════════════════════════════════════════════
+📝 PASSO 3: INSTALAR NO WORDPRESS
+═══════════════════════════════════════════════════════════
+
+3.1 - Abra: wordpress-webhook.php
+3.2 - Encontre estas 2 linhas:
+
+define('NEXTJS_SITE_URL', 'https://SEU-SITE-AQUI.vercel.app');
+define('NEXTJS_REVALIDATE_SECRET', 'SEU-TOKEN-SECRETO');
+
+3.3 - Substitua para:
+
+define('NEXTJS_SITE_URL', 'https://primeiranews.vercel.app');
+define('NEXTJS_REVALIDATE_SECRET', 'primeiranews2024webhook789secure456token123xyz');
+
+⚠️  ATENÇÃO: Use a URL REAL do seu site Vercel!
+
+3.4 - Copie TODO o código (Ctrl+A, Ctrl+C)
+
+3.5 - No WordPress Admin:
+   → Aparência → Editor de Temas
+   → Clique em "functions.php" (menu direito)
+   → Role ATÉ O FINAL do arquivo
+   → Cole o código (Ctrl+V)
+   → Clique "Atualizar Arquivo"
+
+✅ Deve aparecer: "Arquivo atualizado com sucesso"
+
+═══════════════════════════════════════════════════════════
+🧪 PASSO 4: TESTAR
+═══════════════════════════════════════════════════════════
+
+TESTE 1: Manual (copie e execute no terminal)
+
+curl -X POST https://primeiranews.vercel.app/api/revalidate \
+  -H "Authorization: Bearer primeiranews2024webhook789secure456token123xyz" \
+  -H "Content-Type: application/json" \
+  -d '{"tag":"posts-list"}'
+
+✅ Deve retornar:
+{
+  "success": true,
+  "message": "Cache updated for tag: posts-list"
+}
+
+TESTE 2: Real
+
+1. No WordPress, crie um post de teste
+2. Publique
+3. Aguarde 2-3 segundos
+4. Acesse seu site
+5. ✅ O post deve aparecer!
+
+═══════════════════════════════════════════════════════════
+✅ PRONTO!
+═══════════════════════════════════════════════════════════
+
+Agora quando você publicar posts no WordPress:
+
+1. WordPress dispara webhook automaticamente
+2. Next.js atualiza cache em 2-3 segundos
+3. Post aparece no site instantaneamente!
+
+ANTES: 0-60 segundos
+DEPOIS: 2-3 segundos ⚡
+
+═══════════════════════════════════════════════════════════
+⚠️  LEMBRE-SE
+═══════════════════════════════════════════════════════════
+
+O token DEVE ser EXATAMENTE IGUAL em 3 lugares:
+
+1. ✅ .env.local (já está)
+2. ⏳ Vercel Environment Variables (você precisa adicionar)
+3. ⏳ wordpress-webhook.php (você precisa editar)
+
+Se algo não funcionar, é porque o token está diferente!
+
+═══════════════════════════════════════════════════════════
+📞 PROBLEMAS?
+═══════════════════════════════════════════════════════════
+
+Erro 401: Token diferente
+Erro 404: URL errada ou deploy não terminou
+Webhook não dispara: Código não foi colado no WordPress
+
+Leia: INSTALACAO_WEBHOOK.md (guia completo)
+
+═══════════════════════════════════════════════════════════

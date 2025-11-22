@@ -1,0 +1,16 @@
+{
+  "name": "Primeira News",
+  "short_name": "Primeira News",
+  "description": "Portal de notícias com as últimas informações sobre política, economia, esportes e muito mais.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import OptimizedImage from '../src/components/OptimizedImage';
@@ -16,9 +16,16 @@ import Sidebar from '../src/components/Sidebar';
 import Footer from '../src/components/Footer';
 import Carousel3DWithPanel from '../src/components/Carousel3DWithPanel';
 import TrendingTopics from '../src/components/TrendingTopics';
+import {
+  SidebarSkeleton,
+  CarouselSkeleton,
+  PostsListSkeleton,
+  NewsSectionSkeleton,
+  VideoCarouselSkeleton,
+} from '../src/components/Skeletons';
 
 const VideoCarousel = dynamic(() => import('../src/components/VideoCarousel'), {
-  ssr: false,
+  loading: () => <VideoCarouselSkeleton />,
 });
 
 type HomeVideo = {
@@ -56,6 +63,61 @@ function extractYouTubeId(url: string): string | null {
   } catch {
     return null;
   }
+}
+
+function HomeSkeleton() {
+  const sidebarCard = (
+    <div className="bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-lg">
+      <div className="h-12 bg-slate-200" />
+      <div className="p-4">
+        <SidebarSkeleton />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      <div className="animated-bg absolute inset-0 -z-10"></div>
+      <Header />
+      <Navigation />
+
+      <main className="max-w-7xl mx-auto px-4 py-4 space-y-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          <div className="lg:col-span-3">{sidebarCard}</div>
+          <div className="lg:col-span-6">
+            <div className="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-lg p-4">
+              <CarouselSkeleton />
+            </div>
+          </div>
+          <div className="lg:col-span-3">{sidebarCard}</div>
+        </div>
+
+        <section className="mt-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-lg p-4">
+            <div className="h-8 w-1/3 bg-slate-200 rounded animate-pulse" />
+            <div className="mt-6">
+              <NewsSectionSkeleton />
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-lg p-4">
+            <div className="h-8 w-1/4 bg-slate-200 rounded animate-pulse mb-4" />
+            <PostsListSkeleton />
+          </div>
+        </section>
+
+        <section className="mt-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-lg p-4">
+            <VideoCarouselSkeleton />
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
 
 function LazyVideoCarousel({ videos }: { videos: HomeVideo[] }) {
@@ -187,16 +249,9 @@ export default function HomePage() {
   const { data: opinionPosts = [], isLoading: loadingOpinion } = usePostsByCategory('opiniao', 5);
   
   const loading = loadingPosts || loadingNews || loadingEnganadores || loadingOpinion;
-  
-  useEffect(() => {
-    if (successPosts && successNews && !loading) {
-      const totalPosts = newsPosts.length + posts.length;
-      if (totalPosts > 0) {
-      }
-    }
-  }, [successPosts, successNews, loading, newsPosts.length, posts.length]);
 
-  const handlePostClick = (postId: number) => {
+  // Memoiza callback de clique para evitar re-renders desnecessários
+  const handlePostClick = useCallback((postId: number) => {
     // Busca o post pelo ID para pegar o slug
     const post = posts.find(p => p.id === postId) || newsPosts.find(p => p.id === postId);
     if (post) {
@@ -205,53 +260,59 @@ export default function HomePage() {
       // Fallback para ID se post não existir no estado
       router.push(`/post/${postId}`);
     }
-  };
+  }, [posts, newsPosts, router]);
+
+  // Memoiza todas as computações de posts para evitar recálculos
+  const postsData = useMemo(() => {
+    const sidebarPosts = posts.slice(0, 5);
+    const personagensPosts = posts.slice(5, 15);
+    const centerPosts = posts.slice(15, 21);
+    const highlightPosts = (opinionPosts.length > 0 ? opinionPosts : posts.slice(21, 26));
+    const bottomPosts = posts.slice(26, 30);
+
+    const judiciaryPosts = posts
+      .filter((post) =>
+        post.categories_names?.some((name) => {
+          const normalized = name.toLowerCase();
+          return normalized.includes('judiciário') || normalized.includes('judiciario');
+        })
+      )
+      .slice(0, 5);
+
+    return {
+      sidebarPosts,
+      personagensPosts,
+      centerPosts,
+      highlightPosts,
+      bottomPosts,
+      judiciaryPosts,
+    };
+  }, [posts, opinionPosts]);
+
+  // Memoiza preparação de dados do Carousel3D
+  const carouselData = useMemo(() => {
+    const items = enganadoresPosts.map((post) => {
+      const tags = post._embedded?.['wp:term']?.[1]?.map(tag => tag.name) || [];
+      return {
+        id: post.id,
+        image: getPostImage(post),
+        title: getPostTitle(post),
+        description: post.excerpt?.rendered?.replace(/<[^>]+>/g, '').substring(0, 100) + '...' || '',
+        category: post.categories_names?.[0] || 'Enganadores',
+        tags: tags
+      };
+    });
+
+    const summaries = enganadoresPosts.map(post => 
+      post.excerpt?.rendered?.replace(/<[^>]+>/g, '').trim() || getPostTitle(post)
+    );
+
+    return { items, summaries };
+  }, [enganadoresPosts]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400"></div>
-          <p className="mt-4 text-gray-900">Carregando notícias...</p>
-        </div>
-      </div>
-    );
+    return <HomeSkeleton />;
   }
-
-  const sidebarPosts = posts.slice(0, 5);
-  const carouselPosts = posts.slice(0, 5);
-  const leftSidebarPosts = sidebarPosts;
-  const rightSidebarPosts = sidebarPosts;
-  const personagensPosts = posts.slice(5, 15);
-  const centerPosts = posts.slice(15, 21);
-  const highlightPosts = (opinionPosts.length > 0 ? opinionPosts : posts.slice(21, 26));
-  const bottomPosts = posts.slice(26, 30);
-
-  const judiciaryPosts = posts
-    .filter((post) =>
-      post.categories_names?.some((name) => {
-        const normalized = name.toLowerCase();
-        return normalized.includes('judiciário') || normalized.includes('judiciario');
-      })
-    )
-    .slice(0, 5);
-
-  // Preparar dados para o Carousel3DWithPanel
-  const carouselItems = enganadoresPosts.map((post, index) => {
-    const tags = post._embedded?.['wp:term']?.[1]?.map(tag => tag.name) || [];
-    return {
-      id: post.id,
-      image: getPostImage(post),
-      title: getPostTitle(post),
-      description: post.excerpt?.rendered?.replace(/<[^>]+>/g, '').substring(0, 100) + '...' || '',
-      category: post.categories_names?.[0] || 'Enganadores',
-      tags: tags
-    };
-  });
-
-  const carouselSummaries = enganadoresPosts.map(post => 
-    post.excerpt?.rendered?.replace(/<[^>]+>/g, '').trim() || getPostTitle(post)
-  );
 
   const featuredVideos: HomeVideo[] = [
     {
@@ -337,7 +398,7 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto px-4 py-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           <div className="lg:col-span-3">
-            <Sidebar posts={leftSidebarPosts} title="Mais Lidas" onPostClick={handlePostClick} />
+            <Sidebar posts={postsData.sidebarPosts} title="Mais Lidas" onPostClick={handlePostClick} />
           </div>
 
           <div className="lg:col-span-6">
@@ -366,7 +427,7 @@ export default function HomePage() {
           </div>
 
           <div className="lg:col-span-3">
-            <Sidebar posts={rightSidebarPosts} title="Assuntos em Alta" onPostClick={handlePostClick} />
+            <Sidebar posts={postsData.sidebarPosts} title="Assuntos em Alta" onPostClick={handlePostClick} />
           </div>
         </div>
 
@@ -395,7 +456,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              <Carousel3DWithPanel items={carouselItems} summaries={carouselSummaries} onItemClick={handlePostClick} />
+              <Carousel3DWithPanel items={carouselData.items} summaries={carouselData.summaries} onItemClick={handlePostClick} />
             </div>
             <div className="lg:col-span-3">
               <TrendingTopics />
@@ -437,6 +498,7 @@ export default function HomePage() {
                           alt={getPostTitle(post)}
                           ratio="none"
                           usePicture={false}
+                          priority="normal"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
@@ -474,7 +536,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="p-3 space-y-3">
-                  {judiciaryPosts.map((post, index) => (
+                  {postsData.judiciaryPosts.map((post: WordPressPost, index: number) => (
                     <div
                       key={post.id}
                       onClick={() => handlePostClick(post.id)}
@@ -487,6 +549,7 @@ export default function HomePage() {
                             alt={getPostTitle(post)}
                             ratio="none"
                             usePicture={false}
+                            priority="normal"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
@@ -525,15 +588,15 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="p-4">
-                  {highlightPosts[0] && (
+                  {postsData.highlightPosts[0] && (
                     <div
-                      onClick={() => handlePostClick(highlightPosts[0].id)}
+                      onClick={() => handlePostClick(postsData.highlightPosts[0].id)}
                       className="group cursor-pointer rounded-xl overflow-hidden border border-slate-200 bg-slate-50/60 hover:bg-slate-100 transition-colors duration-200 shadow-sm"
                     >
                       <div className="relative">
                         <OptimizedImage
-                          src={getImagePath(highlightPosts[0])}
-                          alt={highlightPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
+                          src={getImagePath(postsData.highlightPosts[0])}
+                          alt={postsData.highlightPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
                           ratio="none"
                           usePicture={false}
                           className="w-full h-52 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
@@ -541,7 +604,7 @@ export default function HomePage() {
                       </div>
                       <div className="px-3 pb-4 pt-3">
                         <h3 className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors leading-snug line-clamp-3">
-                          {highlightPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
+                          {postsData.highlightPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
                         </h3>
                       </div>
                     </div>

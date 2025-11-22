@@ -3,31 +3,34 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'react-hot-toast';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { installTwicpics } from '@twicpics/components/react';
+
+// Inicializar TwicPics no top-level (antes do componente)
+// Otimizado para reduzir payload de rede drasticamente
+installTwicpics({
+  domain: "https://primeiranews.twic.pics",
+  anticipation: 0.5, // Aumentado para melhor preload
+  breakpoints: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 },
+  env: "production",
+  maxDPR: 2, // Reduzido de 3 para 2 (economiza ~33% em telas retina)
+  step: 10, // Aumentado de 5 para 10 (menos variações de tamanho)
+});
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 60 * 5, // Dados considerados frescos por 5 minutos
-        gcTime: 1000 * 60 * 10, // Cache mantido por 10 minutos
-        retry: 3, // Tentar 3 vezes em caso de erro
-        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-        refetchOnWindowFocus: false, // Não revalidar ao focar na janela
+        staleTime: 0, // Sempre buscar dados atualizados (posts em tempo real)
+        gcTime: 1000 * 60 * 5, // Cache mantido por 5 minutos
+        retry: 2, // Tentar 2 vezes em caso de erro
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+        refetchOnWindowFocus: true, // Revalidar ao focar na janela
         refetchOnReconnect: true, // Revalidar ao reconectar
+        refetchOnMount: true, // Revalidar ao montar componente
       },
     },
-  }));
-
-  // Inicializar TwicPics no client-side
-  useEffect(() => {
-    installTwicpics({
-      domain: "https://primeiranews.twic.pics",
-      anticipation: 0.4,
-      step: 5,
-    });
-  }, []);
+  }))
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -77,7 +80,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }}
       />
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {process.env.NODE_ENV === 'development' && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
     </QueryClientProvider>
   );
 }

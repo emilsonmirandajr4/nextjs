@@ -19,7 +19,7 @@ export function PostsListSkeleton() {
 
 export function CarouselSkeleton() {
   return (
-    <div className="w-full h-64 bg-gray-200 rounded-lg animate-pulse" />
+    <div className="w-full h-[420px] bg-gray-200 rounded-lg animate-pulse" />
   );
 }
 
