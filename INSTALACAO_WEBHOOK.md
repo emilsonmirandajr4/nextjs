@@ -89,8 +89,8 @@ Encontre estas linhas no código copiado:
 // URL do seu site Next.js na Vercel
 define('NEXTJS_SITE_URL', 'https://SEU-SITE-AQUI.vercel.app');
 
-// Token secreto (copie do .env.local)
-define('NEXTJS_REVALIDATE_SECRET', 'SEU-TOKEN-SECRETO');
+// Token secreto (mesmo valor de WEBHOOK_SECRET do .env.local e Vercel)
+define('WEBHOOK_SECRET', 'SEU-TOKEN-SECRETO');
 ```
 
 **Substitua:**
@@ -100,7 +100,7 @@ define('NEXTJS_REVALIDATE_SECRET', 'SEU-TOKEN-SECRETO');
 **Exemplo:**
 ```php
 define('NEXTJS_SITE_URL', 'https://primeiranews.vercel.app');
-define('NEXTJS_REVALIDATE_SECRET', 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6');
+define('WEBHOOK_SECRET', 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6');
 ```
 
 ### **4.3 - Adicionar no WordPress**

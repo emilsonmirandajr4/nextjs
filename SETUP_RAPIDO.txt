@@ -52,12 +52,12 @@ primeiranews2024webhook789secure456token123xyz
 3.2 - Encontre estas 2 linhas:
 
 define('NEXTJS_SITE_URL', 'https://SEU-SITE-AQUI.vercel.app');
-define('NEXTJS_REVALIDATE_SECRET', 'SEU-TOKEN-SECRETO');
+define('WEBHOOK_SECRET', 'SEU-TOKEN-SECRETO');
 
 3.3 - Substitua para:
 
 define('NEXTJS_SITE_URL', 'https://primeiranews.vercel.app');
-define('NEXTJS_REVALIDATE_SECRET', 'primeiranews2024webhook789secure456token123xyz');
+define('WEBHOOK_SECRET', 'primeiranews2024webhook789secure456token123xyz');
 
 ⚠️  ATENÇÃO: Use a URL REAL do seu site Vercel!
 

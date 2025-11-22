@@ -20,8 +20,8 @@
 // URL do seu site Next.js na Vercel
 define('NEXTJS_SITE_URL', 'https://SEU-SITE-AQUI.vercel.app');
 
-// Token secreto (copie do .env.local)
-define('NEXTJS_REVALIDATE_SECRET', 'SEU-TOKEN-SECRETO');
+// Token secreto (mesmo valor de WEBHOOK_SECRET do .env.local e Vercel)
+define('WEBHOOK_SECRET', 'SEU-TOKEN-SECRETO');
 
 // ============================================
 // CÓDIGO DO WEBHOOK (NÃO EDITE ABAIXO)
@@ -42,7 +42,7 @@ function revalidate_nextjs_cache_on_publish($new_status, $old_status, $post) {
     }
     
     $url = NEXTJS_SITE_URL . '/api/revalidate';
-    $secret = NEXTJS_REVALIDATE_SECRET;
+    $secret = WEBHOOK_SECRET;
     
     // Dados para revalidar
     $body = json_encode([
@@ -88,7 +88,7 @@ function revalidate_nextjs_cache_on_update($post_id, $post_after, $post_before) 
     }
     
     $url = NEXTJS_SITE_URL . '/api/revalidate';
-    $secret = NEXTJS_REVALIDATE_SECRET;
+    $secret = WEBHOOK_SECRET;
     
     $body = json_encode([
         'tag' => 'posts-list',
