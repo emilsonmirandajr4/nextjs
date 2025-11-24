@@ -18,7 +18,7 @@ export function optimizeTwicPicsUrl(imagePath: string, maxWidth?: number): strin
   const cleanPath = imagePath.split('?')[0];
   
   // Define largura máxima baseada no contexto
-  const width = maxWidth || 1200;
+  const width = maxWidth || 3000;
   
   // Adiciona parâmetros de otimização agressiva + resize
   // output=webp: força formato WebP (30-50% menor que JPEG)
@@ -49,10 +49,10 @@ export function getOptimalImageSize(context: 'hero' | 'thumbnail' | 'card' | 'ca
  */
 export function getOptimalQuality(context: 'hero' | 'thumbnail' | 'card' | 'carousel'): number {
   const quality = {
-    hero: 80,        // Imagens principais - qualidade boa
-    carousel: 75,    // Carousels - qualidade média-boa
-    card: 75,        // Cards - qualidade média-boa
-    thumbnail: 70,   // Thumbnails - qualidade média
+    hero: 85,        // Imagens principais - qualidade boa
+    carousel: 85,    // Carousels - qualidade média-boa
+    card: 85,        // Cards - qualidade média-boa
+    thumbnail: 85,   // Thumbnails - qualidade média
   };
   
   return quality[context];

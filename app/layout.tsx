@@ -67,8 +67,6 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://primeiranews.twic.pics" crossOrigin="" />
         <link rel="preconnect" href="https://primeiranews.com.br" />
-        <link rel="dns-prefetch" href="https://primeiranews.com.br" />
-        <link rel="dns-prefetch" href="https://img.youtube.com" />
       </head>
       <body className={`${robotoCondensed.variable} font-sans bg-white text-gray-900 antialiased`} suppressHydrationWarning>
         <Providers>{children}</Providers>

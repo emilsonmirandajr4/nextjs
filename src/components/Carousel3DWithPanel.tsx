@@ -273,8 +273,32 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
   }
 
   return (
-    <div className="w-full" style={{ background: 'linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)', borderRadius: '16px' }}>
+    <div className="w-full" style={{ background: 'linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)', borderRadius: '16px', minHeight: '440px' }}>
       <style>{`
+        /* TwicPics responsive optimization - reduz forced reflows */
+        .twic-carousel-img {
+          --twic-ratio: calc(4/3);
+          --twic-mode: cover;
+        }
+        
+        @media (max-width: 768px) {
+          .twic-carousel-img {
+            --twic-ratio: 1;
+          }
+        }
+        
+        @media (min-width: 1024px) {
+          .twic-carousel-img {
+            --twic-ratio: calc(4/3);
+          }
+        }
+        
+        @media (min-width: 1280px) {
+          .twic-carousel-img {
+            --twic-ratio: calc(16/9);
+          }
+        }
+        
         .animate-border-glow {
           position: relative;
         }
@@ -300,14 +324,15 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
         }
         .main-content {
           max-width: 1400px;
-          margin: 0 auto;
-          padding: 12px 24px;
+          padding: 20px;
+          height: 440px;
         }
         .content-grid {
           display: grid;
           grid-template-columns: 1fr 2fr;
           gap: 8px;
-          align-items: start;
+          align-items: stretch;
+          height: 100%;
         }
         .summary-panel {
           position: relative;
@@ -315,9 +340,10 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
           backdrop-filter: blur(10px);
           border-radius: 16px;
           padding: 24px;
-          position: sticky;
-          top: 24px;
           border: 1px solid rgba(255, 255, 255, 0.1);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
         .summary-panel h2 {
           font-size: 20px;
@@ -339,9 +365,9 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
         .carousel-container {
           position: relative;
           width: 100%;
-          height: 450px;
+          height: 380px;
           perspective: 1200px;
-          padding: 0 0 40px 0;
+          padding: 0 0 30px 0;
         }
         .carousel-wrapper {
           position: relative;
@@ -353,7 +379,7 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
         }
         .carousel-item {
           position: absolute;
-          width: 400px;
+          width: 380px;
           cursor: grab;
         }
         .carousel-card {
@@ -361,14 +387,14 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
           width: 100%;
           border-radius: 16px;
           overflow: visible;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(37, 99, 235, 0.4);
           background: white;
           isolation: isolate;
         }
         .carousel-image {
           position: relative;
           width: 100%;
-          height: 300px;
+          height: 280px;
           overflow: hidden;
           border-radius: 16px;
           z-index: 2;
@@ -497,10 +523,10 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
             height: 500px;
           }
           .carousel-item {
-            width: 300px;
+            width: 320px;
           }
           .carousel-image {
-            height: 300px;
+            height: 320px;
           }
         }
       `}</style>
@@ -509,33 +535,10 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
         <div className="content-grid">
           {/* Title Panel - Left Side */}
           <div className="summary-panel">
-            <div className="summary-content" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '300px' }}>
-              <h2 style={{ fontSize: '28px', lineHeight: '1.3', marginBottom: '16px' }}>
+            <div className="summary-content" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
+              <h2 style={{ fontSize: '26px', lineHeight: '1.3' }}>
                 {items[currentIndex]?.title}
               </h2>
-              <p className="small-text" style={{ marginBottom: '16px' }}>
-                {summaries[currentIndex]}
-              </p>
-              {items[currentIndex]?.tags && items[currentIndex].tags.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {items[currentIndex].tags.slice(0, 3).map((tag, idx) => (
-                    <span
-                      key={idx}
-                      style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                        color: 'white',
-                        padding: '4px 12px',
-                        borderRadius: '16px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4)'
-                      }}
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
@@ -577,6 +580,7 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
                         ratio="4/3"
                         priority={index === currentIndex ? "high" : "normal"}
                         transitionDuration="400ms"
+                        className="twic-carousel-img"
                       />
                       {item.category && (
                         <div className="absolute top-4 left-4 bg-red-700 text-white px-3 py-1 text-xs font-bold uppercase z-20 rounded-full shadow-lg">

@@ -10,11 +10,11 @@ import { usePosts, usePostsByCategory } from '../src/hooks/usePosts';
 import { getPostUrl } from '../src/utils/navigation';
 import Header from '../src/components/Header';
 import Navigation from '../src/components/Navigation';
-import NewsCarousel from '../src/components/NewsCarousel';
+import NewsCarouselEmbla from '@/components/NewsCarouselEmbla';
 import NewsCard from '../src/components/NewsCard';
 import Sidebar from '../src/components/Sidebar';
 import Footer from '../src/components/Footer';
-import Carousel3DWithPanel from '../src/components/Carousel3DWithPanel';
+import CarouselWithPanel from '../src/components/CarouselWithPanel';
 import TrendingTopics from '../src/components/TrendingTopics';
 import {
   SidebarSkeleton,
@@ -264,11 +264,12 @@ export default function HomePage() {
 
   // Memoiza todas as computações de posts para evitar recálculos
   const postsData = useMemo(() => {
-    const sidebarPosts = posts.slice(0, 5);
-    const personagensPosts = posts.slice(5, 15);
-    const centerPosts = posts.slice(15, 21);
-    const highlightPosts = (opinionPosts.length > 0 ? opinionPosts : posts.slice(21, 26));
-    const bottomPosts = posts.slice(26, 30);
+    const sidebarLeftPosts = posts.slice(0, 6);
+    const sidebarRightPosts = posts.slice(6, 12);
+    const personagensPosts = posts.slice(12, 22);
+    const centerPosts = posts.slice(22, 28);
+    const highlightPosts = (opinionPosts.length > 0 ? opinionPosts : posts.slice(28, 33));
+    const bottomPosts = posts.slice(33, 37);
 
     const judiciaryPosts = posts
       .filter((post) =>
@@ -280,7 +281,8 @@ export default function HomePage() {
       .slice(0, 5);
 
     return {
-      sidebarPosts,
+      sidebarLeftPosts,
+      sidebarRightPosts,
       personagensPosts,
       centerPosts,
       highlightPosts,
@@ -396,9 +398,9 @@ export default function HomePage() {
       <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <div className="lg:col-span-3">
-            <Sidebar posts={postsData.sidebarPosts} title="Mais Lidas" onPostClick={handlePostClick} />
+            <Sidebar posts={postsData.sidebarLeftPosts} title="Mais Lidas" onPostClick={handlePostClick} />
           </div>
 
           <div className="lg:col-span-6">
@@ -423,11 +425,11 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <NewsCarousel posts={(newsPosts.length > 0 ? newsPosts : posts).slice(0, 8)} onPostClick={handlePostClick} />
+            <NewsCarouselEmbla posts={(newsPosts.length > 0 ? newsPosts : posts).slice(0, 8)} onPostClick={handlePostClick} />
           </div>
 
           <div className="lg:col-span-3">
-            <Sidebar posts={postsData.sidebarPosts} title="Assuntos em Alta" onPostClick={handlePostClick} />
+            <Sidebar posts={postsData.sidebarRightPosts} title="Assuntos em Alta" onPostClick={handlePostClick} />
           </div>
         </div>
 
@@ -456,7 +458,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              <Carousel3DWithPanel items={carouselData.items} summaries={carouselData.summaries} onItemClick={handlePostClick} />
+              <CarouselWithPanel items={carouselData.items} summaries={carouselData.summaries} onItemClick={handlePostClick} />
             </div>
             <div className="lg:col-span-3">
               <TrendingTopics />

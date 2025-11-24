@@ -44,37 +44,35 @@ function revalidate_nextjs_cache_on_publish($new_status, $old_status, $post) {
     $url = NEXTJS_SITE_URL . '/api/revalidate';
     $secret = WEBHOOK_SECRET;
     
-    // Dados para revalidar
-    $body = json_encode([
-        'tag' => 'posts-list',
-        'postId' => $post->ID,
-        'postSlug' => $post->post_name,
-    ]);
+    // Revalida AMBOS: lista de posts E post individual
+    $tags = ['posts-list', 'post-' . $post->post_name];
     
-    // Fazer requisição
-    $response = wp_remote_post($url, [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $secret,
-            'Content-Type' => 'application/json',
-        ],
-        'body' => $body,
-        'timeout' => 5,
-        'blocking' => false, // Não espera resposta (mais rápido)
-    ]);
-    
-    // Log de debug (opcional - ver em Ferramentas → Saúde do Site → Informações → Logs)
-    if (is_wp_error($response)) {
-        error_log('❌ [Next.js Webhook] Erro: ' . $response->get_error_message());
-    } else {
-        error_log('✅ [Next.js Webhook] Cache revalidado para post: ' . $post->post_title);
+    foreach ($tags as $tag) {
+        $body = json_encode([
+            'tag' => $tag,
+            'postId' => $post->ID,
+            'postSlug' => $post->post_name,
+        ]);
+        
+        wp_remote_post($url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $secret,
+                'Content-Type' => 'application/json',
+            ],
+            'body' => $body,
+            'timeout' => 5,
+            'blocking' => false, // Não espera resposta (mais rápido)
+        ]);
     }
+    
+    error_log('✅ [Next.js Webhook] Cache revalidado para post: ' . $post->post_title . ' (tags: ' . implode(', ', $tags) . ')');
 }
 
 // Hook para quando post é publicado
 add_action('transition_post_status', 'revalidate_nextjs_cache_on_publish', 10, 3);
 
 /**
- * Revalida cache quando post é atualizado
+ * Revalida cache quando post é atualizado (editado)
  */
 function revalidate_nextjs_cache_on_update($post_id, $post_after, $post_before) {
     // Só para posts publicados
@@ -90,27 +88,28 @@ function revalidate_nextjs_cache_on_update($post_id, $post_after, $post_before) 
     $url = NEXTJS_SITE_URL . '/api/revalidate';
     $secret = WEBHOOK_SECRET;
     
-    $body = json_encode([
-        'tag' => 'posts-list',
-        'postId' => $post_id,
-        'postSlug' => $post_after->post_name,
-    ]);
+    // Revalida AMBOS: lista de posts E post individual
+    $tags = ['posts-list', 'post-' . $post_after->post_name];
     
-    $response = wp_remote_post($url, [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $secret,
-            'Content-Type' => 'application/json',
-        ],
-        'body' => $body,
-        'timeout' => 5,
-        'blocking' => false,
-    ]);
-    
-    if (is_wp_error($response)) {
-        error_log('❌ [Next.js Webhook] Erro na atualização: ' . $response->get_error_message());
-    } else {
-        error_log('✅ [Next.js Webhook] Cache revalidado (update) para: ' . $post_after->post_title);
+    foreach ($tags as $tag) {
+        $body = json_encode([
+            'tag' => $tag,
+            'postId' => $post_id,
+            'postSlug' => $post_after->post_name,
+        ]);
+        
+        wp_remote_post($url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $secret,
+                'Content-Type' => 'application/json',
+            ],
+            'body' => $body,
+            'timeout' => 5,
+            'blocking' => false,
+        ]);
     }
+    
+    error_log('✅ [Next.js Webhook] Cache revalidado (update) para: ' . $post_after->post_title . ' (tags: ' . implode(', ', $tags) . ')');
 }
 
 // Hook para quando post é atualizado

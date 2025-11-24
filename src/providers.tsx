@@ -10,10 +10,10 @@ import { installTwicpics } from '@twicpics/components/react';
 // Otimizado para reduzir payload de rede drasticamente
 installTwicpics({
   domain: "https://primeiranews.twic.pics",
-  anticipation: 0.5, // Aumentado para melhor preload
+  anticipation: 0.2, // Aumentado para melhor preload
   breakpoints: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 },
   env: "production",
-  maxDPR: 2, // Reduzido de 3 para 2 (economiza ~33% em telas retina)
+  maxDPR: 3, // Reduzido de 3 para 2 (economiza ~33% em telas retina)
   step: 10, // Aumentado de 5 para 10 (menos variações de tamanho)
 });
 
@@ -21,11 +21,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 0, // Sempre buscar dados atualizados (posts em tempo real)
-        gcTime: 1000 * 60 * 5, // Cache mantido por 5 minutos
-        retry: 2, // Tentar 2 vezes em caso de erro
+        staleTime: 1000 * 60 * 2, // 2 minutos (reduzido - webhook limpa no servidor)
+        gcTime: 1000 * 60 * 5, // 5 minutos (reduzido)
+        retry: 1,
         retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
-        refetchOnWindowFocus: true, // Revalidar ao focar na janela
+        refetchOnWindowFocus: true, // Atualiza quando usuário volta para aba
         refetchOnReconnect: true, // Revalidar ao reconectar
         refetchOnMount: true, // Revalidar ao montar componente
       },

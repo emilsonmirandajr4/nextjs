@@ -1,0 +1,406 @@
+import React, { useCallback, useEffect, useRef } from 'react'
+import {
+  EmblaCarouselType,
+  EmblaEventType,
+  EmblaOptionsType
+} from 'embla-carousel'
+import useEmblaCarousel from 'embla-carousel-react'
+import Autoplay from 'embla-carousel-autoplay'
+import {
+  NextButton,
+  PrevButton,
+  usePrevNextButtons
+} from './EmblaCarouselArrowButtons'
+import { DotButton, useDotButton } from './EmblaCarouselDotButton'
+import OptimizedImage from './OptimizedImage'
+
+const TWEEN_FACTOR_BASE = 0.84
+
+const numberWithinRange = (number: number, min: number, max: number): number =>
+  Math.min(Math.max(number, min), max)
+
+interface CarouselItem {
+  id: number
+  image: string
+  title: string
+  description: string
+  category?: string
+  tags?: string[]
+}
+
+interface CarouselWithPanelProps {
+  items?: CarouselItem[]
+  onImageChange?: (index: number) => void
+  summaries?: string[]
+  onItemClick?: (id: number) => void
+}
+
+const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
+  items: initialItems,
+  onImageChange,
+  summaries: initialSummaries,
+  onItemClick
+}) => {
+  const items = initialItems || []
+  const summaries = initialSummaries || []
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true },
+    [Autoplay({ delay: 5000, stopOnInteraction: false })]
+  )
+  const tweenFactor = useRef(0)
+
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
+
+  const {
+    prevBtnDisabled,
+    nextBtnDisabled,
+    onPrevButtonClick,
+    onNextButtonClick
+  } = usePrevNextButtons(emblaApi)
+
+  const setTweenFactor = useCallback((emblaApi: EmblaCarouselType) => {
+    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length
+  }, [])
+
+  const tweenOpacity = useCallback(
+    (emblaApi: EmblaCarouselType, eventName?: EmblaEventType) => {
+      const engine = emblaApi.internalEngine()
+      const scrollProgress = emblaApi.scrollProgress()
+      const slidesInView = emblaApi.slidesInView()
+      const isScrollEvent = eventName === 'scroll'
+
+      emblaApi.scrollSnapList().forEach((scrollSnap, snapIndex) => {
+        let diffToTarget = scrollSnap - scrollProgress
+        const slidesInSnap = engine.slideRegistry[snapIndex]
+
+        slidesInSnap.forEach((slideIndex) => {
+          if (isScrollEvent && !slidesInView.includes(slideIndex)) return
+
+          if (engine.options.loop) {
+            engine.slideLooper.loopPoints.forEach((loopItem) => {
+              const target = loopItem.target()
+
+              if (slideIndex === loopItem.index && target !== 0) {
+                const sign = Math.sign(target)
+
+                if (sign === -1) {
+                  diffToTarget = scrollSnap - (1 + scrollProgress)
+                }
+                if (sign === 1) {
+                  diffToTarget = scrollSnap + (1 - scrollProgress)
+                }
+              }
+            })
+          }
+
+          const tweenValue = 1 - Math.abs(diffToTarget * tweenFactor.current)
+          const opacity = numberWithinRange(tweenValue, 0, 1).toString()
+          emblaApi.slideNodes()[slideIndex].style.opacity = opacity
+        })
+      })
+    },
+    []
+  )
+
+  useEffect(() => {
+    if (!emblaApi) return
+
+    setTweenFactor(emblaApi)
+    tweenOpacity(emblaApi)
+    emblaApi
+      .on('reInit', setTweenFactor)
+      .on('reInit', tweenOpacity)
+      .on('scroll', tweenOpacity)
+      .on('slideFocus', tweenOpacity)
+  }, [emblaApi, tweenOpacity, setTweenFactor])
+
+  useEffect(() => {
+    if (!emblaApi) return
+    
+    const onSelect = () => {
+      const index = emblaApi.selectedScrollSnap()
+      if (onImageChange) {
+        onImageChange(index)
+      }
+    }
+    
+    emblaApi.on('select', onSelect)
+    return () => {
+      emblaApi.off('select', onSelect)
+    }
+  }, [emblaApi, onImageChange])
+
+  return (
+    <div className="w-full" style={{ background: 'linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)', borderRadius: '16px', padding: '20px', minHeight: '440px', maxHeight: '440px', overflow: 'hidden' }}>
+      <style>{`
+        @keyframes border-glow {
+          0%, 100% {
+            box-shadow: 0 0 4px rgba(220, 38, 38, 0.4);
+            opacity: 0.7;
+          }
+          50% {
+            box-shadow: 0 0 24px 6px rgba(220, 38, 38, 0.8);
+            opacity: 1;
+          }
+        }
+        
+        .animate-border-glow {
+          position: relative;
+        }
+        
+        .animate-border-glow::before {
+          content: '';
+          position: absolute;
+          inset: -2.5px;
+          border-radius: 16px;
+          background: linear-gradient(45deg, #7f1d1d, #ef4444);
+          pointer-events: none;
+          z-index: -1;
+          animation: border-glow 3s ease-in-out infinite;
+        }
+        
+        .carousel-wrapper {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 16px;
+          height: 100%;
+          max-height: 400px;
+        }
+        
+        .summary-panel {
+          background: rgba(17, 24, 39, 0.5);
+          backdrop-filter: blur(10px);
+          border-radius: 12px;
+          padding: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+        }
+        
+        .summary-panel h2 {
+          font-size: 22px;
+          line-height: 1.3;
+          color: white;
+          margin: 0;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 6;
+          -webkit-box-orient: vertical;
+        }
+        
+        .embla {
+          max-width: 100%;
+          margin: 0;
+          --slide-height: 16rem;
+          --slide-spacing: 0.8rem;
+          --slide-size: 70%;
+        }
+        
+        .embla__viewport {
+          overflow: hidden;
+        }
+        
+        .embla__container {
+          display: flex;
+          touch-action: pan-y pinch-zoom;
+          margin-left: calc(var(--slide-spacing) * -1);
+        }
+        
+        .embla__slide {
+          transform: translate3d(0, 0, 0);
+          flex: 0 0 var(--slide-size);
+          min-width: 0;
+          padding-left: var(--slide-spacing);
+        }
+        
+        .embla__slide__img {
+          border-radius: 14px;
+          display: block;
+          height: var(--slide-height);
+          width: 100%;
+          object-fit: cover;
+          cursor: pointer;
+        }
+        
+        .embla__controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          margin-top: 12px;
+        }
+        
+        .embla__buttons {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+        
+        .embla__button {
+          -webkit-appearance: none;
+          appearance: none;
+          background: linear-gradient(135deg, rgba(220, 38, 38, 0.15), rgba(185, 28, 28, 0.15));
+          backdrop-filter: blur(10px);
+          border: 1.5px solid rgba(220, 38, 38, 0.4);
+          touch-action: manipulation;
+          cursor: pointer;
+          padding: 0;
+          margin: 0;
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          color: rgba(239, 68, 68, 1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .embla__button:hover:not(:disabled) {
+          background: linear-gradient(135deg, rgba(220, 38, 38, 0.25), rgba(185, 28, 28, 0.25));
+          border-color: rgba(239, 68, 68, 0.7);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .embla__button:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+        
+        .embla__button__svg {
+          width: 45%;
+          height: 45%;
+        }
+        
+        .embla__dots {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 6px;
+        }
+        
+        .embla__dot {
+          -webkit-appearance: none;
+          appearance: none;
+          background-color: transparent;
+          touch-action: manipulation;
+          cursor: pointer;
+          border: 0;
+          padding: 0;
+          margin: 0;
+          width: 28px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .embla__dot:after {
+          background: rgba(255, 255, 255, 0.25);
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          display: block;
+          content: '';
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .embla__dot:hover:after {
+          background: rgba(255, 255, 255, 0.5);
+          transform: scale(1.2);
+        }
+        
+        .embla__dot--selected:after {
+          background: linear-gradient(135deg, #dc2626, #ef4444);
+          width: 24px;
+          height: 8px;
+          border-radius: 4px;
+          box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+        }
+        
+        @media (max-width: 1024px) {
+          .carousel-wrapper {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+          
+          .summary-panel {
+            order: 2;
+            max-height: 100px;
+          }
+          
+          .embla {
+            order: 1;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .embla {
+            --slide-size: 85%;
+          }
+          
+          .embla__button {
+            width: 28px;
+            height: 28px;
+          }
+        }
+      `}</style>
+
+      <div className="carousel-wrapper">
+        {/* Title Panel - Left Side */}
+        <div className="summary-panel">
+          <h2>
+            {items[selectedIndex]?.title}
+          </h2>
+        </div>
+
+        {/* Embla Carousel - Right Side */}
+        <div className="embla">
+          <div className="embla__viewport" ref={emblaRef}>
+            <div className="embla__container">
+              {items.map((item) => (
+                <div className="embla__slide" key={item.id}>
+                  <div onClick={() => onItemClick?.(item.id)} className="animate-border-glow">
+                    <OptimizedImage
+                      src={item.image}
+                      alt={item.title}
+                      ratio="16/9"
+                      mode="cover"
+                      priority="high"
+                      className="embla__slide__img"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="embla__controls">
+            <div className="embla__buttons">
+              <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+              <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
+            </div>
+
+            <div className="embla__dots">
+              {scrollSnaps.map((_, index) => (
+                <DotButton
+                  key={index}
+                  onClick={() => onDotButtonClick(index)}
+                  className={'embla__dot'.concat(
+                    index === selectedIndex ? ' embla__dot--selected' : ''
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default CarouselWithPanel
