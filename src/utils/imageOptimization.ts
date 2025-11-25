@@ -25,7 +25,7 @@ export function optimizeTwicPicsUrl(imagePath: string, maxWidth?: number): strin
   // quality=70: reduz qualidade para 70 (ótimo para web)
   // cover={width}x-: resize mantendo aspect ratio
   // max={width}: garante que não ultrapassa largura
-  const params = `twic=v1/output=webp/quality=70/cover=${width}x-/max=${width}`;
+  const params = `twic=v1/output=avif/quality-min=75/quality-max=80/cover=${width}x-/max=${width}`;
   
   return `${cleanPath}?${params}`;
 }

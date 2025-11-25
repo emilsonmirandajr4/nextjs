@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
+import Fade from 'embla-carousel-fade';
 import { WordPressPost } from '../types/wordpress';
 import { getPostImage, getPostTitle } from '../services/wordpress';
 import OptimizedImage from './OptimizedImage';
@@ -11,7 +12,6 @@ import {
   PrevButton,
   usePrevNextButtons
 } from './embla/EmblaCarouselArrowButtons';
-import { DotButton, useDotButton } from './embla/EmblaCarouselDotButton';
 import { Thumb } from './embla/EmblaCarouselThumbsButton';
 
 interface NewsCarouselEmblaProps {
@@ -51,8 +51,9 @@ export default function NewsCarouselEmbla({ posts, onPostClick }: NewsCarouselEm
     { 
       loop: true,
       align: 'start',
+      duration: 40, // Transição mais suave (padrão é 25)
     },
-    [Autoplay({ delay: 8000, stopOnInteraction: false, stopOnMouseEnter: false })]
+    [Fade(), Autoplay({ delay: 8000, stopOnInteraction: false, stopOnMouseEnter: false })]
   );
 
   // Thumbs carousel
@@ -187,24 +188,6 @@ export default function NewsCarouselEmbla({ posts, onPostClick }: NewsCarouselEm
             />
           ))}
         </div>
-      </div>
-
-      {/* Dot Pagination */}
-      <div className="flex justify-center gap-2 mt-6 py-2">
-        {posts.slice(0, 8).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => onThumbClick(index)}
-            className={`rounded-full transition-all duration-300 ${
-              index === selectedIndex 
-                ? 'w-12 h-2.5 border-2 border-[#3332b7] shadow-lg shadow-blue-900/50' 
-                : 'bg-gray-300 hover:bg-gray-400 w-2.5 h-2.5'
-            }`}
-            style={index === selectedIndex ? {
-              background: 'linear-gradient(to right, #3332b7, #3332b7)'
-            } : undefined}
-          />
-        ))}
       </div>
     </div>
   );

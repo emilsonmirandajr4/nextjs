@@ -5,16 +5,15 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { installTwicpics } from '@twicpics/components/react';
+import '@twicpics/components/style.css';
 
-// Inicializar TwicPics no top-level (antes do componente)
-// Otimizado para reduzir payload de rede drasticamente
+// Inicializar TwicPics
 installTwicpics({
   domain: "https://primeiranews.twic.pics",
-  anticipation: 0.2, // Aumentado para melhor preload
-  breakpoints: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 },
+  anticipation: 0.2,
   env: "production",
-  maxDPR: 3, // Reduzido de 3 para 2 (economiza ~33% em telas retina)
-  step: 10, // Aumentado de 5 para 10 (menos variações de tamanho)
+  maxDPR: 3,
+  step: 10,
 });
 
 export function Providers({ children }: { children: React.ReactNode }) {

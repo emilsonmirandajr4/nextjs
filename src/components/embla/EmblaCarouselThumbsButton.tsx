@@ -15,10 +15,10 @@ export const Thumb: React.FC<PropType> = (props) => {
     <button
       onClick={onClick}
       type="button"
-      className={`relative flex-[0_0_16.666%] min-w-0 h-20 mx-1 overflow-hidden rounded-lg transition-all duration-300 ${
+      className={`relative flex-[0_0_16.666%] min-w-0 h-20 mx-1 overflow-hidden rounded-lg transition-opacity duration-300 ${
         selected 
-          ? 'ring-2 ring-blue-800 scale-105 shadow-lg shadow-blue-900/40' 
-          : ''
+          ? 'opacity-100' 
+          : 'opacity-70 hover:opacity-90'
       }`}
     >
       <OptimizedImage

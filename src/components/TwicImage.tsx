@@ -28,7 +28,7 @@ export default function TwicImage({
   alt = "", 
   ratio = "16/9",
   mode = "cover",
-  placeholder = "preview",
+  placeholder = "none",
   anchor,
   focus = "auto",
   eager = false,

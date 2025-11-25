@@ -82,7 +82,24 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+  		animation: {
+  			'background-position-spin': 'background-position-spin 3s linear infinite',
+  			'gradient-xy': 'gradient-xy 3s ease infinite',
+  			'spin-slow': 'spin 4s linear infinite',
+  		},
+  		keyframes: {
+  			'background-position-spin': {
+  				'0%': { backgroundPosition: 'top center' },
+  				'100%': { backgroundPosition: 'bottom center' },
+  			},
+  			'gradient-xy': {
+  				'0%, 100%': { backgroundPosition: '0% 50%' },
+  				'25%': { backgroundPosition: '100% 50%' },
+  				'50%': { backgroundPosition: '100% 100%' },
+  				'75%': { backgroundPosition: '50% 100%' },
+  			},
+  		},
   	}
   },
   plugins: [require("tailwindcss-animate")],

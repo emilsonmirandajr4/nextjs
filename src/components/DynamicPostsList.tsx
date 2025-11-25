@@ -1,7 +1,7 @@
 'use client';
 
 import { WordPressPost } from '../types/wordpress';
-import NewsCarousel from './NewsCarousel';
+import NewsCarouselEmbla from './NewsCarouselEmbla';
 import NewsCard from './NewsCard';
 import { useRouter } from 'next/navigation';
 import { getPostUrl } from '../utils/navigation';
@@ -36,15 +36,15 @@ export default function DynamicPostsList({ posts, title, perPage = 50 }: Dynamic
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{title}</h2>
-          <NewsCarousel 
-            posts={posts.slice(0, 5)} 
+          <NewsCarouselEmbla 
+            posts={posts.slice(0, 8)} 
             onPostClick={handlePostClick}
           />
         </div>
         
         <div className="lg:col-span-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.slice(5, perPage).map((post) => (
+            {posts.slice(8, perPage).map((post) => (
               <div key={post.id} onClick={() => handlePostClick(post.id)} className="cursor-pointer">
                 <NewsCard post={post} />
               </div>

@@ -251,7 +251,7 @@ const Carousel3DWithPanel: React.FC<Carousel3DWithPanelProps> = ({
       const scale = 1 - (stackDepth * 0.08)
       const translateX = stackDepth * stackSpacing
       const translateY = stackDepth * 30
-      const opacity = 1 - (stackDepth * 0.25)
+      const opacity = 0.8
       
       return {
         transform: `translateX(${translateX}px) translateY(${translateY}px) scale(${scale})`,
