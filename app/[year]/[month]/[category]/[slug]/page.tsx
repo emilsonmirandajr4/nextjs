@@ -4,10 +4,11 @@ import { Suspense, use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OptimizedImage from '../../../../../src/components/OptimizedImage';
 import { WordPressPost } from '../../../../../src/types/wordpress';
-import { fetchPosts, fetchPostBySlug } from '../../../../../src/services/wordpress';
+import { fetchPosts, fetchPostBySlug, decodeHtmlEntities } from '../../../../../src/services/wordpress';
 import { usePostsByCategory } from '../../../../../src/hooks/usePosts';
 import TrendingTopics from '../../../../../src/components/TrendingTopics';
-import { Facebook, Twitter, Share2, Clock, ChevronRight, User, Tag, ChevronLeft, TrendingUp } from 'lucide-react';
+import Sidebar from '../../../../../src/components/Sidebar';
+import { Facebook, Twitter, Share2, Clock, ChevronRight, User, Tag, ChevronLeft } from 'lucide-react';
 import { getPostUrl } from '../../../../../src/utils/navigation';
 import Header from '../../../../../src/components/Header';
 import Footer from '../../../../../src/components/Footer';
@@ -63,7 +64,7 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
         const posts = await fetchPosts(20);
         setAllPosts(posts);
         const currentId = data.id;
-        setRelatedPosts(posts.filter(p => p.id !== currentId).slice(0, 5));
+        setRelatedPosts(posts.filter(p => p.id !== currentId).slice(0, 6));
         
         if (data._embedded?.['wp:term']?.[0]?.[0]) {
           setCategory(data._embedded['wp:term'][0][0].name);
@@ -127,7 +128,7 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
           <ChevronRight className="w-5 h-5 text-gray-600" />
           <span className="hover:text-sky-700 transition-colors cursor-pointer font-semibold">{category}</span>
           <ChevronRight className="w-5 h-5 text-gray-600" />
-          <span className="text-gray-900 font-medium line-clamp-1">{post.title.rendered.replace(/<[^>]*>/g, '').substring(0, 100)}...</span>
+          <span className="text-gray-900 font-medium line-clamp-1">{decodeHtmlEntities(post.title.rendered.replace(/<[^>]*>/g, '')).substring(0, 100)}...</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -148,16 +149,6 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                 }}
               />
             )}
-
-            <div className="mb-6 rounded-lg overflow-hidden shadow-[0_4px_12px_rgba(14,165,233,0.3)]">
-              <OptimizedImage
-                src={getImagePath(getPostImage())}
-                alt={post.title.rendered}
-                ratio="16/9"
-                priority="high"
-                usePicture={true}
-              />
-            </div>
 
             <div className="flex flex-col gap-4 text-gray-600 mb-6 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-4 flex-wrap">
@@ -193,8 +184,18 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
               </div>
             </div>
 
+            <div className="mb-6 rounded-lg overflow-hidden shadow-[0_4px_12px_rgba(14,165,233,0.3)]">
+              <OptimizedImage
+                src={getImagePath(getPostImage())}
+                alt={post.title.rendered}
+                ratio="16/9"
+                priority="high"
+                usePicture={true}
+              />
+            </div>
+
             <div 
-              className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-sky-600 prose-a:hover:text-sky-700 prose-img:rounded-lg prose-img:shadow-md mb-8 text-justify"
+              className="prose prose-xl max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-sky-600 prose-a:hover:text-sky-700 prose-img:rounded-lg prose-img:shadow-md mb-8 text-justify tracking-wide leading-relaxed"
               dangerouslySetInnerHTML={{ __html: post.content.rendered }}
             />
 
@@ -264,61 +265,56 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
             </div>
           </article>
 
-          <aside className="lg:col-span-3">
-            <div className="bg-black rounded-lg shadow-[0_2px_8px_rgba(14,165,233,0.3)] p-4 mb-6 border border-gray-800">
-              <div className="flex items-center space-x-2 mb-4">
-                <TrendingUp className="w-5 h-5 text-sky-400" />
-                <h3 className="text-xl font-bold text-sky-300">Mais Lidas</h3>
-              </div>
-              <div className="space-y-4">
-                {relatedPosts.map((relatedPost, index) => (
-                  <div
-                    key={relatedPost.id}
-                    onClick={() => router.push(getPostUrl(relatedPost))}
-                    className="flex items-start space-x-3 pb-4 mb-4 border-b-2 border-gray-700 last:border-b-0 cursor-pointer group"
-                  >
-                    <span className="flex items-center justify-center text-sm font-bold text-sky-400 border border-sky-400 rounded-full w-7 h-7 flex-shrink-0">
-                      {index + 1}
-                    </span>
-                    <h4 
-                      className="text-sm font-semibold text-gray-300 group-hover:text-sky-300 transition-colors line-clamp-3"
-                      dangerouslySetInnerHTML={{ __html: relatedPost.title.rendered }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+          <aside className="lg:col-span-3 space-y-6">
+            <Sidebar
+              posts={relatedPosts}
+              title="Mais Lidas"
+              onPostClick={(postId) => {
+                const post = relatedPosts.find(p => p.id === postId);
+                if (post) router.push(getPostUrl(post));
+              }}
+            />
             
-            <div className="mb-6">
-              <TrendingTopics />
-            </div>
+            <TrendingTopics />
             
             {opinionPosts.length > 0 && (
-              <div className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(59,130,246,0.3)]">
-                <div className="bg-gradient-to-r from-red-600 to-red-700 px-4 py-3 border-b-4 border-red-800">
-                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                    </svg>
-                    Nossa Opinião
-                  </h2>
+              <div className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-lg shadow-sky-500/40">
+                <div className="relative px-4 py-3 border-b border-red-800 bg-gradient-to-r from-red-600 via-rose-600 to-red-800 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-rose-500 to-red-700 opacity-70 blur-sm"></div>
+                  <div className="relative flex items-center gap-3">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-red-300 blur-sm opacity-80"></div>
+                      <div className="relative w-8 h-8 bg-gradient-to-br from-red-300 via-red-500 to-rose-500 rounded-lg flex items-center justify-center text-red-900 shadow-lg shadow-red-500/60">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <h2 className="text-sm font-black text-white tracking-tight flex items-center gap-2 uppercase">
+                      Nossa Opinião
+                    </h2>
+                  </div>
                 </div>
                 <div className="p-4">
-                {opinionPosts.map((opinionPost, index) => (
-                    <div
-                      key={opinionPost.id}
-                    onClick={() => router.push(getPostUrl(opinionPost))}
-                      className="flex items-start gap-3 py-3 hover:bg-blue-50/50 transition-all duration-300 cursor-pointer group border-b-2 border-gray-300 last:border-b-0 rounded-lg px-2"
-                    >
-                      <span className="flex items-center justify-center text-lg font-bold text-red-600 border-2 border-red-400 rounded-full w-8 h-8 flex-shrink-0">
-                        {index + 1}
-                      </span>
-                      <h4 
-                        className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-3"
-                        dangerouslySetInnerHTML={{ __html: opinionPost.title.rendered }}
+                  <div
+                    onClick={() => router.push(getPostUrl(opinionPosts[0]))}
+                    className="group cursor-pointer rounded-xl overflow-hidden border border-slate-200 bg-slate-50/60 hover:bg-slate-100 transition-colors duration-200 shadow-sm"
+                  >
+                    <div className="relative">
+                      <OptimizedImage
+                        src={getImagePath(opinionPosts[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || '')}
+                        alt={opinionPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
+                        ratio="none"
+                        usePicture={false}
+                        className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
-                  ))}
+                    <div className="px-3 pb-4 pt-3">
+                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors leading-snug line-clamp-3">
+                        {decodeHtmlEntities(opinionPosts[0].title.rendered.replace(/<[^>]*>/g, ''))}
+                      </h3>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

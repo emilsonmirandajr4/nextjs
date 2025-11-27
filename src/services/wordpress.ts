@@ -60,8 +60,24 @@ export function getPostImage(post: WordPressPost): string {
   return fallback;
 }
 
+// Decodifica entidades HTML (ex: &#8220; -> ", &amp; -> &)
+export function decodeHtmlEntities(text: string): string {
+  const entities: Record<string, string> = {
+    '&#8220;': '"', '&#8221;': '"', // Smart quotes
+    '&#8216;': "'", '&#8217;': "'", // Smart apostrophes
+    '&#8211;': '–', '&#8212;': '—', // Dashes
+    '&amp;': '&', '&lt;': '<', '&gt;': '>',
+    '&quot;': '"', '&apos;': "'", '&nbsp;': ' ',
+  };
+  
+  return text
+    .replace(/&#?\w+;/g, match => entities[match] || match)
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
+}
+
 export function getPostTitle(post: WordPressPost): string {
-  return post.title.rendered.replace(/<[^>]*>/g, '');
+  const title = post.title.rendered.replace(/<[^>]*>/g, '');
+  return decodeHtmlEntities(title);
 }
 
 export async function fetchPostsByCategory(categoryId: number, perPage: number = 20): Promise<WordPressPost[]> {

@@ -20,40 +20,7 @@ export function optimizeTwicPicsUrl(imagePath: string, maxWidth?: number): strin
   // Define largura máxima baseada no contexto
   const width = maxWidth || 3000;
   
-  // Adiciona parâmetros de otimização agressiva + resize
-  // output=webp: força formato WebP (30-50% menor que JPEG)
-  // quality=70: reduz qualidade para 70 (ótimo para web)
-  // cover={width}x-: resize mantendo aspect ratio
-  // max={width}: garante que não ultrapassa largura
-  const params = `output=avif/quality-min=75/quality-max=80/cover=${width}x-/max=${width}`;
+    const params = `output=avif/quality-min=75/quality-max=80/cover=16/9`;
   
   return `${cleanPath}?${params}`;
-}
-
-/**
- * Calcula o tamanho ideal baseado no contexto de uso
- */
-export function getOptimalImageSize(context: 'hero' | 'thumbnail' | 'card' | 'carousel'): number {
-  const sizes = {
-    hero: 1920,      // Imagens principais
-    carousel: 1536,  // Carousels
-    card: 800,       // Cards de notícias
-    thumbnail: 400,  // Thumbnails pequenas
-  };
-  
-  return sizes[context];
-}
-
-/**
- * Configuração de qualidade baseada no tipo de imagem
- */
-export function getOptimalQuality(context: 'hero' | 'thumbnail' | 'card' | 'carousel'): number {
-  const quality = {
-    hero: 85,        // Imagens principais - qualidade boa
-    carousel: 85,    // Carousels - qualidade média-boa
-    card: 85,        // Cards - qualidade média-boa
-    thumbnail: 85,   // Thumbnails - qualidade média
-  };
-  
-  return quality[context];
 }

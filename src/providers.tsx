@@ -12,7 +12,9 @@ installTwicpics({
   domain: "https://primeiranews.twic.pics",
   anticipation: 0.2,
   env: "production",
-  maxDPR: 3,
+  maxDPR: 2,
+  handleShadowDom: false,
+  breakpoints: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 },
   step: 10,
 });
 

@@ -9,7 +9,7 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Roboto Condensed',
+  				'var(--font-roboto-condensed)',
   				'sans-serif'
   			]
   		},

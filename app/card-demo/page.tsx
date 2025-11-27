@@ -1,4 +1,3 @@
-import { NeonGradientCard } from '@/components/ui/neon-gradient-card';
 import { RotatingBorderCard } from '@/components/ui/rotating-border-card';
 
 export default function CardDemoPage() {
@@ -9,11 +8,13 @@ export default function CardDemoPage() {
           position: relative;
           width: 360px;
           height: 220px;
+          border-radius: 16px;
+          overflow: hidden;
         }
 
         .glow-svg-card__glow {
           position: absolute;
-          inset: 0;
+          inset: -14px;
           background: url('/glow-red.svg') center/cover no-repeat;
           pointer-events: none;
           animation: glow-svg-pulse 3s ease-in-out infinite;
@@ -25,26 +26,25 @@ export default function CardDemoPage() {
           height: 100%;
           border-radius: 16px;
           background:
-            radial-gradient(circle at top left, rgba(248,113,113,0.18), transparent 55%),
+            radial-gradient(circle at top left, rgba(56,189,248,0.16), transparent 55%),
             #020617;
-          border: 1px solid rgba(248,113,113,0.5);
+          border: 1px solid rgba(148,163,184,0.65);
           padding: 20px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           box-shadow:
-            0 20px 40px rgba(0,0,0,0.7),
-            0 0 25px rgba(248,113,113,0.35);
+            0 20px 40px rgba(0,0,0,0.85);
         }
 
         @keyframes glow-svg-pulse {
           0%, 100% {
-            opacity: 0.75;
-            transform: scale(0.98);
+            opacity: 0.6;
+            transform: scale(0.95);
           }
           50% {
             opacity: 1;
-            transform: scale(1.02);
+            transform: scale(1.08);
           }
         }
       `}</style>
@@ -82,6 +82,7 @@ export default function CardDemoPage() {
       {/* SVG Glow Red Card Demo */}
       <section className="flex flex-col items-center gap-6">
         <h2 className="text-3xl font-bold text-white">SVG Glow Red Card (demo)</h2>
+        <div className="flex flex-wrap gap-8 justify-center">
         <div className="glow-svg-card">
           <div className="glow-svg-card__glow" />
           <div className="glow-svg-card__inner">
@@ -107,83 +108,34 @@ export default function CardDemoPage() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Neon Gradient Cards */}
-      <h2 className="text-3xl font-bold text-white">Neon Gradient Cards</h2>
-      
-      {/* Hero Demo */}
-      <NeonGradientCard className="max-w-sm items-center justify-center text-center">
-        <span className="pointer-events-none z-10 h-full whitespace-pre-wrap bg-gradient-to-br from-[#ff2975] from-35% to-[#00FFF1] bg-clip-text text-center text-6xl font-bold leading-none tracking-tighter text-transparent dark:drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">
-          Neon Gradient Card
-        </span>
-      </NeonGradientCard>
-
-      {/* Variations */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-6xl w-full">
         
-        {/* Blue/Purple */}
-        <NeonGradientCard 
-          className="items-center justify-center text-center"
-          neonColors={{ firstColor: '#3b82f6', secondColor: '#8b5cf6' }}
-        >
-          <span className="pointer-events-none z-10 whitespace-pre-wrap bg-gradient-to-br from-[#3b82f6] from-35% to-[#8b5cf6] bg-clip-text text-4xl font-bold leading-none tracking-tighter text-transparent">
-            Blue Purple
-          </span>
-        </NeonGradientCard>
-
-        {/* Green/Cyan */}
-        <NeonGradientCard 
-          className="items-center justify-center text-center"
-          neonColors={{ firstColor: '#10b981', secondColor: '#06b6d4' }}
-        >
-          <span className="pointer-events-none z-10 whitespace-pre-wrap bg-gradient-to-br from-[#10b981] from-35% to-[#06b6d4] bg-clip-text text-4xl font-bold leading-none tracking-tighter text-transparent">
-            Green Cyan
-          </span>
-        </NeonGradientCard>
-
-        {/* Orange/Red */}
-        <NeonGradientCard 
-          className="items-center justify-center text-center"
-          neonColors={{ firstColor: '#f97316', secondColor: '#ef4444' }}
-        >
-          <span className="pointer-events-none z-10 whitespace-pre-wrap bg-gradient-to-br from-[#f97316] from-35% to-[#ef4444] bg-clip-text text-4xl font-bold leading-none tracking-tighter text-transparent">
-            Orange Red
-          </span>
-        </NeonGradientCard>
-
-        {/* Yellow/Pink */}
-        <NeonGradientCard 
-          className="items-center justify-center text-center"
-          neonColors={{ firstColor: '#facc15', secondColor: '#ec4899' }}
-        >
-          <span className="pointer-events-none z-10 whitespace-pre-wrap bg-gradient-to-br from-[#facc15] from-35% to-[#ec4899] bg-clip-text text-4xl font-bold leading-none tracking-tighter text-transparent">
-            Yellow Pink
-          </span>
-        </NeonGradientCard>
-
-        {/* Sky Blue - PrimeiraNews */}
-        <NeonGradientCard 
-          className="items-center justify-center text-center"
-          neonColors={{ firstColor: '#0284c7', secondColor: '#0ea5e9' }}
-          borderSize={3}
-        >
-          <span className="pointer-events-none z-10 whitespace-pre-wrap bg-gradient-to-br from-[#0284c7] from-35% to-[#0ea5e9] bg-clip-text text-4xl font-bold leading-none tracking-tighter text-transparent">
-            Sky Blue
-          </span>
-        </NeonGradientCard>
-
-        {/* Indigo/Violet */}
-        <NeonGradientCard 
-          className="items-center justify-center text-center"
-          neonColors={{ firstColor: '#6366f1', secondColor: '#a855f7' }}
-        >
-          <span className="pointer-events-none z-10 whitespace-pre-wrap bg-gradient-to-br from-[#6366f1] from-35% to-[#a855f7] bg-clip-text text-4xl font-bold leading-none tracking-tighter text-transparent">
-            Indigo Violet
-          </span>
-        </NeonGradientCard>
-
-      </div>
+        {/* Large border version */}
+        <div className="glow-svg-card" style={{ position: 'relative' }}>
+          <div className="glow-svg-card__glow" style={{ background: 'url(\'/glow-red-large.svg\') center/cover no-repeat' }} />
+          <div className="glow-svg-card__inner">
+            <div className="space-y-1">
+              <p className="text-sm uppercase tracking-[0.2em] text-red-400">
+                Destaque Large
+              </p>
+              <h3 className="text-2xl font-bold text-white leading-tight">
+                Borda MAIOR em SVG
+              </h3>
+              <p className="text-sm text-slate-300">
+                Mesma técnica, mas com borda mais grossa e glow mais intenso para comparação.
+              </p>
+            </div>
+            <div className="flex items-center justify-between mt-4">
+              <span className="text-xs text-slate-400">
+                Compare com o card ao lado para ver a diferença.
+              </span>
+              <span className="inline-flex items-center rounded-full border border-red-500/50 px-3 py-1 text-xs font-semibold text-red-300 bg-red-950/40">
+                Large Border
+              </span>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
     </div>
   );
 }

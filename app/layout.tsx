@@ -1,12 +1,23 @@
 import type { Metadata } from 'next';
-import { Roboto_Condensed } from 'next/font/google';
+import localFont from 'next/font/local';
+import { Suspense } from 'react';
 import { Providers } from '../src/providers';
 import '../src/index.css';
 import "@twicpics/components/style.css";
 
-const robotoCondensed = Roboto_Condensed({
-  subsets: ['latin'],
-  weight: ['300', '400', '700'],
+const robotoCondensed = localFont({
+  src: [
+    {
+      path: '../public/fonts/roboto-condensed/RobotoCondensed-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/roboto-condensed/RobotoCondensed-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
   variable: '--font-roboto-condensed',
   display: 'swap',
 });
@@ -16,7 +27,7 @@ export const metadata: Metadata = {
     default: 'Primeira News - Notícias e Informação',
     template: '%s | Primeira News',
   },
-  description: 'Portal de notícias com as últimas informações sobre política, economia, esportes e muito mais.',
+  description: 'Portal de notícias com as últimas informações sobre política, economia e mundo.',
   keywords: ['notícias', 'brasil', 'política', 'economia', 'esportes', 'primeira news'],
   authors: [{ name: 'Primeira News' }],
   creator: 'Primeira News',
@@ -27,7 +38,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Primeira News - Notícias e Informação',
-    description: 'Portal de notícias com as últimas informações sobre política, economia, esportes e muito mais.',
+    description: 'Portal de notícias com as últimas informações sobre política, economia e mundo.',
     url: 'https://primeiranews.com',
     siteName: 'Primeira News',
     locale: 'pt_BR',
@@ -36,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Primeira News - Notícias e Informação',
-    description: 'Portal de notícias com as últimas informações sobre política, economia, esportes e muito mais.',
+    description: 'Portal de notícias com as últimas informações sobre política, economia e mundo.',
   },
   robots: {
     index: true,
@@ -69,7 +80,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://primeiranews.com.br" />
       </head>
       <body className={`${robotoCondensed.variable} font-sans bg-white text-gray-900 antialiased`} suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Suspense fallback={null}>
+            {children}
+          </Suspense>
+        </Providers>
       </body>
     </html>
   );

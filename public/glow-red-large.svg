@@ -1,0 +1,24 @@
+<svg width="400" height="260" viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="glowGradientLarge" x1="0" y1="0" x2="400" y2="260" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7f1d1d" />
+      <stop offset="1" stop-color="#ef4444" />
+    </linearGradient>
+    <filter id="glowBlurLarge" x="-60" y="-60" width="520" height="380" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="40" result="blur" />
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 0.2 0 0 0  0 0 0.2 0 0  0 0 0 1 0" />
+    </filter>
+  </defs>
+
+  <!-- Outer soft glow (muito maior) -->
+  <rect x="10" y="10" width="380" height="240" rx="22" fill="url(#glowGradientLarge)" filter="url(#glowBlurLarge)" opacity="1" />
+
+  <!-- Thick outer border -->
+  <rect x="18" y="18" width="364" height="224" rx="18" fill="none" stroke="url(#glowGradientLarge)" stroke-width="12" opacity="1" />
+  
+  <!-- Medium middle border -->
+  <rect x="32" y="32" width="336" height="196" rx="14" fill="none" stroke="url(#glowGradientLarge)" stroke-width="8" opacity="0.9" />
+  
+  <!-- Inner border line -->
+  <rect x="44" y="44" width="312" height="172" rx="12" fill="none" stroke="url(#glowGradientLarge)" stroke-width="4" opacity="0.8" />
+</svg>

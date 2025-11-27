@@ -53,7 +53,7 @@ export default function NewsCarouselEmbla({ posts, onPostClick }: NewsCarouselEm
       align: 'start',
       duration: 40, // Transição mais suave (padrão é 25)
     },
-    [Fade(), Autoplay({ delay: 8000, stopOnInteraction: false, stopOnMouseEnter: false })]
+    [Fade(), Autoplay({ delay: 8000, stopOnInteraction: false, stopOnMouseEnter: true })]
   );
 
   // Thumbs carousel

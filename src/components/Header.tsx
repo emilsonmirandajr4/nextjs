@@ -15,7 +15,7 @@ export default function Header() {
                 <span className="relative z-10">PN</span>
                 <div className="absolute inset-0 bg-sky-600 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
               </div>
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tight" style={{ fontFamily: "'Roboto Condensed', sans-serif", fontWeight: 700 }}>
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tight font-sans" style={{ fontWeight: 700 }}>
                 <span className="text-gray-900">Primeira</span>
                 <span className="text-sky-600 relative">
                   News
@@ -23,7 +23,7 @@ export default function Header() {
                 </span>
               </h1>
             </a>
-            <p className="text-base md:text-lg text-gray-500 ml-[72px] tracking-wide" style={{ fontFamily: "'Roboto Condensed', sans-serif" }}>
+            <p className="text-base md:text-lg text-gray-500 ml-[72px] tracking-wide font-sans">
               Noticias imparciais de politica, economia e mundo
             </p>
           </div>

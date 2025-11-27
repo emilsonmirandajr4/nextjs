@@ -14,7 +14,7 @@
   /* Animation 2: subtle pulsing while pending */
   visibility: visible;
   animation-name: fadeIn, pulse;
-  animation-duration: 200ms, 1s;
+  animation-duration: 400ms, 1s;
   /* Appear only if navigation actually takes time */
   animation-delay: 100ms, 100ms;
   animation-timing-function: ease, ease-in-out;
@@ -24,11 +24,11 @@
  
 @keyframes fadeIn {
   to {
-    opacity: 0.35;
+    opacity: 0.75;
   }
 }
 @keyframes pulse {
   50% {
-    opacity: 0.15;
+    opacity: 0.65;
   }
 }
