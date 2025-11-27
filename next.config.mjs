@@ -1,5 +1,11 @@
 // @ts-check
- 
+
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
 /**
  * @type {import('next').NextConfig}
  */
@@ -21,29 +27,31 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'primeiranews.com.br',
+        protocol: "https",
+        hostname: "primeiranews.com.br",
       },
       {
-        protocol: 'https',
-        hostname: 'primeiranews.twic.pics',
+        protocol: "https",
+        hostname: "primeiranews.twic.pics",
       },
       {
-        protocol: 'https',
-        hostname: 'img.youtube.com',
+        protocol: "https",
+        hostname: "img.youtube.com",
       },
     ],
-    formats: ['image/avif'],
+    formats: ["image/avif"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   // Otimizações de compilação
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? {
+            exclude: ["error", "warn"],
+          }
+        : false,
   },
 };
- 
-export default nextConfig
 
+export default withBundleAnalyzer(nextConfig);
