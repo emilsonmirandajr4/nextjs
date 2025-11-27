@@ -36,10 +36,10 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   } = usePrevNextButtons(emblaApi);
 
   return (
-    <div className="w-full py-12">
-      <div className="relative mb-8">
+    <div className="w-full py-6">
+      <div className="relative mb-6">
         <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-rose-500 to-amber-400 opacity-40 blur-xl"></div>
-        <div className="relative p-[2px] rounded-2xl shadow-[0_18px_45px_rgba(15,23,42,0.85)] bg-gradient-to-r from-red-500 via-red-600 to-rose-500">
+        <div className="relative p-[2px] rounded-2xl bg-gradient-to-r from-red-500 via-red-600 to-rose-500">
           <div className="relative flex items-center justify-between gap-4 rounded-2xl bg-slate-950 px-5 py-4">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -73,8 +73,8 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
       </div>
 
       <div className="relative px-2 sm:px-4 lg:px-12">
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-5">
+        <div className="overflow-x-hidden overflow-y-visible" ref={emblaRef}>
+          <div className="flex gap-5 pb-6">
             {videos.map((video) => (
               <div key={video.id} className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]">
                 <div className="group relative bg-white rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 shadow-[0_4px_12px_rgba(220,38,38,0.3)] hover:shadow-[0_8px_24px_rgba(220,38,38,0.5)] h-full flex flex-col">
@@ -88,9 +88,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
                     <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
                       {video.duration}
                     </div>
-                    <div className="absolute inset-0 bg-red-600 bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
                       <div className="bg-white bg-opacity-90 rounded-full p-3 transform scale-0 group-hover:scale-100 transition-transform duration-300">
-                        <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                         </svg>
                       </div>
@@ -99,7 +99,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
 
                   <div className="p-4 flex-1 flex flex-col justify-between">
                     <h3 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-2 min-h-[3rem]">
-                      {video.title}
+                      {video.title.length > 60 ? video.title.substring(0, 60) + '...' : video.title}
                     </h3>
 
                     <div className="flex items-center text-xs text-gray-500">

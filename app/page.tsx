@@ -9,7 +9,7 @@ async function fetchHomeData(): Promise<{
   opinionPosts: WordPressPost[];
 }> {
   const [posts, newsPosts, enganadoresPosts, opinionPosts] = await Promise.all([
-    getPosts(50, 1),
+    getPosts(20, 1),
     getPostsByCategorySlug('noticias', 20, 1),
     getPostsByCategorySlug('enganadores', 5, 1),
     getPostsByCategorySlug('opiniao', 5, 1),
