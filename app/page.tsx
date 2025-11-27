@@ -6,16 +6,46 @@ import NewsSection from "@/components/server/NewsSection";
 import OpinionSection from "@/components/server/OpinionSection";
 import MainNewsHeader from "@/components/server/MainNewsHeader";
 import NewsCarouselEmbla from "@/components/NewsCarouselEmbla";
-import CarouselWithPanelWrapper from "@/components/client/CarouselWithPanelWrapper";
-import TrendingTopics from "@/components/TrendingTopics";
 import { getPostUrl } from "@/utils/navigation";
-import LazyVideoCarousel, {
-  type HomeVideo,
-} from "@/components/client/LazyVideoCarousel";
+import dynamic from "next/dynamic";
 import { getPosts, getPostsByCategorySlug } from "@/server/wordpress";
 import { fetchBrazilTrendsServer } from "@/server/twitter";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
 import type { WordPressPost } from "@/types/wordpress";
+
+// Tipos locais
+type HomeVideo = {
+  id: number;
+  title?: string;
+  videoUrl: string;
+};
+
+// Dynamic imports para componentes abaixo da dobra ou pesados
+const CarouselWithPanelWrapper = dynamic(
+  () => import("@/components/client/CarouselWithPanelWrapper"),
+  {
+    loading: () => (
+      <div className="w-full h-[440px] bg-gray-900/50 rounded-xl animate-pulse border border-gray-800" />
+    ),
+  },
+);
+
+const TrendingTopics = dynamic(() => import("@/components/TrendingTopics"), {
+  loading: () => (
+    <div className="w-full h-[400px] bg-gray-100 rounded-xl animate-pulse" />
+  ),
+});
+
+const LazyVideoCarousel = dynamic(
+  () => import("@/components/client/LazyVideoCarousel"),
+  {
+    loading: () => (
+      <div className="mt-8">
+        <div className="w-full h-64 bg-gray-100 rounded-xl animate-pulse" />
+      </div>
+    ),
+  },
+);
 
 async function fetchHomeData() {
   const [posts, newsPosts, enganadoresPosts, opinionPosts, trends] =
@@ -94,32 +124,32 @@ const featuredVideos: HomeVideo[] = [
   {
     id: 1,
     title: "Vídeo em Destaque 1",
-    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    videoUrl: "https://www.youtube.com/watch?v=X3ZbvHr3r1E",
   },
   {
     id: 2,
     title: "Vídeo em Destaque 2",
-    videoUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0",
+    videoUrl: "https://www.youtube.com/watch?v=jdKY0X7iv_k",
   },
   {
     id: 3,
     title: "Vídeo em Destaque 3",
-    videoUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
+    videoUrl: "https://www.youtube.com/watch?v=BbXScYwqQo8",
   },
   {
     id: 4,
     title: "Vídeo em Destaque 4",
-    videoUrl: "https://www.youtube.com/watch?v=2Vv-BfVoq4g",
+    videoUrl: "https://www.youtube.com/watch?v=OmMUuFAJqQs",
   },
   {
     id: 5,
     title: "Vídeo em Destaque 5",
-    videoUrl: "https://www.youtube.com/watch?v=60ItHLz5WEA",
+    videoUrl: "https://www.youtube.com/watch?v=UPc8VLRBDbs",
   },
   {
     id: 6,
     title: "Vídeo em Destaque 6",
-    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    videoUrl: "https://www.youtube.com/watch?v=FA1b592TS3c",
   },
   {
     id: 7,

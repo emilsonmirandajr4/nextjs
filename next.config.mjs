@@ -19,6 +19,15 @@ const nextConfig = {
     turbopackFileSystemCacheForDev: true,
     // Enable filesystem caching for `next build`
     turbopackFileSystemCacheForBuild: true,
+    // Otimizar imports de pacotes grandes
+    optimizePackageImports: [
+      "lucide-react",
+      "date-fns",
+      "lodash",
+      "lodash-es",
+      "ramda",
+      "@radix-ui/react-icons",
+    ],
   },
   // Define explicit root directory to avoid lockfile conflicts
   turbopack: {

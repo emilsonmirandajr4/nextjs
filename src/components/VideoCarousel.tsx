@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
-import React from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
-import { NextButton, PrevButton, usePrevNextButtons } from './embla/EmblaCarouselArrowButtons';
+import React from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  NextButton,
+  PrevButton,
+  usePrevNextButtons,
+} from "./embla/EmblaCarouselArrowButtons";
 
 interface Video {
   id: number;
@@ -20,19 +24,21 @@ interface VideoCarouselProps {
 
 const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { 
+    {
       loop: true,
-      align: 'start',
+      align: "start",
       slidesToScroll: 1,
+      containScroll: "trimSnaps",
+      dragFree: false,
     },
-    [Autoplay({ delay: 5000, stopOnInteraction: false })]
+    [Autoplay({ delay: 5000, stopOnInteraction: false })],
   );
 
   const {
     prevBtnDisabled,
     nextBtnDisabled,
     onPrevButtonClick,
-    onNextButtonClick
+    onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
 
   return (
@@ -45,8 +51,18 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
               <div className="relative">
                 <div className="absolute inset-0 bg-red-400 blur-sm opacity-70"></div>
                 <div className="relative w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-red-500 via-red-400 to-amber-300 text-white shadow-lg shadow-red-500/50">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 3l14 9-14 9V3z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M5 3l14 9-14 9V3z"
+                    />
                   </svg>
                 </div>
               </div>
@@ -74,9 +90,12 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
 
       <div className="relative px-2 sm:px-4 lg:px-12">
         <div className="overflow-x-hidden overflow-y-visible" ref={emblaRef}>
-          <div className="flex gap-5 pb-6">
+          <div className="flex pb-6">
             {videos.map((video) => (
-              <div key={video.id} className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]">
+              <div
+                key={video.id}
+                className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_25%] xl:flex-[0_0_20%] px-2.5"
+              >
                 <div className="group relative bg-white rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 shadow-[0_4px_12px_rgba(220,38,38,0.3)] hover:shadow-[0_8px_24px_rgba(220,38,38,0.5)] h-full flex flex-col">
                   <div className="relative pb-[56.25%]">
                     <img
@@ -90,27 +109,43 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
                     </div>
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
                       <div className="bg-white bg-opacity-90 rounded-full p-3 transform scale-0 group-hover:scale-100 transition-transform duration-300">
-                        <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                        <svg
+                          className="w-6 h-6 text-gray-800"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 flex-1 flex flex-col justify-between">
-                    <h3 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-2 min-h-[3rem]">
-                      {video.title.length > 60 ? video.title.substring(0, 60) + '...' : video.title}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <h3 className="font-semibold text-gray-800 text-sm mb-3 line-clamp-2 min-h-[4.5rem] leading-relaxed">
+                      {video.title}
                     </h3>
 
                     <div className="flex items-center text-xs text-gray-500">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <svg
+                        className="w-4 h-4 mr-1"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
                         <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                        <path
+                          fillRule="evenodd"
+                          d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       {video.views.toLocaleString()} visualizações
                     </div>
                   </div>
-                  
+
                   <a
                     href={video.videoUrl}
                     className="absolute inset-0"

@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const urls: string[] = Array.isArray(body?.urls) ? body.urls : [];
 
+    console.log("API YouTube Metadata chamada com URLs:", urls.length);
+
     if (!urls.length) {
       return NextResponse.json(
         { items: {} },
@@ -70,7 +72,10 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.YOUTUBE_API_KEY;
+    console.log("API Key configurada:", !!apiKey); // Log seguro (true/false)
+
     if (!apiKey) {
+      console.error("Erro: YOUTUBE_API_KEY está faltando");
       return NextResponse.json(
         { error: 'YOUTUBE_API_KEY não configurada no ambiente' },
         { status: 500, headers: { 'Cache-Control': 'private, no-store' } }
@@ -84,6 +89,8 @@ export async function POST(req: NextRequest) {
           .filter((id): id is string => Boolean(id))
       )
     );
+    
+    console.log("IDs extraídos:", ids);
 
     if (!ids.length) {
       return NextResponse.json(
@@ -96,10 +103,12 @@ export async function POST(req: NextRequest) {
       ','
     )}&key=${apiKey}`;
 
-    const ytRes = await fetch(apiUrl);
+    const ytRes = await fetch(apiUrl, { cache: 'no-store' });
     if (!ytRes.ok) {
+      const errorText = await ytRes.text();
+      console.error("Erro na API do YouTube:", ytRes.status, errorText);
       return NextResponse.json(
-        { error: 'Falha ao buscar dados no YouTube' },
+        { error: 'Falha ao buscar dados no YouTube', details: errorText },
         { status: 502, headers: { 'Cache-Control': 'private, no-store' } }
       );
     }
