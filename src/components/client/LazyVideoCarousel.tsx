@@ -18,6 +18,7 @@ type EnrichedVideo = HomeVideo & {
   thumbnail: string;
   views: number;
   duration: string;
+  channelTitle: string;
 };
 
 function extractYouTubeId(url: string): string | null {
@@ -103,7 +104,13 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
         const data = await res.json();
         const items: Record<
           string,
-          { thumbnail: string; duration: string; views: number; title?: string }
+          {
+            thumbnail: string;
+            duration: string;
+            views: number;
+            title?: string;
+            channelTitle?: string;
+          }
         > = data.items || {};
 
         const nextVideos: EnrichedVideo[] = videos.map((video) => {
@@ -120,6 +127,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
               "https://img.youtube.com/vi/4VkrctbXrJg/hqdefault.jpg",
             duration: meta?.duration || "0:00",
             views: meta?.views ?? 0,
+            channelTitle: meta?.channelTitle || "",
           };
         });
 
@@ -134,6 +142,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
             thumbnail: "https://img.youtube.com/vi/4VkrctbXrJg/hqdefault.jpg",
             duration: "0:00",
             views: 0,
+            channelTitle: "",
           }));
           setEnrichedVideos(fallback);
         }

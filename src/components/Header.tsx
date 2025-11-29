@@ -1,66 +1,119 @@
-import { Instagram, Facebook, Youtube } from 'lucide-react';
+"use client";
+
+import LogoComplete from "@/components/LogoComplete";
+import { Search, Youtube, Facebook, Instagram } from "lucide-react";
+import { useState } from "react";
 
 export default function Header() {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Implementar busca aqui
+      console.log("Buscando:", searchQuery);
+    }
+  };
+
   return (
-    <header className="header-pn relative overflow-hidden">
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-sky-50/50 via-transparent to-sky-50/50 pointer-events-none" />
-      
-      <div className="max-w-7xl mx-auto px-6 py-4 relative">
-        <div className="flex items-center justify-between">
-          {/* Logo & Branding */}
-          <div className="flex flex-col gap-1">
-            <a href="https://primeiranews.com" className="group flex items-center gap-4 hover:opacity-90 transition-all duration-300">
-              <div className="logo-icon-pn relative">
-                <span className="relative z-10">PN</span>
-                <div className="absolute inset-0 bg-sky-600 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-              </div>
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tight font-sans" style={{ fontWeight: 700 }}>
-                <span className="text-gray-900">Primeira</span>
-                <span className="text-sky-600 relative">
-                  News
-                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-sky-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                </span>
-              </h1>
-            </a>
-            <p className="text-base md:text-lg text-gray-500 ml-[72px] tracking-wide font-sans">
-              Noticias imparciais de politica, economia e mundo
-            </p>
+    <header className="w-full bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="flex items-center justify-between gap-8">
+          {/* Logo Completo em SVG - Lado Esquerdo */}
+          <div className="flex items-center">
+            <LogoComplete width={450} className="w-full max-w-md" />
           </div>
 
-          {/* Social Links */}
-          <div className="flex items-center gap-1">
-            {[
-              { icon: Instagram, href: '#', label: 'Instagram' },
-              { icon: Facebook, href: '#', label: 'Facebook' },
-              { icon: Youtube, href: '#', label: 'Youtube' },
-            ].map(({ icon: Icon, href, label }) => (
-              <a 
-                key={label}
-                href={href} 
-                aria-label={label}
-                className="group relative p-3 rounded-full text-gray-500 hover:text-sky-600 transition-all duration-300"
+          {/* Ícones Sociais e Busca - Lado Direito */}
+          <div className="flex items-center gap-4">
+            {/* Redes Sociais */}
+            <div className="hidden md:flex items-center gap-3">
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full hover:bg-red-50 transition-colors group"
+                aria-label="YouTube"
               >
-                <span className="absolute inset-0 rounded-full bg-sky-100 scale-0 group-hover:scale-100 transition-transform duration-300" />
-                <Icon className="w-5 h-5 relative z-10" />
+                <Youtube className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" />
               </a>
-            ))}
-            <a 
-              href="#" 
-              aria-label="X (Twitter)"
-              className="group relative p-3 rounded-full text-gray-500 hover:text-sky-600 transition-all duration-300"
-            >
-              <span className="absolute inset-0 rounded-full bg-sky-100 scale-0 group-hover:scale-100 transition-transform duration-300" />
-              <svg className="w-5 h-5 relative z-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </a>
+              <a
+                href="https://x.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors group"
+                aria-label="X (Twitter)"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-600 group-hover:text-black transition-colors"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full hover:bg-blue-50 transition-colors group"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full hover:bg-pink-50 transition-colors group"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-5 h-5 text-gray-600 group-hover:text-pink-600 transition-colors" />
+              </a>
+            </div>
+
+            {/* Divisor */}
+            <div className="hidden md:block w-px h-8 bg-gray-300"></div>
+
+            {/* Busca */}
+            <div className="relative">
+              {searchOpen ? (
+                <form onSubmit={handleSearch} className="flex items-center">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Pesquisar..."
+                    className="w-48 md:w-64 px-4 py-2 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    autoFocus
+                    onBlur={() => {
+                      if (!searchQuery) {
+                        setTimeout(() => setSearchOpen(false), 200);
+                      }
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-2 p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                    aria-label="Buscar"
+                  >
+                    <Search className="w-4 h-4 text-gray-600" />
+                  </button>
+                </form>
+              ) : (
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors group"
+                  aria-label="Abrir busca"
+                >
+                  <Search className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
-      
-      {/* Bottom border accent */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" />
     </header>
   );
 }

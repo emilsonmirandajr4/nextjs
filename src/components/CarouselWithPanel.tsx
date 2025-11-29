@@ -145,30 +145,32 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
       }}
     >
       <style>{`
-        @keyframes border-glow {
-          0%, 100% {
-            box-shadow: 0 0 4px rgba(220, 38, 38, 0.4);
-            opacity: 0.7;
-          }
-          50% {
-            box-shadow: 0 0 24px 6px rgba(220, 38, 38, 0.8);
-            opacity: 1;
-          }
-        }
-
-        .animate-border-glow {
+        .carousel-image-wrapper {
           position: relative;
+          border: 2px solid #dc2626;
+          border-radius: 16px;
+          overflow: hidden;
+          transition: transform 0.3s ease;
         }
 
-        .animate-border-glow::before {
-          content: '';
+        .carousel-image-wrapper:hover {
+          transform: scale(1.05);
+        }
+
+        .category-badge {
           position: absolute;
-          inset: -2.5px;
-          border-radius: 16px;
-          background: linear-gradient(45deg, #7f1d1d, #ef4444);
-          pointer-events: none;
-          z-index: -1;
-          animation: border-glow 3s ease-in-out infinite;
+          top: 12px;
+          left: 12px;
+          background: #dc2626;
+          color: white;
+          padding: 6px 12px;
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-radius: 4px;
+          z-index: 10;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .carousel-wrapper {
@@ -180,8 +182,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         }
 
         .summary-panel {
-          background: rgba(17, 24, 39, 0.5);
-          backdrop-filter: blur(10px);
+          background: rgba(17, 24, 39, 0.85);
           border-radius: 12px;
           padding: 20px;
           border: 1px solid rgba(255, 255, 255, 0.1);
@@ -204,7 +205,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         .embla {
           max-width: 100%;
           margin: 0;
-          --slide-height: 16rem;
+          --slide-height: 17rem;
           --slide-spacing: 0.8rem;
           --slide-size: 70%;
         }
@@ -231,8 +232,9 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           display: block;
           height: var(--slide-height);
           width: 100%;
-          object-fit: cover;
+          object-fit: contain;
           cursor: pointer;
+          background: rgba(0, 0, 0, 0.05);
         }
 
         .embla__controls {
@@ -252,8 +254,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         .embla__button {
           -webkit-appearance: none;
           appearance: none;
-          background: linear-gradient(135deg, rgba(220, 38, 38, 0.15), rgba(185, 28, 28, 0.15));
-          backdrop-filter: blur(10px);
+          background: rgba(220, 38, 38, 0.15);
           border: 1.5px solid rgba(220, 38, 38, 0.4);
           touch-action: manipulation;
           cursor: pointer;
@@ -270,10 +271,9 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         }
 
         .embla__button:hover:not(:disabled) {
-          background: linear-gradient(135deg, rgba(220, 38, 38, 0.25), rgba(185, 28, 28, 0.25));
+          background: rgba(220, 38, 38, 0.25);
           border-color: rgba(239, 68, 68, 0.7);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+          box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
         }
 
         .embla__button:disabled {
@@ -326,11 +326,11 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         }
 
         .embla__dot--selected:after {
-          background: linear-gradient(135deg, #dc2626, #ef4444);
+          background: #dc2626;
           width: 24px;
           height: 8px;
           border-radius: 4px;
-          box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+          box-shadow: 0 0 8px rgba(220, 38, 38, 0.3);
         }
 
         @media (max-width: 1024px) {
@@ -375,13 +375,14 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                 <div className="embla__slide" key={item.id}>
                   <div
                     onClick={() => onItemClick?.(item.id)}
-                    className="animate-border-glow"
+                    className="carousel-image-wrapper"
                   >
+                    <div className="category-badge">ENGANADORES</div>
                     <OptimizedImage
                       src={item.image}
                       alt={item.title}
-                      ratio="16/9"
-                      mode="cover"
+                      ratio="none"
+                      usePicture={false}
                       priority="high"
                       className="embla__slide__img"
                     />

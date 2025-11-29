@@ -16,6 +16,7 @@ interface Video {
   videoUrl: string;
   views: number;
   duration: string;
+  channelTitle: string;
 }
 
 interface VideoCarouselProps {
@@ -31,7 +32,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
       containScroll: "trimSnaps",
       dragFree: false,
     },
-    [Autoplay({ delay: 5000, stopOnInteraction: false })],
+    [Autoplay({ delay: 5000, stopOnInteraction: true })],
   );
 
   const {
@@ -125,6 +126,18 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
                   </div>
 
                   <div className="p-5 flex-1 flex flex-col justify-between">
+                    {video.channelTitle && (
+                      <p className="text-xs text-gray-500 font-medium mb-2 flex items-center gap-1">
+                        <svg
+                          className="w-3 h-3"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                        </svg>
+                        {video.channelTitle}
+                      </p>
+                    )}
                     <h3 className="font-semibold text-gray-800 text-sm mb-3 line-clamp-2 min-h-[4.5rem] leading-relaxed">
                       {video.title}
                     </h3>
@@ -148,6 +161,8 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
 
                   <a
                     href={video.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="absolute inset-0"
                     aria-label={`Assistir ${video.title}`}
                   />

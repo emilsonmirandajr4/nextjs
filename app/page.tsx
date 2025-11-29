@@ -12,6 +12,7 @@ import { getPosts, getPostsByCategorySlug } from "@/server/wordpress";
 import { fetchBrazilTrendsServer } from "@/server/twitter";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
 import type { WordPressPost } from "@/types/wordpress";
+import { ScrollReveal } from "@/components/animations";
 
 // Tipos locais
 type HomeVideo = {
@@ -196,76 +197,84 @@ export default async function HomePage() {
 
       <main className="max-w-7xl mx-auto px-4 py-4">
         {/* Grid Principal: Sidebars + Carousel de Notícias */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Sidebar Esquerda - Server Component */}
-          <div className="lg:col-span-3">
-            <SidebarServer
-              posts={postsData.sidebarLeftPosts}
-              title="Mais Lidas"
-            />
-          </div>
-
-          {/* Centro: Carousel de Notícias - Client Component */}
-          <div className="lg:col-span-6">
-            <MainNewsHeader />
-            <NewsCarouselEmbla posts={newsCarouselPosts} />
-          </div>
-
-          {/* Sidebar Direita - Server Component */}
-          <div className="lg:col-span-3">
-            <SidebarServer
-              posts={postsData.sidebarRightPosts}
-              title="Assuntos em Alta"
-            />
-          </div>
-        </div>
-
-        {/* Carousel 3D com Painel e Trending Topics */}
-        <section className="mt-16 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Carousel 3D - Client Component */}
-            <div className="lg:col-span-9">
-              <CarouselWithPanelWrapper
-                items={carouselData.items}
-                summaries={carouselData.summaries}
+        <ScrollReveal animation="fade" duration={600}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Sidebar Esquerda - Server Component */}
+            <div className="lg:col-span-3">
+              <SidebarServer
+                posts={postsData.sidebarLeftPosts}
+                title="Mais Lidas"
               />
             </div>
-            {/* Trending Topics - Client Component */}
+
+            {/* Centro: Carousel de Notícias - Client Component */}
+            <div className="lg:col-span-6">
+              <MainNewsHeader />
+              <NewsCarouselEmbla posts={newsCarouselPosts} />
+            </div>
+
+            {/* Sidebar Direita - Server Component */}
             <div className="lg:col-span-3">
-              <TrendingTopics initialTrends={trends} />
+              <SidebarServer
+                posts={postsData.sidebarRightPosts}
+                title="Assuntos em Alta"
+              />
             </div>
           </div>
-        </section>
+        </ScrollReveal>
+
+        {/* Carousel 3D com Painel e Trending Topics */}
+        <ScrollReveal animation="slide-up" duration={700} delay={100}>
+          <section className="mt-16 relative">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Carousel 3D - Client Component */}
+              <div className="lg:col-span-9">
+                <CarouselWithPanelWrapper
+                  items={carouselData.items}
+                  summaries={carouselData.summaries}
+                />
+              </div>
+              {/* Trending Topics - Client Component */}
+              <div className="lg:col-span-3">
+                <TrendingTopics initialTrends={trends} />
+              </div>
+            </div>
+          </section>
+        </ScrollReveal>
 
         {/* Seções de Notícias - Server Components */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Container para Últimas Notícias e Judiciário */}
-          <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Últimas Notícias - Server Component */}
-            <NewsSection
-              posts={postsData.latestNewsPosts}
-              title="Últimas Notícias"
-              icon="clock"
-              iconColor="sky"
-            />
+        <ScrollReveal animation="fade-scale" duration={700} delay={150}>
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Container para Últimas Notícias e Judiciário */}
+            <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Últimas Notícias - Server Component */}
+              <NewsSection
+                posts={postsData.latestNewsPosts}
+                title="Últimas Notícias"
+                icon="clock"
+                iconColor="sky"
+              />
 
-            {/* Judiciário - Server Component */}
-            <NewsSection
-              posts={postsData.judiciaryPosts}
-              title="Judiciário"
-              icon="scale"
-              iconColor="red"
-            />
-          </div>
+              {/* Judiciário - Server Component */}
+              <NewsSection
+                posts={postsData.judiciaryPosts}
+                title="Judiciário"
+                icon="scale"
+                iconColor="red"
+              />
+            </div>
 
-          {/* Nossa Opinião - Server Component */}
-          <div className="lg:col-span-3">
-            <OpinionSection posts={postsData.highlightPosts} />
+            {/* Nossa Opinião - Server Component */}
+            <div className="lg:col-span-3">
+              <OpinionSection posts={postsData.highlightPosts} />
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Seção de Vídeos em Destaque - Client Component (lazy loaded) */}
-        <LazyVideoCarousel videos={featuredVideos} />
+        <ScrollReveal animation="slide-up" duration={700} delay={200}>
+          <LazyVideoCarousel videos={featuredVideos} />
+        </ScrollReveal>
       </main>
 
       <Footer />

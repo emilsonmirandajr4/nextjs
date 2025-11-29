@@ -93,7 +93,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     <div className="relative w-full space-y-2">
       {/* Main Carousel */}
       <div
-        className="overflow-hidden rounded-xl shadow-2xl shadow-blue-900/30"
+        className="overflow-hidden rounded-xl shadow-2xl shadow-blue-900/30 h-[380px]"
         ref={emblaMainRef}
       >
         <div className="flex touch-pan-y">
@@ -156,7 +156,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
       <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
 
       {/* Thumbnails */}
-      <div className="overflow-hidden" ref={emblaThumbsRef}>
+      <div className="overflow-hidden h-[120px]" ref={emblaThumbsRef}>
         <div className="flex gap-0">
           {posts.slice(0, 8).map((post, index) => (
             <Thumb
