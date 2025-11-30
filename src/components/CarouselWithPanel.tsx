@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef } from "react";
-import { EmblaCarouselType, EmblaEventType } from "embla-carousel";
+import React, { useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import {
@@ -11,11 +10,6 @@ import {
 } from "./EmblaCarouselArrowButtons";
 import { DotButton, useDotButton } from "./EmblaCarouselDotButton";
 import OptimizedImage from "./OptimizedImage";
-
-const TWEEN_FACTOR_BASE = 0.84;
-
-const numberWithinRange = (number: number, min: number, max: number): number =>
-  Math.min(Math.max(number, min), max);
 
 interface CarouselItem {
   id: number;
@@ -45,10 +39,9 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
   const summaries = initialSummaries || [];
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 5000, stopOnInteraction: false }),
+    Autoplay({ delay: 6000, stopOnInteraction: false }),
   ]);
-  const tweenFactor = useRef(0);
-
+ 
   const { selectedIndex, scrollSnaps, onDotButtonClick } =
     useDotButton(emblaApi);
 
@@ -58,62 +51,6 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
     onPrevButtonClick,
     onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
-
-  const setTweenFactor = useCallback((emblaApi: EmblaCarouselType) => {
-    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length;
-  }, []);
-
-  const tweenOpacity = useCallback(
-    (emblaApi: EmblaCarouselType, eventName?: EmblaEventType) => {
-      const engine = emblaApi.internalEngine();
-      const scrollProgress = emblaApi.scrollProgress();
-      const slidesInView = emblaApi.slidesInView();
-      const isScrollEvent = eventName === "scroll";
-
-      emblaApi.scrollSnapList().forEach((scrollSnap, snapIndex) => {
-        let diffToTarget = scrollSnap - scrollProgress;
-        const slidesInSnap = engine.slideRegistry[snapIndex];
-
-        slidesInSnap.forEach((slideIndex) => {
-          if (isScrollEvent && !slidesInView.includes(slideIndex)) return;
-
-          if (engine.options.loop) {
-            engine.slideLooper.loopPoints.forEach((loopItem) => {
-              const target = loopItem.target();
-
-              if (slideIndex === loopItem.index && target !== 0) {
-                const sign = Math.sign(target);
-
-                if (sign === -1) {
-                  diffToTarget = scrollSnap - (1 + scrollProgress);
-                }
-                if (sign === 1) {
-                  diffToTarget = scrollSnap + (1 - scrollProgress);
-                }
-              }
-            });
-          }
-
-          const tweenValue = 1 - Math.abs(diffToTarget * tweenFactor.current);
-          const opacity = numberWithinRange(tweenValue, 0, 1).toString();
-          emblaApi.slideNodes()[slideIndex].style.opacity = opacity;
-        });
-      });
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    setTweenFactor(emblaApi);
-    tweenOpacity(emblaApi);
-    emblaApi
-      .on("reInit", setTweenFactor)
-      .on("reInit", tweenOpacity)
-      .on("scroll", tweenOpacity)
-      .on("slideFocus", tweenOpacity);
-  }, [emblaApi, tweenOpacity, setTweenFactor]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -150,11 +87,6 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           border: 2px solid #dc2626;
           border-radius: 16px;
           overflow: hidden;
-          transition: transform 0.3s ease;
-        }
-
-        .carousel-image-wrapper:hover {
-          transform: scale(1.05);
         }
 
         .category-badge {
@@ -221,7 +153,6 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         }
 
         .embla__slide {
-          transform: translate3d(0, 0, 0);
           flex: 0 0 var(--slide-size);
           min-width: 0;
           padding-left: var(--slide-spacing);
@@ -267,7 +198,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
 
         .embla__button:hover:not(:disabled) {
@@ -317,7 +248,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           border-radius: 50%;
           display: block;
           content: '';
-          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: background 0.2s, transform 0.2s, width 0.2s, height 0.2s, border-radius 0.2s;
         }
 
         .embla__dot:hover:after {
@@ -381,9 +312,9 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                     <OptimizedImage
                       src={item.image}
                       alt={item.title}
-                      ratio="none"
-                      usePicture={false}
-                      priority="high"
+                      ratio="16/9"
+                      usePicture={true}
+                      priority="normal"
                       className="embla__slide__img"
                     />
                   </div>

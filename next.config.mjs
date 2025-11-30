@@ -15,11 +15,8 @@ const nextConfig = {
   // This is normal and expected. Caches work perfectly in production (npm run build)
   cacheComponents: true,
   experimental: {
-    // Enable filesystem caching for `next dev`
     turbopackFileSystemCacheForDev: true,
-    // Enable filesystem caching for `next build`
     turbopackFileSystemCacheForBuild: true,
-    // Otimizar imports de pacotes grandes
     optimizePackageImports: [
       "lucide-react",
       "date-fns",
@@ -43,13 +40,9 @@ const nextConfig = {
         protocol: "https",
         hostname: "primeiranews.twic.pics",
       },
-      {
-        protocol: "https",
-        hostname: "img.youtube.com",
-      },
     ],
     formats: ["image/avif"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3000],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   // Otimizações de compilação

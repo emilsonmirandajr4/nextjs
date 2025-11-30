@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast';
 import { WordPressPost } from '../types/wordpress';
 import { WORDPRESS_CONFIG } from '../config/wordpress';
 
@@ -18,14 +17,13 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
     });
 
     if (!response.ok) {
-      toast.error('Erro ao carregar notícias. Tente novamente.');
+      console.error('Erro ao carregar notícias:', response.status, response.statusText);
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const text = await response.text();
     if (!text) {
-      console.warn('Empty response from API');
-      toast('Nenhuma notícia encontrada.', { icon: '⚠️' });
+      console.warn('Empty response from API - Nenhuma notícia encontrada.');
       return [];
     }
 
@@ -42,9 +40,9 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
   } catch (error) {
     console.error('Error fetching posts from API:', error);
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      toast.error('Sem conexão com a internet.');
+      console.error('Sem conexão com a internet.');
     } else {
-      toast.error('Falha ao conectar com o servidor.');
+      console.error('Falha ao conectar com o servidor.');
     }
     return [];
   }
@@ -94,13 +92,13 @@ export async function fetchPostsByCategory(categoryId: number, perPage: number =
     });
 
     if (!response.ok) {
-      toast.error('Erro ao carregar categoria.');
+      console.error('Erro ao carregar categoria:', response.status, response.statusText);
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const text = await response.text();
     if (!text) {
-      toast('Nenhuma notícia encontrada nesta categoria.', { icon: '⚠️' });
+      console.warn('Nenhuma notícia encontrada nesta categoria.');
       return [];
     }
 
@@ -116,7 +114,6 @@ export async function fetchPostsByCategory(categoryId: number, perPage: number =
     });
   } catch (error) {
     console.error('Error fetching posts by category:', error);
-    toast.error('Erro ao buscar notícias da categoria.');
     return [];
   }
 }
@@ -128,18 +125,18 @@ function normalizeText(s: string): string {
 
 export async function fetchCategoryIdBySlug(slug: string): Promise<number | null> {
   try {
-    // Try exact slug first
-    const exact = await fetch(`${WP_API_URL}/categories?slug=${encodeURIComponent(slug)}`, { cache: 'no-store' });
+    // Try exact slug first - cache for 1 hour
+    const exact = await fetch(`${WP_API_URL}/categories?slug=${encodeURIComponent(slug)}`, { next: { revalidate: 3600 } });
     if (exact.ok) {
       const arr = await exact.json();
       if (Array.isArray(arr) && arr.length > 0) return arr[0].id;
     }
-    // Fallback: search and pick best match by name/slug
-    const res = await fetch(`${WP_API_URL}/categories?search=${encodeURIComponent(slug)}`, { cache: 'no-store' });
+    // Fallback: search and pick best match by name/slug - cache for 1 hour
+    const res = await fetch(`${WP_API_URL}/categories?search=${encodeURIComponent(slug)}`, { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     const cats = await res.json();
     if (!Array.isArray(cats) || cats.length === 0) {
-      toast(`Categoria "${slug}" não encontrada.`, { icon: '⚠️' });
+      console.warn(`Categoria "${slug}" não encontrada.`);
       return null;
     }
     const norm = normalizeText(slug);
@@ -170,13 +167,13 @@ export async function fetchPostsByCategorySlug(slug: string, perPage: number = 5
     });
 
     if (!response.ok) {
-      toast.error('Erro ao carregar categoria.');
+      console.error('Erro ao carregar categoria:', response.status, response.statusText);
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const text = await response.text();
     if (!text) {
-      toast('Nenhuma notícia encontrada nesta categoria.', { icon: '⚠️' });
+      console.warn('Nenhuma notícia encontrada nesta categoria.');
       return [];
     }
 
@@ -191,7 +188,6 @@ export async function fetchPostsByCategorySlug(slug: string, perPage: number = 5
     });
   } catch (error) {
     console.error('Error fetching posts by category from API:', error);
-    toast.error('Erro ao buscar notícias da categoria.');
     return [];
   }
 }
@@ -215,7 +211,7 @@ export async function fetchPostsPaginated(perPage: number = 10, page: number = 1
         // Página além do limite - retorna array vazio
         return [];
       }
-      toast.error('Erro ao carregar notícias.');
+      console.error('Erro ao carregar notícias:', response.status, response.statusText);
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
@@ -260,7 +256,7 @@ export async function fetchPostsByCategoryPaginated(
         // Página além do limite - retorna array vazio
         return [];
       }
-      toast.error('Erro ao carregar categoria.');
+      console.error('Erro ao carregar categoria:', response.status, response.statusText);
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
@@ -313,7 +309,7 @@ export async function fetchPostBySlug(slug: string): Promise<WordPressPost | nul
     }
 
     if (!response.ok) {
-      toast.error('Erro ao carregar notícia.');
+      console.error('Erro ao carregar notícia:', response.status, response.statusText);
       return null;
     }
 
@@ -329,16 +325,7 @@ export async function fetchPostBySlug(slug: string): Promise<WordPressPost | nul
     };
   } catch (error) {
     console.error('Error fetching post by slug from API:', error);
-    toast.error('Erro ao buscar notícia.');
     return null;
   }
 }
 
-const fetchWithTimeout = (url: string, timeout = 10000) => {
-  return Promise.race([
-    fetch(url),
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Timeout')), timeout)
-    )
-  ]);
-};

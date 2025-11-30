@@ -7,7 +7,7 @@ import { WordPressPost } from '../types/wordpress';
 function parseWordPressUrl(link: string): { year: string; month: string; category: string; postname: string } | null {
   // Exemplo: https://primeiranews.com.br/2024/11/politica/bolsonaro-sofre-derrota/
   // Aceita tanto .com quanto .com.br
-  const match = link.match(/\/(\d{4})\/(\d{2})\/([^\/]+)\/([^\/]+)\/?$/);
+  const match = link.match(/\/(\d{4})\/(\d{2})\/([^/]+)\/([^/]+)\/?$/);
   if (match) {
     return {
       year: match[1],
@@ -18,7 +18,7 @@ function parseWordPressUrl(link: string): { year: string; month: string; categor
   }
   
   // Fallback: tenta extrair apenas o último segmento como slug
-  const simpleMatch = link.match(/\/([^\/]+)\/?$/);
+  const simpleMatch = link.match(/\/([^/]+)\/?$/);
   if (simpleMatch && simpleMatch[1]) {
     return {
       year: '',
@@ -56,7 +56,7 @@ export function getPostUrl(post: WordPressPost | { id: number; slug?: string; li
           // Usar categoria padrão se não tiver
           const category = parsed.category || 'noticias';
           return `/${year}/${month}/${category}/${parsed.postname}`;
-        } catch (e) {
+        } catch {
           console.error('Failed to parse date:', post.date);
         }
       }
@@ -76,7 +76,7 @@ export function getPostUrl(post: WordPressPost | { id: number; slug?: string; li
         const month = String(now.getMonth() + 1).padStart(2, '0');
         return `/${year}/${month}/noticias/${parts[parts.length - 1]}`;
       }
-    } catch (e) {
+    } catch {
       console.error('Failed to parse post link:', post.link);
     }
   }
@@ -90,7 +90,7 @@ export function getPostUrl(post: WordPressPost | { id: number; slug?: string; li
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       return `/${year}/${month}/noticias/${post.slug}`;
-    } catch (e) {
+    } catch {
       console.error('Failed to parse date for slug:', post.slug);
     }
   }

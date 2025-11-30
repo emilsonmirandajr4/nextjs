@@ -18,9 +18,9 @@ export function optimizeTwicPicsUrl(imagePath: string, maxWidth?: number): strin
   const cleanPath = imagePath.split('?')[0];
   
   // Define largura máxima baseada no contexto
-  const width = maxWidth || 3000;
+  // const width = maxWidth || 3000;
   
-    const params = `output=avif/quality-min=75/quality-max=80/cover=16/9`;
+  const params = `output=avif/quality-min=75/quality-max=80/cover=16/9`;
   
   return `${cleanPath}?${params}`;
 }

@@ -117,6 +117,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
           const id = extractYouTubeId(video.videoUrl);
           const meta = id ? items[id] : undefined;
 
+          // Usar título do YouTube (original)
           const resolvedTitle = meta?.title || video.title || "";
 
           return {
@@ -124,7 +125,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
             title: resolvedTitle,
             thumbnail:
               meta?.thumbnail ||
-              "https://img.youtube.com/vi/4VkrctbXrJg/hqdefault.jpg",
+              "https://primeiranews.com/thumbvideo.webp",
             duration: meta?.duration || "0:00",
             views: meta?.views ?? 0,
             channelTitle: meta?.channelTitle || "",
@@ -139,7 +140,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
           const fallback: EnrichedVideo[] = videos.map((video) => ({
             ...video,
             title: video.title ?? "",
-            thumbnail: "https://img.youtube.com/vi/4VkrctbXrJg/hqdefault.jpg",
+            thumbnail: "https://primeiranews.com/thumbvideo.webp",
             duration: "0:00",
             views: 0,
             channelTitle: "",

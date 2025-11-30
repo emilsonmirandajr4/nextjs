@@ -56,7 +56,7 @@ export default function SidebarServer({ posts, title }: SidebarServerProps) {
           <div className="relative p-3 space-y-1.5">
             {posts.map((post, index) => (
               <Link
-                key={post.id}
+                key={`${post.id}-${index}`}
                 href={getPostUrl(post)}
                 className="group/item relative flex items-start gap-2.5 p-2.5 rounded-xl bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-sky-900/30 hover:to-blue-900/30 border border-slate-700/50 hover:border-sky-500/50 transition-all duration-300 ease-out shadow-md shadow-blue-900/30 hover:shadow-lg hover:shadow-sky-500/40 hover:scale-[1.02] active:scale-[0.98]"
               >

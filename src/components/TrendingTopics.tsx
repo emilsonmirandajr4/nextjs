@@ -100,7 +100,7 @@ export default function TrendingTopics({
           </div>
         ) : (
           <div className="relative p-3 space-y-1.5">
-            {trends.slice(0, 7).map((topic, index) => (
+            {trends.slice(0, 8).map((topic, index) => (
               <div
                 key={index}
                 className="group/trend relative flex items-center gap-2.5 p-2 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-blue-900/30 hover:to-indigo-900/30 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 ease-out shadow-md shadow-indigo-900/30 hover:shadow-lg hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98]"

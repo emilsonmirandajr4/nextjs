@@ -17,6 +17,7 @@ interface Video {
   views: number;
   duration: string;
   channelTitle: string;
+  internalUrl?: string; // URL interna do post
 }
 
 interface VideoCarouselProps {
@@ -160,9 +161,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
                   </div>
 
                   <a
-                    href={video.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={video.internalUrl || video.videoUrl}
+                    target={video.internalUrl ? "_self" : "_blank"}
+                    rel={video.internalUrl ? undefined : "noopener noreferrer"}
                     className="absolute inset-0"
                     aria-label={`Assistir ${video.title}`}
                   />

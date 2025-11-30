@@ -5,21 +5,19 @@ import SidebarServer from "@/components/server/SidebarServer";
 import NewsSection from "@/components/server/NewsSection";
 import OpinionSection from "@/components/server/OpinionSection";
 import MainNewsHeader from "@/components/server/MainNewsHeader";
+import EnganadoresHeader from "@/components/server/EnganadoresHeader";
 import NewsCarouselEmbla from "@/components/NewsCarouselEmbla";
 import { getPostUrl } from "@/utils/navigation";
 import dynamic from "next/dynamic";
 import { getPosts, getPostsByCategorySlug } from "@/server/wordpress";
 import { fetchBrazilTrendsServer } from "@/server/twitter";
+import { fetchVideos } from "@/services/videos";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
 import type { WordPressPost } from "@/types/wordpress";
 import { ScrollReveal } from "@/components/animations";
 
-// Tipos locais
-type HomeVideo = {
-  id: number;
-  title?: string;
-  videoUrl: string;
-};
+// NOTA: Cache ZERO configurado em src/config/wordpress.ts
+// cacheComponents no next.config.mjs cuida do cache automaticamente
 
 // Dynamic imports para componentes abaixo da dobra ou pesados
 const CarouselWithPanelWrapper = dynamic(
@@ -49,16 +47,39 @@ const LazyVideoCarousel = dynamic(
 );
 
 async function fetchHomeData() {
-  const [posts, newsPosts, enganadoresPosts, opinionPosts, trends] =
-    await Promise.all([
+  const [
+    posts, 
+    newsPosts, 
+    enganadoresPosts, 
+    opinionPosts, 
+    judiciaryPosts,
+    politicsPosts,
+    economyPosts,
+    trends, 
+    videosData
+  ] = await Promise.all([
       getPosts(20, 1),
-      getPostsByCategorySlug("noticias", 20, 1),
+      getPostsByCategorySlug("noticias", 20, 1), // Mais posts para sidebars
       getPostsByCategorySlug("enganadores", 5, 1),
-      getPostsByCategorySlug("opiniao", 5, 1),
-      fetchBrazilTrendsServer(), // Fetch trends on server
+      getPostsByCategorySlug("opiniao", 10, 1),
+      getPostsByCategorySlug("judiciario", 20, 1), // Mais posts para sidebars
+      getPostsByCategorySlug("politica", 15, 1), // Mais posts para sidebars
+      getPostsByCategorySlug("economia", 15, 1), // Mais posts para sidebars
+      fetchBrazilTrendsServer(),
+      fetchVideos(10).catch(() => []),
     ]);
 
-  return { posts, newsPosts, enganadoresPosts, opinionPosts, trends };
+  return { 
+    posts, 
+    newsPosts, 
+    enganadoresPosts, 
+    opinionPosts, 
+    judiciaryPosts,
+    politicsPosts,
+    economyPosts,
+    trends, 
+    videosData 
+  };
 }
 
 // Preparar dados do Carousel 3D no servidor
@@ -92,102 +113,153 @@ function prepareCarouselData(enganadoresPosts: WordPressPost[]) {
 // Preparar dados dos posts no servidor
 function preparePostsData(
   posts: WordPressPost[],
+  newsPosts: WordPressPost[],
   opinionPosts: WordPressPost[],
+  judiciaryPosts: WordPressPost[],
+  politicsPosts: WordPressPost[],
+  economyPosts: WordPressPost[],
 ) {
-  const sidebarLeftPosts = posts.slice(0, 6);
-  const sidebarRightPosts = posts.slice(6, 12);
-  const latestNewsPosts = posts.slice(0, 5);
-  const highlightPosts =
-    opinionPosts.length > 0 ? opinionPosts : posts.slice(28, 33);
+  // Helper: Remove posts de categorias indesejadas (videos e enganadores)
+  const filterUnwantedCategories = (postList: WordPressPost[]) => 
+    postList.filter(post => {
+      // Filtro 1: Verifica categorias
+      const hasUnwantedCategory = post.categories_names?.some(cat => {
+        const lowerCat = cat.toLowerCase().trim();
+        return lowerCat === 'videos' || lowerCat === 'vídeos' || lowerCat === 'enganadores';
+      });
+      
+      if (hasUnwantedCategory) return false;
+      
+      // Filtro 2: Verifica se o título começa com "video" (fallback)
+      const title = post.title.rendered.toLowerCase().trim();
+      if (title.startsWith('video ') || title.startsWith('vídeo ')) {
+        return false;
+      }
+      
+      return true;
+    });
 
-  const judiciaryPosts = posts
-    .filter((post) =>
-      post.categories_names?.some((name) => {
-        const normalized = name.toLowerCase();
-        return (
-          normalized.includes("judiciário") || normalized.includes("judiciario")
-        );
-      }),
-    )
-    .slice(0, 5);
+  // Helper: Remove posts duplicados baseado no ID
+  const removeDuplicates = (postList: WordPressPost[]) => {
+    const seen = new Set<number>();
+    return postList.filter(post => {
+      if (seen.has(post.id)) return false;
+      seen.add(post.id);
+      return true;
+    });
+  };
+
+  // Filtrar posts limpos APENAS para sidebars (posts gerais podem ter vídeos/enganadores)
+  const cleanNewsPosts = filterUnwantedCategories(newsPosts);
+  const cleanPoliticsPosts = filterUnwantedCategories(politicsPosts);
+  const cleanEconomyPosts = filterUnwantedCategories(economyPosts);
+
+  // SIDEBAR ESQUERDA: Pega mais posts para compensar duplicatas
+  let sidebarLeftPosts = removeDuplicates([
+    ...cleanNewsPosts.slice(0, 3),
+    ...judiciaryPosts.slice(0, 3), // SEM filtro - já vem da categoria específica
+    ...cleanPoliticsPosts.slice(0, 2),
+    ...cleanEconomyPosts.slice(0, 2),
+  ]);
+  
+  // Se não tiver 6, completa com posts gerais
+  if (sidebarLeftPosts.length < 6) {
+    const cleanGeneralPosts = filterUnwantedCategories(posts);
+    const usedIds = new Set(sidebarLeftPosts.map(p => p.id));
+    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 6 - sidebarLeftPosts.length);
+    sidebarLeftPosts = [...sidebarLeftPosts, ...extraPosts];
+  }
+  sidebarLeftPosts = sidebarLeftPosts.slice(0, 6);
+
+  // SIDEBAR DIREITA: Pega posts diferentes da esquerda
+  let sidebarRightPosts = removeDuplicates([
+    ...cleanNewsPosts.slice(3, 6),
+    ...judiciaryPosts.slice(3, 6), // SEM filtro - já vem da categoria específica
+    ...cleanPoliticsPosts.slice(2, 4),
+    ...cleanEconomyPosts.slice(2, 4),
+  ]);
+  
+  // Se não tiver 6, completa com posts gerais (diferentes da esquerda)
+  if (sidebarRightPosts.length < 6) {
+    const cleanGeneralPosts = filterUnwantedCategories(posts);
+    const usedIds = new Set([...sidebarLeftPosts, ...sidebarRightPosts].map(p => p.id));
+    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 6 - sidebarRightPosts.length);
+    sidebarRightPosts = [...sidebarRightPosts, ...extraPosts];
+  }
+  sidebarRightPosts = sidebarRightPosts.slice(0, 6);
+  
+  // Últimas Notícias: usa posts da categoria "noticias"
+  const latestNewsPosts = cleanNewsPosts.slice(0, 5);
+  
+  // Judiciário: usa posts direto da categoria "judiciario" (SEM filtro adicional)
+  const filteredJudiciaryPosts = judiciaryPosts.slice(0, 5);
+  
+  // Nossa Opinião: usa posts direto da categoria "opiniao" (SEM filtro adicional)
+  const highlightPosts = opinionPosts.slice(0, 5);
 
   return {
     sidebarLeftPosts,
     sidebarRightPosts,
     latestNewsPosts,
-    judiciaryPosts,
+    judiciaryPosts: filteredJudiciaryPosts,
     highlightPosts,
   };
 }
 
-// Vídeos em destaque (hardcoded como estava antes)
-const featuredVideos: HomeVideo[] = [
-  {
-    id: 1,
-    title: "Vídeo em Destaque 1",
-    videoUrl: "https://www.youtube.com/watch?v=X3ZbvHr3r1E",
-  },
-  {
-    id: 2,
-    title: "Vídeo em Destaque 2",
-    videoUrl: "https://www.youtube.com/watch?v=jdKY0X7iv_k",
-  },
-  {
-    id: 3,
-    title: "Vídeo em Destaque 3",
-    videoUrl: "https://www.youtube.com/watch?v=BbXScYwqQo8",
-  },
-  {
-    id: 4,
-    title: "Vídeo em Destaque 4",
-    videoUrl: "https://www.youtube.com/watch?v=OmMUuFAJqQs",
-  },
-  {
-    id: 5,
-    title: "Vídeo em Destaque 5",
-    videoUrl: "https://www.youtube.com/watch?v=UPc8VLRBDbs",
-  },
-  {
-    id: 6,
-    title: "Vídeo em Destaque 6",
-    videoUrl: "https://www.youtube.com/watch?v=FA1b592TS3c",
-  },
-  {
-    id: 7,
-    title: "Vídeo em Destaque 7",
-    videoUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0",
-  },
-  {
-    id: 8,
-    title: "Vídeo em Destaque 8",
-    videoUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
-  },
-  {
-    id: 9,
-    title: "Vídeo em Destaque 9",
-    videoUrl: "https://www.youtube.com/watch?v=2Vv-BfVoq4g",
-  },
-  {
-    id: 10,
-    title: "Vídeo em Destaque 10",
-    videoUrl: "https://www.youtube.com/watch?v=60ItHLz5WEA",
-  },
-];
-
 export default async function HomePage() {
   // Buscar dados no servidor
-  const { posts, newsPosts, enganadoresPosts, opinionPosts, trends } =
-    await fetchHomeData();
+  const { 
+    posts, 
+    newsPosts, 
+    enganadoresPosts, 
+    opinionPosts, 
+    judiciaryPosts,
+    politicsPosts,
+    economyPosts,
+    trends, 
+    videosData 
+  } = await fetchHomeData();
 
   // Preparar dados no servidor (evitar useMemo no cliente)
-  const postsData = preparePostsData(posts, opinionPosts);
+  const postsData = preparePostsData(
+    posts, 
+    newsPosts, 
+    opinionPosts, 
+    judiciaryPosts,
+    politicsPosts,
+    economyPosts
+  );
   const carouselData = prepareCarouselData(enganadoresPosts);
 
-  // Selecionar posts para o carousel de notícias
-  const newsCarouselPosts = (newsPosts.length > 0 ? newsPosts : posts).slice(
-    0,
-    8,
-  );
+  // Selecionar posts para o carousel de notícias (SEM videos e enganadores)
+  const filterCarouselPosts = (postList: WordPressPost[]) => 
+    postList.filter(post => {
+      // Filtro 1: Verifica categorias
+      const hasUnwantedCategory = post.categories_names?.some(cat => {
+        const lowerCat = cat.toLowerCase().trim();
+        return lowerCat === 'videos' || lowerCat === 'vídeos' || lowerCat === 'enganadores';
+      });
+      
+      if (hasUnwantedCategory) return false;
+      
+      // Filtro 2: Verifica se o título começa com "video" (fallback)
+      const title = post.title.rendered.toLowerCase().trim();
+      if (title.startsWith('video ') || title.startsWith('vídeo ')) {
+        return false;
+      }
+      
+      return true;
+    });
+  
+  const cleanCarouselPosts = filterCarouselPosts(newsPosts.length > 0 ? newsPosts : posts);
+  const newsCarouselPosts = cleanCarouselPosts.slice(0, 8);
+
+  // Converter videos para o formato esperado pelo LazyVideoCarousel
+  const featuredVideos = videosData.map((video) => ({
+    id: typeof video.id === 'number' ? video.id : parseInt(String(video.id)),
+    title: video.title,
+    videoUrl: video.videoUrl,
+  }));
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -197,7 +269,7 @@ export default async function HomePage() {
 
       <main className="max-w-7xl mx-auto px-4 py-4">
         {/* Grid Principal: Sidebars + Carousel de Notícias */}
-        <ScrollReveal animation="fade" duration={600}>
+        <ScrollReveal animation="fade" duration={400}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Sidebar Esquerda - Server Component */}
             <div className="lg:col-span-3">
@@ -224,11 +296,12 @@ export default async function HomePage() {
         </ScrollReveal>
 
         {/* Carousel 3D com Painel e Trending Topics */}
-        <ScrollReveal animation="slide-up" duration={700} delay={100}>
-          <section className="mt-16 relative">
+        <ScrollReveal animation="slide-up" duration={500} delay={100}>
+          <section className="mt-8 relative">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Carousel 3D - Client Component */}
               <div className="lg:col-span-9">
+                <EnganadoresHeader />
                 <CarouselWithPanelWrapper
                   items={carouselData.items}
                   summaries={carouselData.summaries}
@@ -243,7 +316,7 @@ export default async function HomePage() {
         </ScrollReveal>
 
         {/* Seções de Notícias - Server Components */}
-        <ScrollReveal animation="fade-scale" duration={700} delay={150}>
+        <ScrollReveal animation="fade-scale" duration={500} delay={150}>
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Container para Últimas Notícias e Judiciário */}
             <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -272,9 +345,11 @@ export default async function HomePage() {
         </ScrollReveal>
 
         {/* Seção de Vídeos em Destaque - Client Component (lazy loaded) */}
-        <ScrollReveal animation="slide-up" duration={700} delay={200}>
-          <LazyVideoCarousel videos={featuredVideos} />
-        </ScrollReveal>
+        {featuredVideos.length > 0 && (
+          <ScrollReveal animation="slide-up" duration={500} delay={200}>
+            <LazyVideoCarousel videos={featuredVideos} />
+          </ScrollReveal>
+        )}
       </main>
 
       <Footer />

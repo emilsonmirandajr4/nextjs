@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useLinkStatus } from 'next/link'
 import { memo } from 'react'
-import Logo from './components/Logo'
+import Logo from '@/components/Logo'
 
 const Hint = memo(function Hint() {
   const { pending } = useLinkStatus()
