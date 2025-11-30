@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, ReactNode } from 'react';
 
-type AnimationType = 'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'scale' | 'fade-scale';
+type AnimationType = 'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'scale' | 'fade-scale' | 'zoom-in' | 'blur';
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -13,20 +13,39 @@ interface ScrollRevealProps {
   rootMargin?: string;
   triggerOnce?: boolean;
   className?: string;
+  // Skeleton loading props
+  showSkeleton?: boolean;
+  isLoading?: boolean;
+  skeleton?: ReactNode;
 }
 
 export default function ScrollReveal({
   children,
   animation = 'fade',
   delay = 0,
-  duration = 600,
-  threshold = 0.1,
-  rootMargin = '0px 0px -50px 0px',
+  duration = 400,
+  threshold = 0.05,
+  rootMargin = '0px 0px 100px 0px',
   triggerOnce = true,
   className = '',
+  showSkeleton = false,
+  isLoading = false,
+  skeleton,
 }: ScrollRevealProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(!showSkeleton);
   const elementRef = useRef<HTMLDivElement>(null);
+
+  // Atualiza hasLoaded quando isLoading muda
+  useEffect(() => {
+    if (showSkeleton && !isLoading) {
+      // Pequeno delay para transição suave do skeleton para conteúdo
+      const timer = setTimeout(() => {
+        setHasLoaded(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, showSkeleton]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -65,9 +84,11 @@ export default function ScrollReveal({
 
   // Estilos base para cada tipo de animação (estado inicial - antes de aparecer)
   const getInitialStyle = (): React.CSSProperties => {
+    // Transição rápida e suave
     const baseStyle: React.CSSProperties = {
       opacity: 0,
-      transition: `all ${duration}ms cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`,
+      transition: `all ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms`,
+      willChange: 'transform, opacity',
     };
 
     switch (animation) {
@@ -77,37 +98,50 @@ export default function ScrollReveal({
       case 'slide-up':
         return {
           ...baseStyle,
-          transform: 'translateY(40px)',
+          transform: 'translateY(30px)',
         };
 
       case 'slide-down':
         return {
           ...baseStyle,
-          transform: 'translateY(-40px)',
+          transform: 'translateY(-30px)',
         };
 
       case 'slide-left':
         return {
           ...baseStyle,
-          transform: 'translateX(40px)',
+          transform: 'translateX(30px)',
         };
 
       case 'slide-right':
         return {
           ...baseStyle,
-          transform: 'translateX(-40px)',
+          transform: 'translateX(-30px)',
         };
 
       case 'scale':
         return {
           ...baseStyle,
-          transform: 'scale(0.9)',
+          transform: 'scale(0.92)',
         };
 
       case 'fade-scale':
         return {
           ...baseStyle,
           transform: 'scale(0.95) translateY(20px)',
+        };
+
+      case 'zoom-in':
+        return {
+          ...baseStyle,
+          transform: 'scale(0.9)',
+        };
+
+      case 'blur':
+        return {
+          ...baseStyle,
+          filter: 'blur(8px)',
+          transform: 'translateY(15px)',
         };
 
       default:
@@ -120,9 +154,29 @@ export default function ScrollReveal({
     return {
       opacity: 1,
       transform: 'translateY(0) translateX(0) scale(1)',
-      transition: `all ${duration}ms cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`,
+      filter: 'blur(0px)',
+      transition: `all ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms`,
+      willChange: 'auto',
     };
   };
+
+  // Se skeleton está habilitado e ainda está carregando
+  if (showSkeleton && !hasLoaded) {
+    return (
+      <div
+        ref={elementRef}
+        className={className}
+        style={isVisible ? getVisibleStyle() : getInitialStyle()}
+      >
+        {skeleton || (
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div

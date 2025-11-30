@@ -53,7 +53,7 @@ interface LazyVideoCarouselProps {
 export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
   const [shouldShow, setShouldShow] = useState(false);
   const [enrichedVideos, setEnrichedVideos] = useState<EnrichedVideo[]>([]);
-  const [loadingMeta, setLoadingMeta] = useState(false);
+  const [loadingMeta, setLoadingMeta] = useState(true);
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -161,21 +161,61 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
     };
   }, [shouldShow, videos]);
 
+  // Skeleton do carousel de vídeos
+  const VideoSkeleton = () => (
+    <div className="animate-pulse">
+      {/* Header skeleton */}
+      <div className="relative mb-6">
+        <div className="h-24 bg-gray-200 rounded-2xl" />
+      </div>
+      
+      {/* Video cards grid skeleton */}
+      <div className="px-2 sm:px-4 lg:px-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="space-y-3">
+              <div className="bg-gray-200 rounded-lg aspect-video" />
+              <div className="space-y-2 px-2">
+                <div className="h-4 bg-gray-200 rounded w-full" />
+                <div className="h-3 bg-gray-200 rounded w-2/3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="mt-8" ref={ref}>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-12">
           {shouldShow ? (
             loadingMeta ? (
-              <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
+              <VideoSkeleton />
             ) : (
               <VideoCarousel videos={enrichedVideos} />
             )
           ) : (
-            <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
+            <VideoSkeleton />
           )}
         </div>
       </div>
+      
+      {/* Botão Ver Todos */}
+      {!loadingMeta && enrichedVideos.length > 0 && (
+        <div className="flex justify-center mt-6">
+          <a
+            href="/videos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+          >
+            <span>VER TODOS</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      )}
     </section>
   );
 }

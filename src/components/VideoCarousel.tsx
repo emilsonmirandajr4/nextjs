@@ -98,12 +98,12 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
                 key={video.id}
                 className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_25%] xl:flex-[0_0_20%] px-2.5"
               >
-                <div className="group relative bg-white rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 shadow-[0_4px_12px_rgba(220,38,38,0.3)] hover:shadow-[0_8px_24px_rgba(220,38,38,0.5)] h-full flex flex-col">
-                  <div className="relative pb-[56.25%]">
+                <div className="group relative bg-white rounded-lg transition-all duration-300 shadow-[0_4px_12px_rgba(220,38,38,0.3)] hover:shadow-[0_8px_24px_rgba(220,38,38,0.5)] h-full flex flex-col overflow-hidden">
+                  <div className="relative pb-[56.25%] overflow-hidden">
                     <img
                       src={video.thumbnail}
                       alt={video.title}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
 
                     <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">

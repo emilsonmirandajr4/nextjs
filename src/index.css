@@ -243,27 +243,29 @@ body {
   }
 }
 
-/* Fundo animado da página inicial */
+/* Fundo com padrão de pontos da página inicial */
 .animated-bg {
-  background: linear-gradient(
-    135deg,
-    #f8fafc 0%,
-    #f0f9ff 20%,
-    #f8fbff 40%,
-    #f0f9ff 60%,
-    #f8fafc 80%,
-    #f8fafc 100%
-  );
-  background-size: 400% 400%;
-  animation: gradient-shift 8s ease infinite;
+  position: relative;
+  background: #fafafa;
 }
 
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 100% 50%; }
-  50% { background-position: 50% 100%; }
-  75% { background-position: 0% 50%; }
-  100% { background-position: 0% 50%; }
+.animated-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-radial-gradient(
+      circle at 0 0,
+      rgba(0,0,0,0.06) 0 0.7px,
+      transparent 0.7px 6px
+    ),
+    repeating-radial-gradient(
+      circle at 100% 100%,
+      rgba(0,0,0,0.03) 0 0.6px,
+      transparent 0.6px 5px
+    );
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 /* Borda animada usada em destaques */

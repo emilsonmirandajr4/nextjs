@@ -1,7 +1,7 @@
 // Server-side function to fetch Twitter trends
 // This runs on the server and can be called from Server Components
 //
-// IMPORTANT: All fetch operations have a 3-second timeout to prevent
+// IMPORTANT: All fetch operations have a 2-second timeout to prevent
 // the server from hanging if external APIs are slow or unresponsive.
 // This ensures the home page always loads quickly, falling back to
 // static trends if APIs fail or timeout.
@@ -30,9 +30,9 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
   }
 
   try {
-    // Timeout protection: abort fetch after 3 seconds
+    // Timeout protection: abort fetch after 2 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
 
     const response = await fetch(
       `https://api.twitter.com/1.1/trends/place.json?id=${BRAZIL_WOEID}`,
@@ -75,9 +75,9 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
 
 async function fetchFromGetDayTrends(): Promise<TrendingTopic[] | null> {
   try {
-    // Timeout protection: abort fetch after 3 seconds
+    // Timeout protection: abort fetch after 2 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
 
     const response = await fetch("https://getdaytrends.com/brazil/", {
       headers: {
@@ -176,7 +176,7 @@ function getFallbackTrends(): TrendingTopic[] {
  * - Tries Twitter API first (if token available)
  * - Falls back to GetDayTrends scraping
  * - Falls back to static trends if all sources fail
- * - 3-second timeout on all external requests
+ * - 2-second timeout on all external requests
  * - Cached for 5 minutes (Next.js revalidation)
  *
  * @returns Array of trending topics (always returns data, never fails)

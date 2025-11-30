@@ -11,7 +11,7 @@ import { getPostUrl } from "@/utils/navigation";
 import dynamic from "next/dynamic";
 import { getPosts, getPostsByCategorySlug } from "@/server/wordpress";
 import { fetchBrazilTrendsServer } from "@/server/twitter";
-import { fetchVideos } from "@/services/videos";
+import { getFeaturedVideos } from "@/data/videos";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
 import type { WordPressPost } from "@/types/wordpress";
 import { ScrollReveal } from "@/components/animations";
@@ -55,8 +55,7 @@ async function fetchHomeData() {
     judiciaryPosts,
     politicsPosts,
     economyPosts,
-    trends, 
-    videosData
+    trends
   ] = await Promise.all([
       getPosts(20, 1),
       getPostsByCategorySlug("noticias", 20, 1), // Mais posts para sidebars
@@ -66,7 +65,6 @@ async function fetchHomeData() {
       getPostsByCategorySlug("politica", 15, 1), // Mais posts para sidebars
       getPostsByCategorySlug("economia", 15, 1), // Mais posts para sidebars
       fetchBrazilTrendsServer(),
-      fetchVideos(10).catch(() => []),
     ]);
 
   return { 
@@ -77,8 +75,7 @@ async function fetchHomeData() {
     judiciaryPosts,
     politicsPosts,
     economyPosts,
-    trends, 
-    videosData 
+    trends
   };
 }
 
@@ -216,9 +213,11 @@ export default async function HomePage() {
     judiciaryPosts,
     politicsPosts,
     economyPosts,
-    trends, 
-    videosData 
+    trends
   } = await fetchHomeData();
+  
+  // Buscar vídeos do arquivo local (síncrono)
+  const videosData = getFeaturedVideos();
 
   // Preparar dados no servidor (evitar useMemo no cliente)
   const postsData = preparePostsData(
@@ -254,12 +253,8 @@ export default async function HomePage() {
   const cleanCarouselPosts = filterCarouselPosts(newsPosts.length > 0 ? newsPosts : posts);
   const newsCarouselPosts = cleanCarouselPosts.slice(0, 8);
 
-  // Converter videos para o formato esperado pelo LazyVideoCarousel
-  const featuredVideos = videosData.map((video) => ({
-    id: typeof video.id === 'number' ? video.id : parseInt(String(video.id)),
-    title: video.title,
-    videoUrl: video.videoUrl,
-  }));
+  // Vídeos já estão no formato correto
+  const featuredVideos = videosData;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
