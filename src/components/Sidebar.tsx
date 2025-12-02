@@ -11,24 +11,15 @@ interface SidebarProps {
 export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
   return (
     <aside>
-      {/* Animated Gradient Border Container */}
-      <div className="relative rounded-2xl overflow-hidden group/sidebar">
-        {/* Animated gradient border */}
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-400 via-blue-500 to-cyan-400 opacity-75 blur-sm animate-pulse"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 via-sky-500 to-cyan-500 animate-spin-slow"></div>
-        
+      <div className="relative rounded-2xl overflow-hidden">
         {/* Content card with backdrop */}
-        <div className="relative m-[2px] bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 rounded-2xl backdrop-blur-xl border border-white/10">
-          {/* Glass effect overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl"></div>
-          
+        <div className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 border border-white/10">
           {/* Header */}
           <div className="relative px-5 py-4 border-b border-sky-500/20 bg-gradient-to-r from-sky-950/50 to-blue-950/30">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="absolute inset-0 bg-sky-400 blur-md opacity-60 animate-pulse"></div>
-                <div className="relative w-9 h-9 bg-gradient-to-br from-sky-400 via-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/50 group-hover/sidebar:scale-110 transition-transform duration-300">
-                  <TrendingUp className="w-5 h-5 text-white animate-pulse" strokeWidth={2.5} />
+                <div className="relative w-9 h-9 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-white" strokeWidth={2.5} />
                 </div>
               </div>
               <div className="flex-1">
@@ -36,7 +27,7 @@ export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
                   {title}
                 </h2>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <Flame className="w-3 h-3 text-orange-500 animate-pulse" />
+                  <Flame className="w-3 h-3 text-orange-500" />
                   <span className="text-xs text-sky-300 font-medium">Atualizando ao vivo</span>
                 </div>
               </div>
@@ -49,7 +40,7 @@ export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
               <div
                 key={post.id}
                 onClick={() => onPostClick?.(post.id)}
-                className="group/item relative flex items-start gap-2.5 p-2.5 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-sky-900/30 hover:to-blue-900/30 border border-slate-700/50 hover:border-sky-500/50 transition-all duration-300 ease-out shadow-md shadow-blue-900/30 hover:shadow-lg hover:shadow-sky-500/40 hover:scale-[1.02] active:scale-[0.98]"
+                className="group/item relative flex items-start gap-2.5 p-2.5 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-sky-900/30 hover:to-blue-900/30 border border-slate-700/50 hover:border-sky-500/50"
               >
                 {/* Gradient glow on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 via-sky-500/10 to-blue-500/0 opacity-0 group-hover/item:opacity-100 rounded-xl transition-opacity duration-300"></div>
@@ -66,8 +57,6 @@ export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
                   <h3 className="text-sm font-semibold text-slate-100 group-hover/item:text-white leading-tight line-clamp-2 transition-colors duration-300">
                     {getPostTitle(post)}
                   </h3>
-                  {/* Animated underline on hover */}
-                  <div className="h-0.5 w-0 bg-gradient-to-r from-sky-400 to-blue-500 group-hover/item:w-full transition-all duration-500 mt-1 rounded-full"></div>
                 </div>
 
                 {/* Arrow icon */}
@@ -81,20 +70,6 @@ export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 8s linear infinite;
-        }
-      `}</style>
     </aside>
   );
 }

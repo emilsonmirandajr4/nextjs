@@ -268,19 +268,6 @@ body {
   pointer-events: none;
 }
 
-/* Borda animada usada em destaques */
-.animated-border {
-  background: linear-gradient(90deg, #0ea5e9, #3b82f6, #8b5cf6, #ec4899, #f59e0b, #0ea5e9);
-  background-size: 300% 300%;
-  animation: rotate-border 4s ease infinite;
-}
-
-@keyframes rotate-border {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 
 
 @layer base {

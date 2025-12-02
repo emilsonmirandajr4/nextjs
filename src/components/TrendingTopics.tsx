@@ -44,41 +44,16 @@ export default function TrendingTopics({
   }, [initialTrends.length]);
 
   return (
-    <div className="relative rounded-2xl overflow-hidden group/trending">
-      <style>{`
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-          50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        .animate-pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
-        .animate-spin-slow {
-          animation: spin-slow 8s linear infinite;
-        }
-      `}</style>
-
-      {/* Animated gradient border */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-500 opacity-75 blur-sm animate-pulse"></div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600 via-blue-500 to-purple-500 animate-spin-slow"></div>
-
+    <div className="relative rounded-2xl overflow-hidden">
       {/* Content container */}
-      <div className="relative m-[2px] bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 rounded-2xl backdrop-blur-xl border border-white/10">
-        {/* Glass effect overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl"></div>
-
+      <div className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 border border-white/10">
         {/* Header com gradiente */}
         <div className="relative px-4 py-3 border-b border-blue-500/20 bg-gradient-to-r from-blue-950/50 to-indigo-950/30">
           <div className="flex items-center gap-2">
             <div className="relative">
-              <div className="absolute inset-0 bg-blue-400 blur-md opacity-60 animate-pulse"></div>
-              <div className="relative w-9 h-9 bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50 group-hover/trending:scale-110 transition-transform duration-300">
+              <div className="relative w-9 h-9 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl flex items-center justify-center">
                 <TrendingUp
-                  className="w-5 h-5 text-white animate-pulse"
+                  className="w-5 h-5 text-white"
                   strokeWidth={2.5}
                 />
               </div>
@@ -87,7 +62,7 @@ export default function TrendingTopics({
               Trending no X Brasil
             </h3>
             <div className="ml-auto flex items-center gap-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-2 py-1 rounded-full border border-green-400/30">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               <span className="text-xs text-green-300 font-bold">Ao vivo</span>
             </div>
           </div>
@@ -103,7 +78,7 @@ export default function TrendingTopics({
             {trends.slice(0, 8).map((topic, index) => (
               <div
                 key={index}
-                className="group/trend relative flex items-center gap-2.5 p-2 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-blue-900/30 hover:to-indigo-900/30 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 ease-out shadow-md shadow-indigo-900/30 hover:shadow-lg hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98]"
+                className="group/trend relative flex items-center gap-2.5 p-2 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-blue-900/30 hover:to-indigo-900/30 border border-slate-700/50 hover:border-blue-500/50"
               >
                 {/* Gradient glow on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-indigo-500/10 to-purple-500/0 opacity-0 group-hover/trend:opacity-100 rounded-xl transition-opacity duration-300"></div>

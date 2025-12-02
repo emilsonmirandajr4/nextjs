@@ -33,7 +33,7 @@ export default function OptimizedImage({
   className = "",
   style,
   focus = "auto",
-  priority = "high",
+  priority = "normal",
   usePicture = true,
   anchor,
   transition = "fade",

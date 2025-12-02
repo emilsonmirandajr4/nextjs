@@ -37,68 +37,47 @@ export default function NewsSection({ posts, title, icon, iconColor = 'sky' }: N
   const colors = iconColor === 'red'
     ? {
         gradient: 'from-slate-900 via-slate-800 to-zinc-900',
-        gradientBlur: 'from-slate-700 via-slate-800 to-black',
         iconBg: 'from-red-500 via-red-600 to-rose-500',
-        iconGlow: 'bg-red-500',
         iconShadow: 'shadow-red-500/60',
         hoverText: 'group-hover:text-red-700',
         shadow: 'shadow-sky-500/40'
       }
     : {
         gradient: 'from-slate-900 via-slate-950 to-black',
-        gradientBlur: 'from-slate-800 via-slate-900 to-black',
         iconBg: 'from-sky-400 to-blue-600',
-        iconGlow: 'bg-sky-500',
         iconShadow: 'shadow-sky-500/60',
         hoverText: 'group-hover:text-sky-700',
         shadow: 'shadow-sky-500/40'
       };
 
   return (
-    <div className={`bg-white rounded-xl overflow-hidden h-full border border-slate-200 shadow-lg ${colors.shadow}`}>
-      <div className={`relative px-4 py-3 border-b border-slate-900 bg-gradient-to-r ${colors.gradient} overflow-hidden`}>
-        <div className={`absolute inset-0 bg-gradient-to-r ${colors.gradientBlur} opacity-80 blur-sm`}></div>
-        <div className="relative flex items-center gap-3">
-          <div className="relative">
-            <div className={`absolute inset-0 ${colors.iconGlow} blur-sm opacity-60`}></div>
+    <div className={`bg-white rounded-[24px] overflow-hidden h-full border border-slate-200 shadow-lg ${colors.shadow} relative pt-14`}>
+      {/* Inverted Border Header Tab */}
+      <div className="absolute top-0 left-0 z-10">
+        <div className={`relative px-6 py-3 bg-gradient-to-r ${colors.gradient} rounded-br-[24px]`}>
+          {/* Inverted Corner Pseudo-element */}
+          <div className="absolute bottom-0 -right-[24px] w-[24px] h-[24px] bg-transparent shadow-[-12px_12px_0_0_#fff] rounded-bl-[24px] pointer-events-none"></div>
+          
+          <div className="relative flex items-center gap-3">
             <div className={`relative w-8 h-8 bg-gradient-to-br ${colors.iconBg} rounded-lg flex items-center justify-center text-white shadow-lg ${colors.iconShadow}`}>
               {icon === 'clock' ? (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               ) : (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
-                  />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
                 </svg>
               )}
             </div>
+            <h2 className="text-sm font-black text-white tracking-tight flex items-center gap-2 uppercase pr-2">
+              {title}
+            </h2>
           </div>
-          <h2 className="text-sm font-black text-white tracking-tight flex items-center gap-2 uppercase">
-            {title}
-          </h2>
         </div>
       </div>
-      <div className="p-3 space-y-3">
+
+      <div className="px-4 pb-4 pt-2 space-y-3">
         {posts.map((post) => (
           <Link
             key={post.id}

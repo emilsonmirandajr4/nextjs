@@ -1,6 +1,7 @@
+// React 19: useCallback removido - React Compiler faz memoização automática
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -55,19 +56,16 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     onNextButtonClick,
   } = usePrevNextButtons(emblaMainApi);
 
-  const onThumbClick = useCallback(
-    (index: number) => {
-      if (!emblaMainApi || !emblaThumbsApi) return;
-      emblaMainApi.scrollTo(index);
-    },
-    [emblaMainApi, emblaThumbsApi],
-  );
+  const onThumbClick = (index: number) => {
+    if (!emblaMainApi || !emblaThumbsApi) return;
+    emblaMainApi.scrollTo(index);
+  };
 
-  const onSelect = useCallback(() => {
+  const onSelect = () => {
     if (!emblaMainApi || !emblaThumbsApi) return;
     setSelectedIndex(emblaMainApi.selectedScrollSnap());
     emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap());
-  }, [emblaMainApi, emblaThumbsApi]);
+  };
 
   useEffect(() => {
     if (!emblaMainApi) return;

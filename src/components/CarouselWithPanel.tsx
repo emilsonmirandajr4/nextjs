@@ -68,6 +68,9 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
     };
   }, [emblaApi, onImageChange]);
 
+  // Border width para CSS puro
+  const b = 3.5;
+
   return (
     <div
       className="w-full"
@@ -75,18 +78,47 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         background:
           "linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)",
         borderRadius: "16px",
-        padding: "20px",
-        minHeight: "440px",
-        maxHeight: "440px",
+        padding: "16px",
+        minHeight: "360px",
+        maxHeight: "360px",
         overflow: "hidden",
       }}
     >
       <style>{`
+        @property --carousel-angle {
+          syntax: '<angle>';
+          initial-value: 0deg;
+          inherits: false;
+        }
+
+        @keyframes fire-spin {
+          to { --carousel-angle: 1turn }
+        }
+
         .carousel-image-wrapper {
           position: relative;
-          border: 2px solid #dc2626;
+          box-sizing: border-box;
+          border: solid ${b}px transparent;
           border-radius: 16px;
-          overflow: hidden;
+          overflow: visible;
+          background: 
+            repeating-conic-gradient(
+              from var(--carousel-angle, 0deg), 
+              #7801167f, #f7b5387f, #db7c267f, #d8572a7f, #c32f277f, #7801167f
+            ) border-box;
+          animation: fire-spin 4s linear infinite;
+          will-change: --carousel-angle;
+          transform: translateZ(0);
+          transition: opacity 0.3s ease;
+        }
+
+        /* Slides não-ativos com opacity reduzida */
+        .embla__slide:not(.is-selected) .carousel-image-wrapper {
+          opacity: 0.4;
+        }
+
+        .embla__slide.is-selected .carousel-image-wrapper {
+          opacity: 1;
         }
 
         .category-badge {
@@ -137,9 +169,9 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         .embla {
           max-width: 100%;
           margin: 0;
-          --slide-height: 17rem;
+          --slide-height: 14rem;
           --slide-spacing: 0.8rem;
-          --slide-size: 70%;
+          --slide-size: 60%;
         }
 
         .embla__viewport {
@@ -302,8 +334,11 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         <div className="embla">
           <div className="embla__viewport" ref={emblaRef}>
             <div className="embla__container">
-              {items.map((item) => (
-                <div className="embla__slide" key={item.id}>
+              {items.map((item, index) => (
+                <div 
+                  className={`embla__slide ${index === selectedIndex ? 'is-selected' : ''}`} 
+                  key={item.id}
+                >
                   <div
                     onClick={() => onItemClick?.(item.id)}
                     className="carousel-image-wrapper"

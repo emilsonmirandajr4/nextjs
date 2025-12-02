@@ -40,7 +40,26 @@ const LazyVideoCarousel = dynamic(
   {
     loading: () => (
       <div className="mt-8">
-        <div className="w-full h-64 bg-gray-100 rounded-xl animate-pulse" />
+        <div className="w-full bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 rounded-xl border border-white/10 p-6">
+          {/* Header skeleton */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-10 h-10 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-lg animate-pulse" />
+            <div className="flex-1">
+              <div className="h-7 w-48 bg-slate-700/50 rounded animate-pulse mb-2" />
+              <div className="h-4 w-64 bg-slate-800/50 rounded animate-pulse" />
+            </div>
+          </div>
+          {/* Video grid skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="space-y-3">
+                <div className="aspect-video bg-slate-800/50 rounded-lg animate-pulse" />
+                <div className="h-5 bg-slate-700/50 rounded animate-pulse" />
+                <div className="h-4 w-3/4 bg-slate-800/50 rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     ),
   },
@@ -159,14 +178,14 @@ function preparePostsData(
     ...cleanEconomyPosts.slice(0, 2),
   ]);
   
-  // Se não tiver 6, completa com posts gerais
-  if (sidebarLeftPosts.length < 6) {
+  // Se não tiver 7, completa com posts gerais
+  if (sidebarLeftPosts.length < 7) {
     const cleanGeneralPosts = filterUnwantedCategories(posts);
     const usedIds = new Set(sidebarLeftPosts.map(p => p.id));
-    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 6 - sidebarLeftPosts.length);
+    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 7 - sidebarLeftPosts.length);
     sidebarLeftPosts = [...sidebarLeftPosts, ...extraPosts];
   }
-  sidebarLeftPosts = sidebarLeftPosts.slice(0, 6);
+  sidebarLeftPosts = sidebarLeftPosts.slice(0, 7);
 
   // SIDEBAR DIREITA: Pega posts diferentes da esquerda
   let sidebarRightPosts = removeDuplicates([
@@ -176,14 +195,14 @@ function preparePostsData(
     ...cleanEconomyPosts.slice(2, 4),
   ]);
   
-  // Se não tiver 6, completa com posts gerais (diferentes da esquerda)
-  if (sidebarRightPosts.length < 6) {
+  // Se não tiver 7, completa com posts gerais (diferentes da esquerda)
+  if (sidebarRightPosts.length < 7) {
     const cleanGeneralPosts = filterUnwantedCategories(posts);
     const usedIds = new Set([...sidebarLeftPosts, ...sidebarRightPosts].map(p => p.id));
-    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 6 - sidebarRightPosts.length);
+    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 7 - sidebarRightPosts.length);
     sidebarRightPosts = [...sidebarRightPosts, ...extraPosts];
   }
-  sidebarRightPosts = sidebarRightPosts.slice(0, 6);
+  sidebarRightPosts = sidebarRightPosts.slice(0, 7);
   
   // Últimas Notícias: usa posts da categoria "noticias"
   const latestNewsPosts = cleanNewsPosts.slice(0, 5);
@@ -265,7 +284,7 @@ export default async function HomePage() {
       <main className="max-w-7xl mx-auto px-4 py-4">
         {/* Grid Principal: Sidebars + Carousel de Notícias */}
         <ScrollReveal animation="fade" duration={400}>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
             {/* Sidebar Esquerda - Server Component */}
             <div className="lg:col-span-3">
               <SidebarServer
@@ -292,8 +311,8 @@ export default async function HomePage() {
 
         {/* Carousel 3D com Painel e Trending Topics */}
         <ScrollReveal animation="slide-up" duration={500} delay={100}>
-          <section className="mt-8 relative">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <section className="mt-4 relative">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
               {/* Carousel 3D - Client Component */}
               <div className="lg:col-span-9">
                 <EnganadoresHeader />
