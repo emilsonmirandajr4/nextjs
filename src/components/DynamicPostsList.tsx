@@ -13,7 +13,7 @@ interface DynamicPostsListProps {
 export default function DynamicPostsList({
   posts,
   title,
-  perPage = 50,
+  perPage = 20,
 }: DynamicPostsListProps) {
   if (!posts || posts.length === 0) {
     return (

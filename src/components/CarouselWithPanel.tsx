@@ -79,8 +79,8 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           "linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)",
         borderRadius: "16px",
         padding: "16px",
-        minHeight: "360px",
-        maxHeight: "360px",
+        minHeight: "387px",
+        maxHeight: "387px",
         overflow: "hidden",
       }}
     >
@@ -114,7 +114,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
 
         /* Slides não-ativos com opacity reduzida */
         .embla__slide:not(.is-selected) .carousel-image-wrapper {
-          opacity: 0.4;
+          opacity: 0.3;
         }
 
         .embla__slide.is-selected .carousel-image-wrapper {
@@ -128,11 +128,11 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           background: #dc2626;
           color: white;
           padding: 6px 12px;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.5px;
-          border-radius: 4px;
+          letter-spacing: 0.4px;
+          border-radius: 8px;
           z-index: 10;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
