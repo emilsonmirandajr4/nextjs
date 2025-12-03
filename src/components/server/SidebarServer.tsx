@@ -2,7 +2,7 @@ import Link from "next/link";
 import { WordPressPost } from "@/types/wordpress";
 import { getPostTitle } from "@/services/wordpress";
 import { getPostUrl } from "@/utils/navigation";
-import { TrendingUp, Flame } from "lucide-react";
+import { BarChart3, Activity } from "lucide-react";
 
 interface SidebarServerProps {
   posts: WordPressPost[];
@@ -12,7 +12,16 @@ interface SidebarServerProps {
 export default function SidebarServer({ posts, title }: SidebarServerProps) {
   return (
     <aside>
-      <div className="relative rounded-2xl overflow-hidden">
+      <div 
+        className="relative rounded-2xl overflow-hidden"
+        style={{
+          boxShadow: `
+            rgba(6, 95, 212, 0.4) 3px 3px,
+            rgba(6, 95, 212, 0.25) 6px 6px,
+            rgba(6, 95, 212, 0.15) 9px 9px
+          `
+        }}
+      >
         {/* Content card with backdrop */}
         <div className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 border border-white/10">
           {/* Header */}
@@ -20,7 +29,7 @@ export default function SidebarServer({ posts, title }: SidebarServerProps) {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="relative w-9 h-9 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-xl flex items-center justify-center">
-                  <TrendingUp
+                  <BarChart3
                     className="w-5 h-5 text-white"
                     strokeWidth={2.5}
                   />
@@ -31,7 +40,7 @@ export default function SidebarServer({ posts, title }: SidebarServerProps) {
                   {title}
                 </h2>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <Flame className="w-3 h-3 text-orange-500" />
+                  <Activity className="w-3 h-3 text-sky-400" />
                   <span className="text-xs text-sky-300 font-medium">
                     Atualizando ao vivo
                   </span>

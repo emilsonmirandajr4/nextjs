@@ -9,6 +9,12 @@ import EnganadoresHeader from "@/components/server/EnganadoresHeader";
 import NewsCarouselEmbla from "@/components/NewsCarouselEmbla";
 import { getPostUrl } from "@/utils/navigation";
 import dynamic from "next/dynamic";
+
+// Dynamic import para Instagram Section (below the fold)
+const InstagramSection = dynamic(
+  () => import("@/components/InstagramSection"),
+  { ssr: true }
+);
 import { getPosts, getPostsByCategorySlug } from "@/server/wordpress";
 import { fetchBrazilTrendsServer } from "@/server/twitter";
 import { getFeaturedVideos } from "@/data/videos";
@@ -306,6 +312,13 @@ export default async function HomePage() {
                 title="Assuntos em Alta"
               />
             </div>
+          </div>
+        </ScrollReveal>
+
+        {/* Seção Instagram - Vale a Pena Seguir */}
+        <ScrollReveal animation="fade" duration={300} delay={50}>
+          <div className="mt-4">
+            <InstagramSection />
           </div>
         </ScrollReveal>
 

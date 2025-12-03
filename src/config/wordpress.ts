@@ -3,17 +3,16 @@ export const WORDPRESS_CONFIG = {
   SITE_URL: 'https://primeiranews.com.br',
 
   // Cache TTL configuration (in milliseconds)
-  // ZERO CACHE para posts aparecerem instantaneamente!
-  // LiteSpeed Cache no WordPress cuida do cache da API REST
+  // Ajustado para 1 hora. Revalidação sob demanda via webhook garante atualizações instantâneas.
   CACHE_TTL: {
-    POSTS_LIST: 0,        // Zero cache - posts aparecem instantaneamente
-    POSTS_CATEGORY: 0,    // Zero cache - categorias atualizadas em tempo real
-    POST_SINGLE: 0,       // Zero cache - edições aparecem imediatamente
+    POSTS_LIST: 3600000,   // 1 hora
+    POSTS_CATEGORY: 3600000, // 1 hora
+    POST_SINGLE: 3600000,  // 1 hora
     CATEGORIES: 60000,    // 1 minuto (categorias não mudam muito)
     TAGS: 300000,         // 5 minutos
-    MEDIA: 3600000,       // 1 hora (imagens não mudam)
+    MEDIA: 31536000,       // 1 hora (imagens não mudam)
   },
-
+  
   PAGINATION: {
     PER_PAGE: 10,
     MAX_PAGES: 100,

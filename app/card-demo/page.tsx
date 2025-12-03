@@ -5,6 +5,8 @@ import { getPostImage, getPostTitle } from '@/services/wordpress';
 import { getPostUrl } from '@/utils/navigation';
 import type { WordPressPost } from '@/types/wordpress';
 
+import GlassCardSection from '@/components/demo/GlassCardSection';
+
 // Adapter para converter WordPressPost
 function adaptPosts(posts: WordPressPost[]) {
   return posts.map(post => ({
@@ -361,6 +363,11 @@ export default function CardDemoPage() {
         </div>
 
       </div>
+
+      {/* Divider */}
+      <div className="w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent my-16" />
+
+      <GlassCardSection />
 
       <style jsx>{`
         .fancy-card {

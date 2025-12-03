@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import { Mail, Check, AlertTriangle } from "lucide-react";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -121,7 +121,7 @@ export default function ContactForm() {
       {/* Status Messages */}
       {status === "success" && (
         <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+          <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
           <p className="text-sm text-green-800">
             Mensagem enviada com sucesso! Retornaremos em breve.
           </p>
@@ -130,7 +130,7 @@ export default function ContactForm() {
 
       {status === "error" && (
         <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
           <p className="text-sm text-red-800">
             Erro ao enviar mensagem. Tente novamente ou envie para contato@primeiranews.com
           </p>
@@ -150,7 +150,7 @@ export default function ContactForm() {
           </>
         ) : (
           <>
-            <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <Mail className="w-5 h-5" />
             Enviar Mensagem
           </>
         )}

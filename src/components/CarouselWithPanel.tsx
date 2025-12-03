@@ -79,8 +79,8 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           "linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)",
         borderRadius: "16px",
         padding: "16px",
-        minHeight: "387px",
-        maxHeight: "387px",
+        minHeight: "380.5px",
+        maxHeight: "380.5px",
         overflow: "hidden",
       }}
     >

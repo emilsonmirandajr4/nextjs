@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TrendingUp, Hash } from "lucide-react";
+import { BarChart3, Hash } from "lucide-react";
 import { fetchBrazilTrends } from "../services/twitter";
 
 export interface TrendingTopic {
@@ -50,14 +50,7 @@ export default function TrendingTopics({
         {/* Header com gradiente */}
         <div className="relative px-4 py-3 border-b border-blue-500/20 bg-gradient-to-r from-blue-950/50 to-indigo-950/30">
           <div className="flex items-center gap-2">
-            <div className="relative">
-              <div className="relative w-9 h-9 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl flex items-center justify-center">
-                <TrendingUp
-                  className="w-5 h-5 text-white"
-                  strokeWidth={2.5}
-                />
-              </div>
-            </div>
+            <BarChart3 className="w-4 h-4 text-white/80" strokeWidth={2} />
             <h3 className="text-lg font-black text-white tracking-tight bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
               Trending no X Brasil
             </h3>
@@ -80,12 +73,10 @@ export default function TrendingTopics({
                 key={index}
                 className="group/trend relative flex items-center gap-2.5 p-2 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-blue-900/30 hover:to-indigo-900/30 border border-slate-700/50 hover:border-blue-500/50"
               >
-                {/* Gradient glow on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-indigo-500/10 to-purple-500/0 opacity-0 group-hover/trend:opacity-100 rounded-xl transition-opacity duration-300"></div>
 
                 {/* Badge com número */}
                 <div className="flex-shrink-0">
-                  <div className="w-6 h-6 bg-slate-800/60 border border-slate-600/50 rounded flex items-center justify-center text-slate-300 text-xs font-semibold group-hover/trend:border-blue-500/70 group-hover/trend:text-blue-400 transition-colors">
+                  <div className="w-6 h-6 bg-slate-800/60 border border-slate-600/50 rounded flex items-center justify-center text-slate-300 text-xs font-semibold group-hover/trend:border-blue-500/70 group-hover/trend:text-blue-400">
                     {index + 1}
                   </div>
                 </div>
@@ -94,14 +85,14 @@ export default function TrendingTopics({
                 <div className="relative flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <Hash className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
-                    <span className="text-sm font-bold text-slate-100 group-hover/trend:text-white transition-colors truncate">
+                    <span className="text-sm font-bold text-slate-100 group-hover/trend:text-white truncate">
                       {topic.tag}
                     </span>
                   </div>
                 </div>
 
                 {/* Ícone de seta */}
-                <div className="flex-shrink-0 opacity-0 group-hover/trend:opacity-100 transition-opacity duration-300">
+                <div className="flex-shrink-0 opacity-0 group-hover/trend:opacity-100">
                   <svg
                     className="w-4 h-4 text-blue-400"
                     fill="none"
@@ -127,11 +118,11 @@ export default function TrendingTopics({
             href="https://twitter.com/explore/tabs/trending"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-white hover:text-blue-300 flex items-center gap-1.5 justify-center font-bold transition-colors group"
+            className="text-xs text-white hover:text-blue-300 flex items-center gap-1.5 justify-center font-bold group"
           >
             <span>Ver mais no X</span>
             <svg
-              className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"
+              className="w-3.5 h-3.5"
               fill="currentColor"
               viewBox="0 0 24 24"
             >

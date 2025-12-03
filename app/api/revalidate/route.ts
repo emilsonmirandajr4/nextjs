@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         }),
         { 
           status: 401,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
         }
       );
     }
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         }),
         { 
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
         }
       );
     }
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       }),
       { 
         status: 200,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
       }
     );
   } catch (error) {
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       }),
       { 
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
       }
     );
   }
@@ -102,7 +102,7 @@ export async function GET(request: Request) {
     }),
     { 
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
     }
   );
 }

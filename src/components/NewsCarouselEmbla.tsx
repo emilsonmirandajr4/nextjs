@@ -30,7 +30,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     {
       loop: true,
       align: "start",
-      duration: 40, // Transição mais suave (padrão é 25)
+      duration: 30,// Transição mais suave (padrão é 25)
     },
     [
       Fade(),
@@ -88,10 +88,17 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
   }
 
   return (
-    <div className="relative w-full space-y-2">
+    <div className="relative w-full space-y-4">
       {/* Main Carousel */}
       <div
-        className="overflow-hidden rounded-xl shadow-2xl shadow-blue-900/30 h-[380px]"
+        className="overflow-hidden rounded-xl h-[380px]"
+        style={{
+          boxShadow: `
+            rgba(6, 95, 212, 0.4) 3px 3px,
+            rgba(6, 95, 212, 0.25) 6px 6px,
+            rgba(6, 95, 212, 0.15) 9px 9px
+          `
+        }}
         ref={emblaMainRef}
       >
         <div className="flex touch-pan-y">
@@ -113,13 +120,12 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
                   <OptimizedImage
                     src={getImagePath(post)}
                     alt={getPostTitle(post)}
-                    ratio="none"
+                    ratio="16/9"
                     priority="high"
                     usePicture={true}
                     maxWidth={1200}
                     fetchpriority="high"
                     style={{
-                      filter: "brightness(120%)",
                       width: "100%",
                       height: "100%",
                     }}
@@ -138,7 +144,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
 
                   {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white line-clamp-2 group-hover:text-sky-400 transition-colors">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white line-clamp-2">
                       {getPostTitle(post)}
                     </h2>
                   </div>
@@ -154,7 +160,10 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
       <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
 
       {/* Thumbnails */}
-      <div className="overflow-hidden h-[120px]" ref={emblaThumbsRef}>
+      <div 
+        className="overflow-hidden h-[120px] rounded-lg" 
+        ref={emblaThumbsRef}
+      >
         <div className="flex gap-0">
           {posts.slice(0, 8).map((post, index) => (
             <Thumb

@@ -80,10 +80,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
             <div className="hidden md:flex items-center gap-2 text-xs text-slate-200/80">
               <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1">
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
                 </span>
-                Novos vídeos em destaque
               </span>
             </div>
           </div>
@@ -103,6 +100,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
                     <img
                       src={video.thumbnail}
                       alt={video.title}
+                      loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
 
