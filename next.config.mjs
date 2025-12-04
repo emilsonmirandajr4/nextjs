@@ -66,7 +66,6 @@ const nextConfig = {
     ],
     formats: ["image/avif"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3000],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   // Otimizações de compilação
   compiler: {
@@ -79,7 +78,7 @@ const nextConfig = {
   },
   // React 19 Compiler - Memoização automática (elimina necessidade de useCallback/useMemo manuais)
   // TEMPORARIAMENTE DESABILITADO: Problemas de compatibilidade com Vercel build
-  // reactCompiler: true,
+  reactCompiler: true,
 };
 
 export default withBundleAnalyzer(nextConfig);

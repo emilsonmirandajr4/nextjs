@@ -191,6 +191,7 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                 ratio="16/9"
                 priority="high"
                 usePicture={true}
+                sizes="(min-width: 1024px) 700px, 100vw"
               />
             </div>
 
@@ -251,6 +252,8 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                         placeholder="maincolor"
                         transitionDuration="300ms"
                         priority="normal"
+                        usePicture={true}
+                        sizes="96px"
                       />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
@@ -304,8 +307,9 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                       <OptimizedImage
                         src={getImagePath(opinionPosts[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || '')}
                         alt={opinionPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
-                        ratio="none"
-                        usePicture={false}
+                        ratio="16/9"
+                        usePicture={true}
+                        sizes="300px"
                         className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>

@@ -1,7 +1,6 @@
-// React 19: useCallback removido - React Compiler faz memoização automática
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -22,7 +21,6 @@ interface NewsCarouselEmblaProps {
 }
 
 export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
-  const [mounted, setMounted] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Main carousel com autoplay
@@ -61,16 +59,20 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     emblaMainApi.scrollTo(index);
   };
 
-  const onSelect = () => {
+  const onSelect = useCallback(() => {
     if (!emblaMainApi || !emblaThumbsApi) return;
     setSelectedIndex(emblaMainApi.selectedScrollSnap());
     emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap());
-  };
+  }, [emblaMainApi, emblaThumbsApi]);
 
   useEffect(() => {
     if (!emblaMainApi) return;
     onSelect();
     emblaMainApi.on("select", onSelect).on("reInit", onSelect);
+    
+    return () => {
+      emblaMainApi.off("select", onSelect).off("reInit", onSelect);
+    };
   }, [emblaMainApi, onSelect]);
 
   // Extrai path da imagem para TwicPics
@@ -79,12 +81,9 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     return imageUrl.replace(/^https?:\/\/[^/]+/, "") || "/placeholder.jpg";
   };
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !posts || posts.length === 0) {
-    return <div className="w-full h-[600px] bg-gray-900 animate-pulse" />;
+  // Early return apenas se não houver posts (dados do servidor)
+  if (!posts || posts.length === 0) {
+    return <div className="w-full h-[380px] bg-gray-900 animate-pulse rounded-xl" />;
   }
 
   return (
@@ -102,7 +101,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
         ref={emblaMainRef}
       >
         <div className="flex touch-pan-y">
-          {posts.slice(0, 8).map((post) => {
+          {posts.slice(0, 8).map((post, index) => {
             const categoryName =
               post.categories_names?.find(
                 (name) =>
@@ -121,10 +120,11 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
                     src={getImagePath(post)}
                     alt={getPostTitle(post)}
                     ratio="16/9"
-                    priority="high"
+                    priority={index === 0 ? "high" : "normal"}
                     usePicture={true}
-                    maxWidth={1200}
-                    fetchpriority="high"
+                    fetchpriority={index === 0 ? "high" : "auto"}
+                    // sizes: mobile=100vw, lg+=50% de max-w-7xl (~640px)
+                    sizes="(min-width: 1024px) 640px, 100vw"
                     style={{
                       width: "100%",
                       height: "100%",

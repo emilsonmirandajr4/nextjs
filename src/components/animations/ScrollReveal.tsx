@@ -33,6 +33,7 @@ export default function ScrollReveal({
   skeleton,
 }: ScrollRevealProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(!showSkeleton);
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -82,13 +83,24 @@ export default function ScrollReveal({
     };
   }, [threshold, rootMargin, triggerOnce]);
 
+  // Remove willChange após a animação completar para liberar memória
+  useEffect(() => {
+    if (isVisible && !animationComplete) {
+      const timer = setTimeout(() => {
+        setAnimationComplete(true);
+      }, duration + delay + 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, duration, delay, animationComplete]);
+
   // Estilos base para cada tipo de animação (estado inicial - antes de aparecer)
   const getInitialStyle = (): React.CSSProperties => {
     // Transição rápida e suave
     const baseStyle: React.CSSProperties = {
       opacity: 0,
       transition: `all ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms`,
-      willChange: 'transform, opacity',
+      // willChange só enquanto animação não completou (libera memória GPU depois)
+      ...(animationComplete ? {} : { willChange: 'transform, opacity' }),
     };
 
     switch (animation) {
@@ -151,13 +163,17 @@ export default function ScrollReveal({
 
   // Estilos quando visível (estado final - depois de aparecer)
   const getVisibleStyle = (): React.CSSProperties => {
-    return {
+    const style: React.CSSProperties = {
       opacity: 1,
       transform: 'translateY(0) translateX(0) scale(1)',
       filter: 'blur(0px)',
       transition: `all ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms`,
-      willChange: 'auto',
     };
+    // Só adiciona willChange: auto se animação não completou (depois remove propriedade)
+    if (!animationComplete) {
+      style.willChange = 'auto';
+    }
+    return style;
   };
 
   // Se skeleton está habilitado e ainda está carregando

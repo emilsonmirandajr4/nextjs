@@ -89,9 +89,10 @@ export default function NewsSection({ posts, title, icon, iconColor = 'sky' }: N
                 <OptimizedImage
                   src={getImagePath(post)}
                   alt={getPostTitle(post)}
-                  ratio="none"
-                  usePicture={false}
+                  ratio="16/9"
+                  usePicture={true}
                   priority="normal"
+                  sizes="112px"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>

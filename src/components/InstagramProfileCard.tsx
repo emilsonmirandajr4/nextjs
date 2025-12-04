@@ -47,6 +47,7 @@ export default function InstagramProfileCard({
                   placeholder="none"
                   priority="normal"
                   usePicture={false}
+                  sizes="96px"
                   className="h-full w-full object-cover"
                 />
               </div>

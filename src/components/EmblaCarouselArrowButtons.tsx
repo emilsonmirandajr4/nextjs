@@ -1,5 +1,5 @@
 import React from 'react'
-export { usePrevNextButtons } from './hooks/usePrevNextButtons'
+export { usePrevNextButtons } from './embla/hooks/usePrevNextButtons'
 
 type PropType = React.ComponentPropsWithRef<'button'>
 

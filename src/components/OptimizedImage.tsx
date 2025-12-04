@@ -22,6 +22,8 @@ interface OptimizedImageProps {
   maxWidth?: number;
   // HTML fetchpriority para otimização de LCP
   fetchpriority?: "high" | "low" | "auto";
+  // sizes para responsive images (ex: "(max-width: 768px) 100vw, 50vw")
+  sizes?: string;
 }
 
 export default function OptimizedImage({
@@ -40,6 +42,7 @@ export default function OptimizedImage({
   transitionDuration = "300ms",
   maxWidth,
   fetchpriority,
+  sizes,
 }: OptimizedImageProps) {
   
   // Remove domínio da URL se necessário para TwicPics
@@ -68,6 +71,7 @@ export default function OptimizedImage({
         {...commonProps}
         eager={isEager || undefined}
         anchor={anchor}
+        sizes={sizes}
       />
     );
   }

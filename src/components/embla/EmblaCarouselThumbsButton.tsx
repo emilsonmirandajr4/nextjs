@@ -27,7 +27,7 @@ export const Thumb: React.FC<PropType> = (props) => {
         ratio="16/9"
         priority="normal"
         usePicture={true}
-        maxWidth={200}
+        sizes="120px"
         style={{ width: '100%', height: '100%' }}
         className="w-full h-full object-cover"
       />
