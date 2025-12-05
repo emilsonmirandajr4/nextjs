@@ -11,12 +11,6 @@ export const WORDPRESS_CONFIG = {
     CATEGORIES: 3153600,    // 1 year (categorias não mudam muito)
     TAGS: 864000,         // 1 dia
     MEDIA: 31536000,       // 1 year (imagens não mudam)
-    POSTS_LIST: 3600000,   // 1 hora
-    POSTS_CATEGORY: 3600000, // 1 hora
-    POST_SINGLE: 3600000,  // 1 hora
-    CATEGORIES: 60000,    // 1 minuto (categorias não mudam muito)
-    TAGS: 300000,         // 5 minutos
-    MEDIA: 315360000,    // 1 ano (imagens não mudam)
   },
   
   PAGINATION: {

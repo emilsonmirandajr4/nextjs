@@ -2,14 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "env": [
-    "WEBHOOK_SECRET",
-    "NEXTJS_SITE_URL"
-  ],
   "headers": [
-    // ============================================
-    // API ENDPOINTS - SEM CACHE (dados frescos)
-    // ============================================
     {
       "source": "/api/posts(.*)",
       "headers": [
@@ -36,9 +29,6 @@
         }
       ]
     },
-    // ============================================
-    // TRENDING TOPICS - CACHE CURTO
-    // ============================================
     {
       "source": "/api/twitter/trends",
       "headers": [
@@ -52,9 +42,6 @@
         }
       ]
     },
-    // ============================================
-    // YOUTUBE METADATA - CACHE DIFERENCIADO
-    // ============================================
     {
       "source": "/api/youtube/metadata",
       "headers": [
@@ -72,9 +59,6 @@
         }
       ]
     },
-    // ============================================
-    // NEXT.JS STATIC ASSETS - CACHE MÁXIMO
-    // ============================================
     {
       "source": "/_next/static/(.*)",
       "headers": [
@@ -88,11 +72,8 @@
         }
       ]
     },
-    // ============================================
-    // FONTS - CACHE MÁXIMO COM CORS
-    // ============================================
     {
-      "source": "/fonts/(.*)\\.woff2?",
+      "source": "/fonts/(.*)\\.woff2",
       "headers": [
         {
           "key": "Vercel-CDN-Cache-Control",
@@ -108,9 +89,6 @@
         }
       ]
     },
-    // ============================================
-    // SECURITY HEADERS - TODAS AS PÁGINAS
-    // ============================================
     {
       "source": "/(.*)",
       "headers": [
@@ -119,20 +97,12 @@
           "value": "SAMEORIGIN"
         },
         {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
         },
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "geolocation=(), microphone=(), camera=()"
         }
       ]
     }
@@ -148,23 +118,5 @@
       "destination": "https://primeiranews.com.br/wp-json$1",
       "permanent": false
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/api/robots"
-    }
-  ],
-  "functions": {
-    "api/revalidate.ts": {
-      "maxDuration": 10
-    },
-    "api/posts.ts": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
