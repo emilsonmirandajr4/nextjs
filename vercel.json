@@ -1,39 +1,170 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "env": [
+    "WEBHOOK_SECRET",
+    "NEXTJS_SITE_URL"
+  ],
   "headers": [
+    // ============================================
+    // API ENDPOINTS - SEM CACHE (dados frescos)
+    // ============================================
+    {
+      "source": "/api/posts(.*)",
+      "headers": [
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, proxy-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/revalidate",
+      "headers": [
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, proxy-revalidate"
+        }
+      ]
+    },
+    // ============================================
+    // TRENDING TOPICS - CACHE CURTO
+    // ============================================
+    {
+      "source": "/api/twitter/trends",
+      "headers": [
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "max-age=300"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
+    },
+    // ============================================
+    // YOUTUBE METADATA - CACHE DIFERENCIADO
+    // ============================================
+    {
+      "source": "/api/youtube/metadata",
+      "headers": [
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "max-age=86400"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "max-age=86400"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    // ============================================
+    // NEXT.JS STATIC ASSETS - CACHE MÁXIMO
+    // ============================================
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "max-age=31536000, immutable"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    // ============================================
+    // FONTS - CACHE MÁXIMO COM CORS
+    // ============================================
+    {
+      "source": "/fonts/(.*)\\.woff2?",
+      "headers": [
+        {
+          "key": "Vercel-CDN-Cache-Control",
+          "value": "max-age=31536000, immutable"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    // ============================================
+    // SECURITY HEADERS - TODAS AS PÁGINAS
+    // ============================================
     {
       "source": "/(.*)",
       "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
         },
         {
-          "key": "X-Frame-Options",
-          "value": "DENY"
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         },
         {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/_next/static/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), camera=()"
         }
       ]
     }
-  ]
+  ],
+  "redirects": [
+    {
+      "source": "/wp-admin(.*)",
+      "destination": "https://primeiranews.com.br/wp-admin$1",
+      "permanent": false
+    },
+    {
+      "source": "/wp-json(.*)",
+      "destination": "https://primeiranews.com.br/wp-json$1",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/api/robots"
+    }
+  ],
+  "functions": {
+    "api/revalidate.ts": {
+      "maxDuration": 10
+    },
+    "api/posts.ts": {
+      "maxDuration": 30
+    }
+  }
 }

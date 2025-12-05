@@ -24,7 +24,7 @@ const robotoCondensed = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Primeira News',
+    default: 'Primeira News - Notícias imparciais sobre política, economia e mundo.',
     template: '%s | Primeira News',
   },
   description: 'Portal de notícias com as últimas informações sobre política, economia e mundo.',

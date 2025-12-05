@@ -189,8 +189,8 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                 src={getImagePath(getPostImage())}
                 alt={post.title.rendered}
                 ratio="16/9"
-                priority="high"
-                usePicture={true}
+                priority="normal"
+                usePicture={false}
               />
             </div>
 

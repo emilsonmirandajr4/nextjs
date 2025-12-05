@@ -26,29 +26,6 @@ const nextConfig = {
       "@radix-ui/react-icons",
     ],
   },
-  // Headers para melhorar cache e performance
-  async headers() {
-    return [
-      {
-        source: '/:all*(svg|jpg|jpeg|png|gif|ico|webp|avif)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
-  },
   // Define explicit root directory to avoid lockfile conflicts
   turbopack: {
     root: process.cwd(),
@@ -65,8 +42,7 @@ const nextConfig = {
       },
     ],
     formats: ["image/avif"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3000],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3000],
   },
   // Otimizações de compilação
   compiler: {
@@ -77,9 +53,8 @@ const nextConfig = {
           }
         : false,
   },
-  // React 19 Compiler - Memoização automática (elimina necessidade de useCallback/useMemo manuais)
-  // TEMPORARIAMENTE DESABILITADO: Problemas de compatibilidade com Vercel build
-  // reactCompiler: true,
+
+  reactCompiler: true,
 };
 
 export default withBundleAnalyzer(nextConfig);
