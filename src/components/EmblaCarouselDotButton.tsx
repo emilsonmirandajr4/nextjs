@@ -1,5 +1,5 @@
 import React, { ComponentPropsWithRef } from 'react'
-export { useDotButton } from './hooks/useDotButton'
+export { useDotButton } from './embla/hooks/useDotButton'
 
 
 type PropType = ComponentPropsWithRef<'button'>

@@ -289,8 +289,8 @@ export default async function HomePage() {
 
       <main className="max-w-7xl mx-auto px-4 py-4">
         {/* Grid Principal: Sidebars + Carousel de Notícias */}
-        <ScrollReveal animation="fade" duration={400}>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        {/* SEM ScrollReveal no elemento LCP para não atrasar renderização */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
             {/* Sidebar Esquerda - Server Component */}
             <div className="lg:col-span-3">
               <SidebarServer
@@ -312,8 +312,7 @@ export default async function HomePage() {
                 title="Assuntos em Alta"
               />
             </div>
-          </div>
-        </ScrollReveal>
+        </div>
 
         {/* Seção Instagram - Vale a Pena Seguir */}
         <ScrollReveal animation="fade" duration={500} delay={100}>

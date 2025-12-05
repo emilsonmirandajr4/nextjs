@@ -22,12 +22,16 @@ export default function TrendingTopics({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+    
     // Se não temos dados iniciais, carregar imediatamente
     if (initialTrends.length === 0) {
       setLoading(true);
       fetchBrazilTrends().then((data) => {
-        setTrends(data);
-        setLoading(false);
+        if (isMounted) {
+          setTrends(data);
+          setLoading(false);
+        }
       });
     }
 
@@ -35,12 +39,17 @@ export default function TrendingTopics({
     const interval = setInterval(
       async () => {
         const data = await fetchBrazilTrends();
-        setTrends(data);
+        if (isMounted) {
+          setTrends(data);
+        }
       },
       5 * 60 * 1000,
     );
 
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [initialTrends.length]);
 
   return (

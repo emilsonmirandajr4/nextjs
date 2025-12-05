@@ -350,6 +350,8 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                       ratio="16/9"
                       usePicture={true}
                       priority="normal"
+                      // slide-size: 60% de 2/3 do container (~400px), mobile 85%
+                      sizes="(min-width: 1024px) 400px, (min-width: 768px) 350px, 280px"
                       className="embla__slide__img"
                     />
                   </div>

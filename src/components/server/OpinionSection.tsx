@@ -48,8 +48,9 @@ export default function OpinionSection({ posts }: OpinionSectionProps) {
             <OptimizedImage
               src={getImagePath(featuredPost)}
               alt={featuredPost.title.rendered.replace(/<[^>]*>/g, "")}
-              ratio="none"
-              usePicture={false}
+              ratio="16/9"
+              usePicture={true}
+              sizes="(min-width: 1024px) 350px, (min-width: 768px) 300px, 100vw"
               className="w-full h-52 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
