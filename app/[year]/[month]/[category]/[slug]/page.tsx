@@ -141,7 +141,6 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
             {post.excerpt?.rendered && (
               <div 
                 className="text-lg text-gray-600 mb-6 leading-relaxed font-normal"
-                style={{ fontFamily: 'Roboto Condensed', fontWeight: 400 }}
                 dangerouslySetInnerHTML={{ 
                   __html: post.excerpt.rendered
                     .replace(/<[^>]+>/g, '')

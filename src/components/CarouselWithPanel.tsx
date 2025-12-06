@@ -131,10 +131,8 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           font-size: 12px;
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.4px;
           border-radius: 8px;
           z-index: 10;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .carousel-wrapper {

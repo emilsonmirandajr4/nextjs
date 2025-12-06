@@ -11,6 +11,9 @@ import { getPostsByCategorySlug } from "@/server/wordpress";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
 import { getPostUrl } from "@/utils/navigation";
 
+// NOTA: Revalidação via webhook - cacheComponents no next.config.mjs cuida do cache automaticamente
+// Não use 'export const revalidate' pois é incompatível com cacheComponents
+
 interface PageProps {
   params: {
     slug: string;

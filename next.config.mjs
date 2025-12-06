@@ -13,7 +13,11 @@ const nextConfig = {
   // Enable Cache Components (v16 feature - PPR alternative)
   cacheComponents: true,
 
+  // React Compiler (auto-memoization)
+  reactCompiler: true,
+
   experimental: {
+    inlineCss: true,
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
     optimizePackageImports: [
@@ -46,8 +50,10 @@ const nextConfig = {
     deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3000],
   },
 
-  // (REMOVIDO) compiler.removeConsole
-  // (REMOVIDO) reactCompiler: true
+  // Remove console.log em produção
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);

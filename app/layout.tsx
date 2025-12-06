@@ -20,6 +20,8 @@ const robotoCondensed = localFont({
   ],
   variable: '--font-roboto-condensed',
   display: 'swap',
+  preload: false,
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {

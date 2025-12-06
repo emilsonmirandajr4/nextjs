@@ -22,8 +22,8 @@ import { getPostImage, getPostTitle } from "@/services/wordpress";
 import type { WordPressPost } from "@/types/wordpress";
 import { ScrollReveal } from "@/components/animations";
 
-// NOTA: Cache ZERO configurado em src/config/wordpress.ts
-// cacheComponents no next.config.mjs cuida do cache automaticamente
+// NOTA: Revalidação via webhook - cacheComponents no next.config.mjs cuida do cache automaticamente
+// Não use 'export const revalidate' pois é incompatível com cacheComponents
 
 // Dynamic imports para componentes abaixo da dobra ou pesados
 const CarouselWithPanelWrapper = dynamic(
