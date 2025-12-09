@@ -216,7 +216,6 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           -webkit-appearance: none;
           appearance: none;
           background: rgba(220, 38, 38, 0.15);
-          border: 1.5px solid rgba(220, 38, 38, 0.4);
           touch-action: manipulation;
           cursor: pointer;
           padding: 0;

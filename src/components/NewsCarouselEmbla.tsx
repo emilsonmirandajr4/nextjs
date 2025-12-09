@@ -83,14 +83,14 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
 
   // Early return apenas se não houver posts (dados do servidor)
   if (!posts || posts.length === 0) {
-    return <div className="w-full h-[380px] bg-gray-900 animate-pulse rounded-xl" />;
+    return <div className="w-full h-[370px] bg-gray-900 animate-pulse rounded-xl" />;
   }
 
   return (
     <div className="relative w-full space-y-4">
       {/* Main Carousel */}
       <div
-        className="overflow-hidden rounded-xl h-[380px]"
+        className="overflow-hidden rounded-xl h-[370px]"
         style={{
           boxShadow: `
             rgba(6, 95, 212, 0.4) 3px 3px,

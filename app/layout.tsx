@@ -77,10 +77,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://primeiranews.twic.pics" crossOrigin="anonymous"/>
-        <link rel="preconnect" href="https://primeiranews.com.br" crossOrigin="anonymous"/>
-      </head>
+      {/* Preconnects movidos para Early Hints (next.config.mjs) - carregam ANTES do HTML */}
       <body className={`${robotoCondensed.variable} font-sans bg-white text-gray-900 antialiased`} suppressHydrationWarning>
         <Providers>
           <Suspense fallback={null}>

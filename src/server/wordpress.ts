@@ -178,3 +178,55 @@ export const getPostSingleCacheControl = (): string =>
 
 export const getCategoryPostsCacheControl = (): string =>
   createCacheControlHeader(WORDPRESS_CONFIG.CACHE_TTL.POSTS_LIST);
+
+/**
+ * Normaliza nome de categoria para matching consistente
+ * Remove acentos, converte para lowercase, remove espaços extras
+ */
+function normalizeCategoryName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(/\s+/g, '-') // Espaços → hífens
+    .replace(/[^a-z0-9-]/g, ''); // Remove caracteres especiais
+}
+
+/**
+ * Otimização: Busca posts uma vez e filtra por múltiplas categorias localmente
+ * Evita requisições duplicadas quando posts estão em múltiplas categorias
+ * 
+ * @example
+ * const grouped = await getPostsGroupedByCategories(50);
+ * const noticias = grouped['noticias'] || [];
+ * const politica = grouped['politica'] || [];
+ */
+export async function getPostsGroupedByCategories(
+  perPage: number = 50,
+  page: number = 1
+): Promise<Record<string, WordPressPost[]>> {
+  // Busca todos os posts de uma vez (1 requisição!)
+  const allPosts = await getPosts(perPage, page);
+  
+  // Agrupa por categoria (um post pode estar em múltiplas)
+  const grouped: Record<string, WordPressPost[]> = {};
+  
+  for (const post of allPosts) {
+    if (post.categories_names && Array.isArray(post.categories_names)) {
+      for (const categoryName of post.categories_names) {
+        const key = normalizeCategoryName(categoryName);
+        
+        if (!grouped[key]) {
+          grouped[key] = [];
+        }
+        
+        // Evita duplicatas no mesmo array
+        if (!grouped[key].some(p => p.id === post.id)) {
+          grouped[key].push(post);
+        }
+      }
+    }
+  }
+  
+  return grouped;
+}

@@ -15,7 +15,7 @@ const InstagramSection = dynamic(
   () => import("@/components/InstagramSection"),
   { ssr: true }
 );
-import { getPosts, getPostsByCategorySlug } from "@/server/wordpress";
+import { getPostsGroupedByCategories } from "@/server/wordpress";
 import { fetchBrazilTrendsServer } from "@/server/twitter";
 import { getFeaturedVideos } from "@/data/videos";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
@@ -72,25 +72,23 @@ const LazyVideoCarousel = dynamic(
 );
 
 async function fetchHomeData() {
-  const [
-    posts, 
-    newsPosts, 
-    enganadoresPosts, 
-    opinionPosts, 
-    judiciaryPosts,
-    politicsPosts,
-    economyPosts,
-    trends
-  ] = await Promise.all([
-      getPosts(20, 1),
-      getPostsByCategorySlug("noticias", 10, 1), // Mais posts para sidebars
-      getPostsByCategorySlug("enganadores", 5, 1),
-      getPostsByCategorySlug("opiniao", 3, 1),
-      getPostsByCategorySlug("judiciario", 10, 1), // Mais posts para sidebars
-      getPostsByCategorySlug("politica", 10, 1), // Mais posts para sidebars
-      getPostsByCategorySlug("economia", 10, 1), // Mais posts para sidebars
-      fetchBrazilTrendsServer(),
-    ]);
+  // ✅ OTIMIZADO: 1 requisição em vez de 7!
+  // Busca 50 posts de uma vez e agrupa por categoria localmente
+  const [postsByCategory, trends] = await Promise.all([
+    getPostsGroupedByCategories(50, 1),
+    fetchBrazilTrendsServer(),
+  ]);
+
+  // Extrai categorias específicas (já deduplicados automaticamente)
+  // Nomes normalizados: lowercase, sem acentos, espaços → hífens
+  const allPostsFlat = Object.values(postsByCategory).flat();
+  const posts = allPostsFlat.slice(0, 20);
+  const newsPosts = postsByCategory['noticias']?.slice(0, 10) || [];
+  const enganadoresPosts = postsByCategory['enganadores']?.slice(0, 5) || [];
+  const opinionPosts = postsByCategory['opiniao']?.slice(0, 3) || [];
+  const judiciaryPosts = postsByCategory['judiciario']?.slice(0, 10) || [];
+  const politicsPosts = postsByCategory['politica']?.slice(0, 10) || [];
+  const economyPosts = postsByCategory['economia']?.slice(0, 10) || [];
 
   return { 
     posts, 
