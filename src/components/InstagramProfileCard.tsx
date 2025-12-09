@@ -79,6 +79,7 @@ export default function InstagramProfileCard({
             </div>
           )}
         </div>
+        
 
         <a
           href={profileUrl}

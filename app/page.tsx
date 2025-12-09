@@ -315,14 +315,14 @@ export default async function HomePage() {
         </div>
 
         {/* Seção Instagram - Vale a Pena Seguir */}
-        <ScrollReveal animation="fade" duration={500} delay={100}>
+        <ScrollReveal animation="fade" duration={400} delay={200}>
           <div className="mt-4">
             <InstagramSection />
           </div>
         </ScrollReveal>
 
         {/* Carousel 3D com Painel e Trending Topics */}
-        <ScrollReveal animation="slide-up" duration={500} delay={100}>
+        <ScrollReveal animation="slide-up" duration={400} delay={200}>
           <section className="mt-4 relative">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
               {/* Carousel 3D - Client Component */}
@@ -342,7 +342,7 @@ export default async function HomePage() {
         </ScrollReveal>
 
         {/* Seções de Notícias - Server Components */}
-        <ScrollReveal animation="fade-scale" duration={500} delay={100}>
+        <ScrollReveal animation="fade-scale" duration={400} delay={200}>
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Container para Últimas Notícias e Judiciário */}
             <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -350,7 +350,6 @@ export default async function HomePage() {
               <NewsSection
                 posts={postsData.latestNewsPosts}
                 title="Últimas Notícias"
-                icon="clock"
                 iconColor="sky"
               />
 
@@ -358,7 +357,6 @@ export default async function HomePage() {
               <NewsSection
                 posts={postsData.judiciaryPosts}
                 title="Judiciário"
-                icon="scale"
                 iconColor="red"
               />
             </div>
@@ -372,7 +370,7 @@ export default async function HomePage() {
 
         {/* Seção de Vídeos em Destaque - Client Component (lazy loaded) */}
         {featuredVideos.length > 0 && (
-          <ScrollReveal animation="slide-up" duration={200} delay={25}>
+          <ScrollReveal animation="slide-up" duration={300} delay={150}>
             <LazyVideoCarousel videos={featuredVideos} />
           </ScrollReveal>
         )}

@@ -30,9 +30,9 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
   }
 
   try {
-    // Timeout protection: abort fetch after 1.5 seconds
+    // Timeout protection: abort fetch after 1.1 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
+    const timeoutId = setTimeout(() => controller.abort(), 1100);
 
     const response = await fetch(
       `https://api.twitter.com/1.1/trends/place.json?id=${BRAZIL_WOEID}`,
@@ -41,7 +41,7 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
           Authorization: `Bearer ${bearer}`,
         },
         signal: controller.signal,
-        next: { revalidate: 300 }, // Cache for 5 minutes
+        next: { revalidate: 60 }, // Cache for 1 minutes
       },
     );
 
@@ -75,9 +75,9 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
 
 async function fetchFromGetDayTrends(): Promise<TrendingTopic[] | null> {
   try {
-    // Timeout protection: abort fetch after 1.5 seconds
+    // Timeout protection: abort fetch after 1.1 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
+    const timeoutId = setTimeout(() => controller.abort(), 1100);
 
     const response = await fetch("https://getdaytrends.com/brazil/", {
       headers: {
@@ -85,7 +85,7 @@ async function fetchFromGetDayTrends(): Promise<TrendingTopic[] | null> {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
       },
       signal: controller.signal,
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      next: { revalidate: 60 }, // Cache for 1 minutes
     });
 
     clearTimeout(timeoutId);
@@ -168,19 +168,6 @@ function getFallbackTrends(): TrendingTopic[] {
   ];
 }
 
-/**
- * Fetch Brazil trending topics (Server-side only)
- * This function should only be called from Server Components
- *
- * Features:
- * - Tries Twitter API first (if token available)
- * - Falls back to GetDayTrends scraping
- * - Falls back to static trends if all sources fail
- * - 1.5-second timeout on all external requests
- * - Cached for 5 minutes (Next.js revalidation)
- *
- * @returns Array of trending topics (always returns data, never fails)
- */
 export async function fetchBrazilTrendsServer(): Promise<TrendingTopic[]> {
   try {
     // Try Twitter API first

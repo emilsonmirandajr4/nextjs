@@ -42,7 +42,7 @@ export default function OptimizedImage({
   transitionDuration = "300ms",
   maxWidth,
   fetchpriority,
-  sizes,
+  sizes = "auto, (max-width: 30em) 100vw, (max-width: 50em) 50vw, calc(33vw - 100px)",
 }: OptimizedImageProps) {
   
   // Remove domínio da URL se necessário para TwicPics

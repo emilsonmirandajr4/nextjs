@@ -79,8 +79,8 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           "linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)",
         borderRadius: "16px",
         padding: "16px",
-        minHeight: "380.5px",
-        maxHeight: "380.5px",
+        minHeight: "340px",
+        maxHeight: "340px",
         overflow: "hidden",
       }}
     >
@@ -345,8 +345,8 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                     <OptimizedImage
                       src={item.image}
                       alt={item.title}
-                      ratio="16/9"
-                      usePicture={true}
+                      ratio="1/1"
+                      usePicture={false}
                       priority="normal"
                       // slide-size: 60% de 2/3 do container (~400px), mobile 85%
                       sizes="(min-width: 1024px) 400px, (min-width: 768px) 350px, 280px"
