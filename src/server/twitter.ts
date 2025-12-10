@@ -30,9 +30,9 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
   }
 
   try {
-    // Timeout protection: abort fetch after 1.1 seconds
+    // Timeout protection: abort fetch after 1.3 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1100);
+    const timeoutId = setTimeout(() => controller.abort(), 1300);
 
     const response = await fetch(
       `https://api.twitter.com/1.1/trends/place.json?id=${BRAZIL_WOEID}`,
@@ -41,7 +41,7 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
           Authorization: `Bearer ${bearer}`,
         },
         signal: controller.signal,
-        next: { revalidate: 60 }, // Cache for 1 minutes
+        next: { revalidate: 300 }, // Cache for 5 minutes
       },
     );
 
@@ -75,9 +75,9 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
 
 async function fetchFromGetDayTrends(): Promise<TrendingTopic[] | null> {
   try {
-    // Timeout protection: abort fetch after 1.1 seconds
+    // Timeout protection: abort fetch after 1.3 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1100);
+    const timeoutId = setTimeout(() => controller.abort(), 1300);
 
     const response = await fetch("https://getdaytrends.com/brazil/", {
       headers: {
@@ -85,7 +85,7 @@ async function fetchFromGetDayTrends(): Promise<TrendingTopic[] | null> {
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
       },
       signal: controller.signal,
-      next: { revalidate: 60 }, // Cache for 1 minutes
+      next: { revalidate: 300 }, // Cache for 5 minutes
     });
 
     clearTimeout(timeoutId);

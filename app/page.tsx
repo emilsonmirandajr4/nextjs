@@ -368,7 +368,7 @@ export default async function HomePage() {
 
         {/* Seção de Vídeos em Destaque - Client Component (lazy loaded) */}
         {featuredVideos.length > 0 && (
-          <ScrollReveal animation="slide-up" duration={300} delay={150}>
+          <ScrollReveal animation="slide-up" duration={300} delay={100}>
             <LazyVideoCarousel videos={featuredVideos} />
           </ScrollReveal>
         )}

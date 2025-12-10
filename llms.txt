@@ -1,8 +1,8 @@
 # Primeira News - Next.js WordPress Frontend
 
-Primeira News is a modern news portal built with Next.js 16.1 (canary) and React 19.3 (canary), serving as a performant frontend for a WordPress-powered content management system. The application leverages Next.js App Router, Server Components, React Compiler, and advanced caching strategies to deliver fast-loading news content with real-time updates via webhook integration.
+Primeira News is a modern news portal built with Next.js 16.1.0-canary.14 and React 19.3.0-canary-fd524fe0-20251121, serving as a performant frontend for a WordPress-powered content management system. The application leverages Next.js App Router, Server Components, React Compiler (automatic memoization), and advanced caching strategies to deliver fast-loading news content with real-time updates via webhook integration.
 
-The project implements a complete news aggregation platform featuring WordPress REST API integration, Twitter/X trending topics, YouTube video metadata fetching, and responsive image optimization with TwicPics. It uses TanStack Query for client-side data management, Embla Carousel for content sliders, and Motion (Framer Motion) for smooth animations. The architecture emphasizes performance with component-level caching (cacheComponents), React Compiler optimizations, ISR (Incremental Static Regeneration), and on-demand revalidation with advanced rate limiting and multi-tag support.
+The project implements a complete news aggregation platform featuring WordPress REST API integration, Twitter/X trending topics, YouTube video metadata fetching, and responsive image optimization with TwicPics. It uses TanStack Query for client-side data management, Embla Carousel for content sliders, and Motion (Framer Motion) for smooth animations. The architecture emphasizes performance with component-level caching (cacheComponents), React Compiler auto-memoization, ISR (Incremental Static Regeneration), and on-demand revalidation with advanced rate limiting and multi-tag support.
 
 ## API Endpoints
 
@@ -269,7 +269,7 @@ export default async function HomePage() {
 
 // This function:
 // - Fetches from WordPress REST API with _embed parameter
-// - Caches for 1 hour (configurable in WORDPRESS_CONFIG)
+// - Caches for 1 minute (configurable in WORDPRESS_CONFIG)
 // - Tags cache with 'posts-list' for on-demand revalidation
 // - Automatically extracts category names from _embedded data
 ```
@@ -307,7 +307,7 @@ export default async function PostPage({
 // - Tags cache with 'post-{slug}' for targeted revalidation
 // - Returns null if post not found (triggers 404)
 // - Includes embedded featured media and author data
-// - Caches for 1 hour with stale-while-revalidate
+// - Caches for 5 minutes with stale-while-revalidate
 ```
 
 ### getPostsByCategorySlug(slug, perPage, page)
@@ -347,6 +347,56 @@ export default async function CategoryPage({
 // - Falls back to fuzzy search with normalized text (removes accents)
 // - Returns empty array if category not found
 // - Tagged with 'posts-list' for cache revalidation
+```
+
+### getPostsGroupedByCategories(perPage, page)
+
+Optimized server-only function to fetch posts once and group by multiple categories locally.
+
+```typescript
+// app/page.tsx
+import { getPostsGroupedByCategories } from '@/src/server/wordpress';
+
+export default async function HomePage() {
+  // Fetch 50 posts once, grouped by all categories (1 API call!)
+  const grouped = await getPostsGroupedByCategories(50, 1);
+
+  const noticias = grouped['noticias'] || [];
+  const politica = grouped['politica'] || [];
+  const esportes = grouped['esportes'] || [];
+
+  return (
+    <div>
+      <section>
+        <h2>Notícias</h2>
+        {noticias.slice(0, 5).map(post => (
+          <article key={post.id}>{post.title.rendered}</article>
+        ))}
+      </section>
+
+      <section>
+        <h2>Política</h2>
+        {politica.slice(0, 5).map(post => (
+          <article key={post.id}>{post.title.rendered}</article>
+        ))}
+      </section>
+
+      <section>
+        <h2>Esportes</h2>
+        {esportes.slice(0, 5).map(post => (
+          <article key={post.id}>{post.title.rendered}</article>
+        ))}
+      </section>
+    </div>
+  );
+}
+
+// This function:
+// - Fetches posts ONCE and groups by all categories
+// - Avoids duplicate API calls when posts appear in multiple categories
+// - Normalizes category names (removes accents, lowercase)
+// - More efficient than multiple getPostsByCategorySlug() calls
+// - Returns Record<string, WordPressPost[]> mapping category slug to posts
 ```
 
 ## Client-Side React Hooks
@@ -623,14 +673,15 @@ export const WORDPRESS_CONFIG = {
   API_BASE: 'https://primeiranews.com.br/wp-json/wp/v2',
   SITE_URL: 'https://primeiranews.com.br',
 
-  // Cache TTL configuration (in seconds, not milliseconds)
+  // Cache TTL configuration (in seconds)
+  // Short TTL values for fast updates via webhook revalidation
   CACHE_TTL: {
-    POSTS_LIST: 86400,      // 24 hours (1 day)
-    POSTS_CATEGORY: 864000, // 10 days
-    POST_SINGLE: 864000,    // 10 days
-    CATEGORIES: 3153600,    // 1 year (categories rarely change)
-    TAGS: 864000,           // 10 days
-    MEDIA: 31536000,        // 1 year (images don't change)
+    POSTS_LIST: 60,        // 1 minute - revalidated via webhook on publish
+    POSTS_CATEGORY: 300,   // 5 minutes - revalidated via webhook on publish
+    POST_SINGLE: 300,      // 5 minutes - revalidated via webhook on edit
+    CATEGORIES: 3600,      // 1 hour (categories rarely change)
+    TAGS: 3600,            // 1 hour
+    MEDIA: 31536000,       // 1 year (images don't change)
   },
 
   PAGINATION: {
@@ -667,14 +718,27 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig = {
   // Enable component-level caching (Next.js 16 feature - PPR alternative)
-  // Note: In dev mode, server caches are disabled for easier debugging
-  // Caches work perfectly in production (npm run build)
   cacheComponents: true,
 
+  // React Compiler (automatic memoization - replaces manual React.memo)
+  reactCompiler: true,
+
   experimental: {
+    // Inline CSS into HTML for faster rendering
+    inlineCss: true,
+
     // Turbopack caching for faster builds
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
+
+    // Client-side router cache - optimized for news portal
+    staleTimes: {
+      dynamic: 30,    // 30s for dynamic routes (posts)
+      static: 1800,   // 30min for static routes
+    },
+
+    // Optimize Server Component rendering
+    optimizeServerReact: true,
 
     // Optimize package imports to reduce bundle size
     optimizePackageImports: [
@@ -701,23 +765,113 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'primeiranewsimg.twic.pics',
+      },
+      {
+        protocol: 'https',
         hostname: 'primeiranews.twic.pics',
       },
     ],
     formats: ['image/avif'],
     deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3000],
+    imageSizes: [32, 48, 64, 96, 128, 256, 384],
+    qualities: [80],
+    minimumCacheTTL: 2678400, // 31 days
   },
 
-  // Compilation optimizations
+  // Remove console.log in production
   compiler: {
-    // Remove console logs in production (except errors/warnings)
-    removeConsole: process.env.NODE_ENV === 'production'
-      ? { exclude: ['error', 'warn'] }
-      : false,
+    removeConsole: process.env.NODE_ENV === "production",
   },
 
-  // Enable React Compiler for automatic optimizations
-  reactCompiler: true,
+  // HTTP Headers - Cache, Security and Early Hints
+  async headers() {
+    return [
+      // API Routes - Cache disabled (webhook revalidates when needed)
+      {
+        source: "/api/posts/:path*",
+        headers: [
+          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
+          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
+        ],
+      },
+      {
+        source: "/api/revalidate",
+        headers: [
+          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
+          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
+        ],
+      },
+      // Twitter API - Cache 5 minutes
+      {
+        source: "/api/twitter/trends",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
+        ],
+      },
+      // YouTube Metadata - Cache 1 hour (CDN 24h)
+      {
+        source: "/api/youtube/metadata",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=3600" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=86400" },
+        ],
+      },
+      // Next.js static assets - Immutable cache 1 year
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=31536000, immutable" },
+        ],
+      },
+      // Fonts - Immutable cache 1 year + CORS
+      {
+        source: "/fonts/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      // Global headers - Security + Early Hints
+      {
+        source: "/:path*",
+        headers: [
+          // Early Hints (103) - Preconnect for CDNs
+          {
+            key: "Link",
+            value: [
+              "<https://primeiranews.twic.pics>; rel=preconnect; crossorigin",
+              "<https://primeiranews.com.br>; rel=preconnect"
+            ].join(", "),
+          },
+          // Security
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
+        ],
+      },
+    ];
+  },
+
+  // Redirects (WordPress Admin)
+  async redirects() {
+    return [
+      {
+        source: "/wp-admin/:path*",
+        destination: "https://primeiranews.com.br/wp-admin/:path*",
+        permanent: false,
+      },
+      {
+        source: "/wp-json/:path*",
+        destination: "https://primeiranews.com.br/wp-json/:path*",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);
@@ -787,8 +941,35 @@ export function AnimatedWithSkeleton() {
 // - skeleton: Custom skeleton component
 ```
 
+## Cache Revalidation Implementation
+
+### Server-Side Revalidation with Profile Parameter
+
+The revalidation endpoint uses Next.js 16's updated `revalidateTag` API with profile parameter.
+
+```typescript
+import { revalidateTag } from 'next/cache';
+
+// In app/api/revalidate/route.ts
+for (const tag of tagsToRevalidate) {
+  try {
+    // Use 'max' profile for aggressive revalidation
+    await revalidateTag(tag, 'max');
+
+    console.log(`Cache revalidated successfully for tag: ${tag}`);
+  } catch (error) {
+    console.error(`Error revalidating tag ${tag}:`, error);
+  }
+}
+
+// Profile options:
+// - 'max': Most aggressive revalidation, best for real-time updates
+// - 'balanced': Default behavior, balances performance and freshness
+// - 'min': Minimal revalidation, prioritizes cache hits
+```
+
 ## Summary
 
-Primeira News is a production-ready Next.js 16.1 application that demonstrates cutting-edge web development practices for content-heavy sites. The platform combines WordPress's robust content management capabilities with Next.js's latest performance features including React Compiler (automatic memoization), component-level caching (cacheComponents), and Turbopack for lightning-fast builds. The webhook-based cache revalidation with rate limiting and multi-tag support ensures content updates appear instantly without sacrificing the performance benefits of aggressive long-term caching strategies.
+Primeira News is a production-ready Next.js 16.1.0 application that demonstrates cutting-edge web development practices for content-heavy sites. The platform combines WordPress's robust content management capabilities with Next.js's latest performance features including component-level caching (cacheComponents), React Compiler for automatic memoization (eliminating manual React.memo), and Turbopack for lightning-fast builds. The webhook-based cache revalidation with rate limiting and multi-tag support ensures content updates appear instantly without sacrificing the performance benefits of aggressive long-term caching strategies.
 
-The application is ideal for news organizations, blogs, and content publishers who want the editorial experience of WordPress with the bleeding-edge performance of React 19 and Next.js 16. Key features include REST API consumption with server-side caching and revalidation tags, client-side state management with TanStack Query, real-time cache invalidation via authenticated webhooks with rate limiting, external API integrations for Twitter trends and YouTube metadata, scroll-based animations with Intersection Observer, and TwicPics image optimization for responsive images. The codebase follows Next.js App Router conventions with clear separation between server and client components, React Compiler optimizations for automatic performance improvements, and comprehensive type safety with TypeScript, making it maintainable and scalable for growing content needs.
+The application is ideal for news organizations, blogs, and content publishers who want the editorial experience of WordPress with the bleeding-edge performance of React 19.3 and Next.js 16.1. Key features include REST API consumption with server-side caching and revalidation tags, client-side state management with TanStack Query, real-time cache invalidation via authenticated webhooks with rate limiting, external API integrations for Twitter trends and YouTube metadata, scroll-based animations with Intersection Observer, React Compiler auto-memoization for zero-overhead optimization, and TwicPics image optimization for responsive images. The codebase follows Next.js App Router conventions with clear separation between server and client components and comprehensive type safety with TypeScript, making it maintainable and scalable for growing content needs.

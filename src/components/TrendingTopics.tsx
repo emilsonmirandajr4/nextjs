@@ -35,7 +35,7 @@ export default function TrendingTopics({
       });
     }
 
-    // Atualizar a cada 1 minutos
+    // Atualizar a cada 5 minutos
     const interval = setInterval(
       async () => {
         const data = await fetchBrazilTrends();
@@ -43,7 +43,7 @@ export default function TrendingTopics({
           setTrends(data);
         }
       },
-      1 * 60 * 1000,
+      5 * 60 * 3000,
     );
 
     return () => {

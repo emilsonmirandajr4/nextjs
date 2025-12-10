@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import localFont from 'next/font/local';
 import { Suspense } from 'react';
 import { Providers } from '../src/providers';
@@ -82,6 +83,7 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={null}>
             {children}
+            <SpeedInsights />
           </Suspense>
         </Providers>
       </body>

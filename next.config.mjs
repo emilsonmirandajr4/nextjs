@@ -31,12 +31,7 @@ const nextConfig = {
     optimizeServerReact: true,
     
     optimizePackageImports: [
-      "lucide-react",
-      "date-fns",
-      "lodash",
-      "lodash-es",
-      "ramda",
-      "@radix-ui/react-icons",
+      "@radix-ui/react-navigation-menu",
     ],
   },
 
@@ -63,7 +58,7 @@ const nextConfig = {
     formats: ["image/avif"],
     deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3000],
     imageSizes: [32, 48, 64, 96, 128, 256, 384],
-    qualities: [80],
+    qualities: [75],
     minimumCacheTTL: 2678400, // 31 days
    },
 
@@ -102,8 +97,8 @@ const nextConfig = {
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=3600" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=86400" },
+          { key: "Cache-Control", value: "public, max-age=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=3600" },
         ],
       },
       // Assets estáticos Next.js - Cache imutável 1 ano
@@ -114,7 +109,6 @@ const nextConfig = {
           { key: "Vercel-CDN-Cache-Control", value: "max-age=31536000, immutable" },
         ],
       },
-      // Fontes - Cache imutável 1 ano + CORS
       {
         source: "/fonts/:path*",
         headers: [
@@ -123,11 +117,14 @@ const nextConfig = {
           { key: "Access-Control-Allow-Origin", value: "*" },
         ],
       },
-      // Headers globais - Segurança + Early Hints
+      // Headers de segurança globais e Early Hints para todas as rotas
       {
         source: "/:path*",
         headers: [
-          // Early Hints (103) - Preconnect para CDNs
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
           {
             key: "Link",
             value: [
@@ -135,17 +132,11 @@ const nextConfig = {
               "<https://primeiranews.com.br>; rel=preconnect"
             ].join(", "),
           },
-          // Segurança
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
       },
     ];
   },
-  
-  // Redirects (WordPress Admin)
+          
   async redirects() {
     return [
       {
