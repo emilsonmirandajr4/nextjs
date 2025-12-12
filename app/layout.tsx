@@ -3,6 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import localFont from 'next/font/local';
 import { Suspense } from 'react';
 import { Providers } from '../src/providers';
+import { TwicInstall } from '@twicpics/components/react';
 import '../src/index.css';
 import "@twicpics/components/style.css";
 
@@ -78,6 +79,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      {/* TwicPics Components configuration */}
+      <TwicInstall
+        domain="https://primeiranews.twic.pics"
+        anticipation={0.2}
+        maxDPR={2}
+        step={10}
+        env="production"
+        breakpoints={{ xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }}
+      />
       {/* Preconnects movidos para Early Hints (next.config.mjs) - carregam ANTES do HTML */}
       <body className={`${robotoCondensed.variable} font-sans bg-white text-gray-900 antialiased`} suppressHydrationWarning>
         <Providers>

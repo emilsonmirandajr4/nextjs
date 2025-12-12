@@ -3,9 +3,9 @@ interface LogoCompleteProps {
   className?: string;
 }
 
-export default function LogoComplete({ width = 400, className = "" }: LogoCompleteProps) {
+export default function LogoComplete({ width = 200, className = "" }: LogoCompleteProps) {
   // Calcula altura proporcional (mantém aspect ratio)
-  const height = width * 0.35; // Proporção ajustada para o novo design
+  const height = width * 0.4; // Proporção ajustada para o novo design
 
   return (
     <svg
@@ -34,7 +34,7 @@ export default function LogoComplete({ width = 400, className = "" }: LogoComple
           <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
           <feOffset dx="0" dy="2" result="offsetblur"/>
           <feComponentTransfer>
-            <feFuncA type="linear" slope="0.15"/>
+            <feFuncA type="linear" slope="0.55"/>
           </feComponentTransfer>
           <feMerge>
             <feMergeNode/>
@@ -52,7 +52,7 @@ export default function LogoComplete({ width = 400, className = "" }: LogoComple
           r="65"
           fill="url(#circleGradient)"
           stroke="#ffffff"
-          strokeWidth="3"
+          strokeWidth="7"
         />
 
         {/* Círculo interno (borda decorativa) */}
@@ -61,15 +61,15 @@ export default function LogoComplete({ width = 400, className = "" }: LogoComple
           cy="90"
           r="62"
           fill="none"
-          stroke="rgba(255, 255, 255, 0.1)"
-          strokeWidth="1"
+          stroke="rgba(255, 255, 255, 0.7)"
+          strokeWidth="2"
         />
 
         {/* Letra P */}
         <path
           d="M 52 70 L 52 110 M 52 70 L 66 70 Q 73 70 73 79 Q 73 90 66 90 L 52 90"
           stroke="#ffffff"
-          strokeWidth="6"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
@@ -82,9 +82,9 @@ export default function LogoComplete({ width = 400, className = "" }: LogoComple
           x2="80"
           y2="106"
           stroke="#ffffff"
-          strokeWidth="4.5"
+          strokeWidth="5.5"
           strokeLinecap="round"
-          opacity="0.9"
+          opacity="1"
         />
 
         {/* Letra N */}
@@ -103,54 +103,27 @@ export default function LogoComplete({ width = 400, className = "" }: LogoComple
         x="170"
         y="95"
         fontFamily="system-ui, -apple-system, 'Segoe UI', Arial, sans-serif"
-        fontSize="52"
-        fontWeight="900"
+        fontSize="40"
+        fontWeight="700"
         fill="url(#titleGradient)"
-        letterSpacing="-1"
+        letterSpacing="-0.2"
       >
         Primeira
-        <tspan fill="#0ea5e9" dx="8">News</tspan>
+        <tspan fill="#112ccc" dx="8">News</tspan>
       </text>
-
-      {/* Linha decorativa sutil abaixo do título */}
-      <line
-        x1="170"
-        y1="105"
-        x2="480"
-        y2="105"
-        stroke="#0ea5e9"
-        strokeWidth="2"
-        opacity="0.3"
-        strokeLinecap="round"
-      />
 
       {/* Subtítulo */}
       <text
         x="170"
         y="130"
         fontFamily="system-ui, -apple-system, 'Segoe UI', Arial, sans-serif"
-        fontSize="18"
+        fontSize="22"
         fontWeight="400"
         fill="#6b7280"
-        letterSpacing="0.5"
+        letterSpacing="-1.2"
       >
         Notícias imparciais de política, economia e mundo
       </text>
-
-      {/* Animação sutil opcional (pode ser removida se não quiser) */}
-      <style>
-        {`
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-          }
-
-          /* Animação suave no círculo ao passar o mouse */
-          svg:hover circle[stroke="#ffffff"] {
-            animation: pulse 2s ease-in-out infinite;
-          }
-        `}
-      </style>
-    </svg>
+          </svg>
   );
 }

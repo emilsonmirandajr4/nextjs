@@ -19,7 +19,7 @@ export const postsKeys = {
  * Hook para buscar posts gerais
  * @param perPage Número de posts por página (padrão: 30)
  */
-export function usePosts(perPage: number = 30) {
+export function usePosts(perPage: number = 50) {
   return useQuery({
     queryKey: postsKeys.list(perPage),
     queryFn: () => fetchPosts(perPage),
@@ -49,7 +49,7 @@ export function usePostsByCategory(slug: string, perPage: number = 100, enabled:
 export function usePrefetchPosts() {
   const queryClient = useQueryClient();
 
-  const prefetchPosts = (perPage: number = 30) => {
+  const prefetchPosts = (perPage: number = 50) => {
     queryClient.prefetchQuery({
       queryKey: postsKeys.list(perPage),
       queryFn: () => fetchPosts(perPage),

@@ -4,16 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
-import { installTwicpics } from '@twicpics/components/react';
-import '@twicpics/components/style.css';
-
-// Inicializar TwicPics
-installTwicpics({
-  domain: "https://primeiranews.twic.pics",
-  env: "production",
-  handleShadowDom: false,
-  breakpoints: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 },
-});
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({

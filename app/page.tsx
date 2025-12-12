@@ -15,7 +15,7 @@ const InstagramSection = dynamic(
   () => import("@/components/InstagramSection"),
   { ssr: true }
 );
-import { getPostsGroupedByCategories } from "@/server/wordpress";
+import { getPostsGroupedByCategories, getPostsByCategorySlug } from "@/server/wordpress";
 import { fetchBrazilTrendsServer } from "@/server/twitter";
 import { getFeaturedVideos } from "@/data/videos";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
@@ -24,6 +24,8 @@ import { ScrollReveal } from "@/components/animations";
 
 // NOTA: Revalidação via webhook - cacheComponents no next.config.mjs cuida do cache automaticamente
 // Não use 'export const revalidate' pois é incompatível com cacheComponents
+
+import ArticlesThree from "@/components/ArticlesThree";
 
 // Dynamic imports para componentes abaixo da dobra ou pesados
 const CarouselWithPanelWrapper = dynamic(
@@ -72,11 +74,10 @@ const LazyVideoCarousel = dynamic(
 );
 
 async function fetchHomeData() {
-  // ✅ OTIMIZADO: 1 requisição em vez de 7!
-  // Busca 50 posts de uma vez e agrupa por categoria localmente
-  const [postsByCategory, trends] = await Promise.all([
+  const [postsByCategory, trends, artigosPosts] = await Promise.all([
     getPostsGroupedByCategories(50, 1),
     fetchBrazilTrendsServer(),
+    getPostsByCategorySlug('artigos', 3, 1),
   ]);
 
   // Extrai categorias específicas (já deduplicados automaticamente)
@@ -98,6 +99,7 @@ async function fetchHomeData() {
     judiciaryPosts,
     politicsPosts,
     economyPosts,
+    artigosPosts,
     trends
   };
 }
@@ -236,6 +238,7 @@ export default async function HomePage() {
     judiciaryPosts,
     politicsPosts,
     economyPosts,
+    artigosPosts,
     trends
   } = await fetchHomeData();
   
@@ -312,15 +315,26 @@ export default async function HomePage() {
             </div>
         </div>
 
+        {/* Seção de Destaques Especiais (ArticlesThree) */}
+        <ScrollReveal animation="slide-up" duration={800} delay={200}>
+          <div className="mt-0">
+            <ArticlesThree 
+              posts={artigosPosts} 
+              title="Artigos em Destaques" 
+              count={3} 
+            />
+          </div>
+        </ScrollReveal>
+
         {/* Seção Instagram - Vale a Pena Seguir */}
-        <ScrollReveal animation="fade" duration={400} delay={200}>
+        <ScrollReveal animation="slide-up" duration={800} delay={200}>
           <div className="mt-4">
             <InstagramSection />
           </div>
         </ScrollReveal>
 
         {/* Carousel 3D com Painel e Trending Topics */}
-        <ScrollReveal animation="slide-up" duration={400} delay={200}>
+        <ScrollReveal animation="slide-up" duration={900} delay={200}>
           <section className="mt-4 relative">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
               {/* Carousel 3D - Client Component */}
@@ -340,7 +354,7 @@ export default async function HomePage() {
         </ScrollReveal>
 
         {/* Seções de Notícias - Server Components */}
-        <ScrollReveal animation="fade-scale" duration={400} delay={200}>
+        <ScrollReveal animation="slide-up" duration={800} delay={200}>
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Container para Últimas Notícias e Judiciário */}
             <div className="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -368,7 +382,7 @@ export default async function HomePage() {
 
         {/* Seção de Vídeos em Destaque - Client Component (lazy loaded) */}
         {featuredVideos.length > 0 && (
-          <ScrollReveal animation="slide-up" duration={300} delay={100}>
+          <ScrollReveal animation="slide-up" duration={800} delay={100}>
             <LazyVideoCarousel videos={featuredVideos} />
           </ScrollReveal>
         )}

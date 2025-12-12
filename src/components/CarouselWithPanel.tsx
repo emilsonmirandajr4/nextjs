@@ -139,6 +139,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           display: grid;
           grid-template-columns: 1fr 2fr;
           gap: 16px;
+          margin-top: 16px;
           height: 100%;
           max-height: 400px;
         }

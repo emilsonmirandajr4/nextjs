@@ -18,13 +18,14 @@ const nextConfig = {
 
   experimental: {
     inlineCss: true,
+    viewTransition: true,
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
     
     // Client-side router cache - otimizado para portal de notícias
     staleTimes: {
       dynamic: 30,    // 30s para rotas dinâmicas (posts)
-      static: 1800,   // 30min para rotas estáticas
+      static: 300,   // 30min para rotas estáticas
     },
     
     // Otimiza renderização de Server Components
@@ -32,6 +33,17 @@ const nextConfig = {
     
     optimizePackageImports: [
       "@radix-ui/react-navigation-menu",
+      "lucide-react",
+      "embla-carousel",
+      "@twicpics/components",
+      "motion",
+      "react-hot-toast",
+      "@tanstack/react-query",
+      "embla-carousel-react",
+      "embla-carousel-autoplay",
+      "embla-carousel-fade",
+      "clsx",
+      "tailwind-merge",
     ],
   },
 
@@ -48,15 +60,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "primeiranewsimg.twic.pics",
-      },
-      {
-        protocol: "https",
         hostname: "primeiranews.twic.pics",
       },
     ],
     formats: ["image/avif"],
-    deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3000],
+    deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [32, 48, 64, 96, 128, 256, 384],
     qualities: [75],
     minimumCacheTTL: 2678400, // 31 days
@@ -89,16 +97,16 @@ const nextConfig = {
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=300" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
+          { key: "Cache-Control", value: "public, max-age=120" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=120" },
         ],
       },
       // YouTube Metadata - Cache 1 hora (CDN 24h)
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=300" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=3600" },
+          { key: "Cache-Control", value: "public, max-age=60" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=600" },
         ],
       },
       // Assets estáticos Next.js - Cache imutável 1 ano

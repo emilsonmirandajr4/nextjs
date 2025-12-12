@@ -7,7 +7,7 @@ const MAX_TAGS_PER_REQUEST = 10; // Evita spam
 // Simples rate limiting em memória (funciona em serverless)
 const requestLog = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 60000; // 1 minuto
-const MAX_REQUESTS_PER_MINUTE = 30; // 30 requisições por minuto
+const MAX_REQUESTS_PER_MINUTE = 100; // 100 requisições por minuto
 
 /**
  * Verifica rate limiting por IP

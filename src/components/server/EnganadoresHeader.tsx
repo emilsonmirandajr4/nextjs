@@ -13,7 +13,7 @@ export default function EnganadoresHeader() {
           <AlertTriangle className="w-4 h-4 text-white/80" strokeWidth={2} />
           <div className="flex flex-col">
             <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-slate-300">
-              Os Verdadeiros
+              Os Maiores
             </span>
             <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
               Enganadores

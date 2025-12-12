@@ -5,9 +5,9 @@ export const WORDPRESS_CONFIG = {
   // Cache TTL configuration (in seconds)
   // Valores baixos para permitir revalidação rápida via webhook
   CACHE_TTL: {
-    POSTS_LIST: 60,      // 1 minuto - revalidado via webhook ao publicar
-    POSTS_CATEGORY: 300, // 5 minutos - revalidado via webhook ao publicar
-    POST_SINGLE: 300,    // 5 minutos - revalidado via webhook ao editar
+    POSTS_LIST: 30,      // 1 minuto - revalidado via webhook ao publicar
+    POSTS_CATEGORY: 60, // 5 minutos - revalidado via webhook ao publicar
+    POST_SINGLE: 60,    // 5 minutos - revalidado via webhook ao editar
     CATEGORIES: 3600,    // 1 hora (categorias mudam raramente)
     TAGS: 3600,          // 1 hora
     MEDIA: 31536000,     // 1 year (imagens não mudam)
