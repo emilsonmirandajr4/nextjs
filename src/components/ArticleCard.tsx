@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import OptimizedImage from './OptimizedImage';
 import { cn } from '@/lib/utils';
+import { decodeHtmlEntities } from '@/services/wordpress';
 
 export interface ArticlePost {
   id: number;
@@ -25,16 +26,9 @@ interface ArticleCardProps {
 
 export default function ArticleCard({ post, className }: ArticleCardProps) {
   const isPlaceholder = post.id >= 1000; // Convention from ArticlesThree
-  
-  // Decodificar HTML entities no excerpt
-  const decodeHtmlEntities = (text: string) => {
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = text;
-    return textarea.value;
-  };
-  
-  const decodedExcerpt = typeof window !== 'undefined' ? decodeHtmlEntities(post.excerpt) : post.excerpt;
-  
+
+  const decodedExcerpt = decodeHtmlEntities(post.excerpt);
+
   const CardContent = (
     <div
       className={cn(
@@ -43,19 +37,21 @@ export default function ArticleCard({ post, className }: ArticleCardProps) {
       )}
       style={{
         boxShadow: `
-          rgba(59, 130, 246, 0.65) 0px 6px 14px,
-          rgba(59, 130, 246, 0.55) 0px 12px 14px
+          rgba(59, 130, 246, 0.65) 0px 7px 13px,
+          rgba(59, 130, 246, 0.65) 0px 9px 13px
         `,
       }}
     >
       {/* Image Container */}
-      <div className="relative aspect-[16/9] overflow-hidden w-full">
+      <div className="relative aspect-[16/9] contrast-120 overflow-hidden w-full">
         <OptimizedImage
           src={post.imageUrl}
           alt={post.title}
           ratio="16/9"
+          refit={true}
+          usePicture={false}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
           className="object-cover transition-transform duration-500 group-hover:scale-105 w-full h-full"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
 
@@ -64,15 +60,25 @@ export default function ArticleCard({ post, className }: ArticleCardProps) {
         {/* Title */}
         <h3
           className="font-bold leading-tight text-white group-hover:text-red-500 transition-colors line-clamp-3"
-          style={{ fontSize: '24px' }}
+          style={{
+            fontSize: '24px',
+            marginBottom: '10px',
+            marginTop: '20px'
+          }}
         >
           {post.title}
         </h3>
 
         {/* Excerpt */}
-        <p className="text-[1.05rem] text-zinc-400 line-clamp-5 flex-grow mb-1">
+        <h3
+          className="text-zinc-400 line-clamp-5 flex-grow mb-1"
+          style={{
+            fontSize: '17px',
+            marginBottom: '20px'
+          }}
+        >
           {decodedExcerpt}
-        </p>
+        </h3>
       </div>
     </div>
   );

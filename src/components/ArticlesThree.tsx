@@ -3,7 +3,7 @@
 import React from 'react';
 import ArticleCard, { ArticlePost } from './ArticleCard';
 import { WordPressPost } from '@/types/wordpress';
-import { getPostImage, getPostTitle } from '@/services/wordpress';
+import { getPostImage, getPostTitle, extractImagePath } from '@/services/wordpress';
 import { formatDate } from '@/utils/date';
 import { getPostUrl } from '@/utils/navigation';
 import { Newspaper } from 'lucide-react';
@@ -55,7 +55,7 @@ export default function ArticlesThree({
       excerpt: getExcerptSmart(post, 42),
       category: post.categories_names?.[0] || 'Geral',
       date: formatDate(post.date),
-      imageUrl: getPostImage(post).replace(/^https?:\/\/[^/]+/, "") || "/placeholder.jpg",
+      imageUrl: extractImagePath(getPostImage(post)),
       author: post._embedded?.author?.[0]?.name || 'Equipe',
       readTime: 5, // Estimativa fixa ou calcular baseado no content
       featured: true,
@@ -69,7 +69,7 @@ export default function ArticlesThree({
       excerpt: 'Estamos preparando artigos exclusivos com análises aprofundadas sobre os principais temas do momento.',
       category: 'Novidade',
       date: '—',
-      imageUrl: '/placeholder.jpg',
+      imageUrl: '/placeholder.png',
       author: 'Primeira News',
       readTime: 3,
       featured: true,
@@ -83,7 +83,7 @@ export default function ArticlesThree({
   return (
     <section className="py-4 w-full">
       {/* Header */}
-      <div 
+      <div
         className="relative bg-black rounded-xl px-4 py-3 border border-white/10 mb-4"
         style={{
           boxShadow: `

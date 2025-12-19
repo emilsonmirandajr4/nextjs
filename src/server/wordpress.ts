@@ -25,6 +25,7 @@ async function wpFetchJson<T>(url: string, ttlMs: number, tag?: string): Promise
     headers: {
       Accept: 'application/json',
     },
+    signal: AbortSignal.timeout(10000),
   };
 
   if (ttlMs <= 0) {
@@ -38,9 +39,7 @@ async function wpFetchJson<T>(url: string, ttlMs: number, tag?: string): Promise
     }
   }
 
-  console.log('[wpFetchJson] Fetching:', url);
   const response = await fetch(url, init);
-  console.log('[wpFetchJson] Response status:', response.status);
 
   if (!response.ok) {
     console.error('[wpFetchJson] Error response:', response.status, response.statusText);
@@ -59,9 +58,12 @@ function withCategoryNames(posts: WordPressPost[]): WordPressPost[] {
   return posts.map((post) => {
     const categories_names =
       post._embedded?.['wp:term']?.[0]?.map((cat: any) => cat.name) || [];
+    const categories_slugs =
+      post._embedded?.['wp:term']?.[0]?.map((cat: any) => cat.slug) || [];
     return {
       ...post,
       categories_names,
+      categories_slugs,
     };
   });
 }
@@ -149,23 +151,19 @@ export async function getPostBySlug(
   slug: string,
 ): Promise<WordPressPost | null> {
   const url = `${WP_API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`;
-  console.log('[WordPress] Fetching post from:', url);
-  
+
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POST_SINGLE,
     `post-${slug}`, // Cache tag with slug
   );
-  console.log('[WordPress] Response received, posts count:', data?.length || 0);
 
   if (!Array.isArray(data) || data.length === 0) {
-    console.log('[WordPress] No post found for slug:', slug);
     return null;
   }
 
   const [post] = data;
   const [postWithCategories] = withCategoryNames([post]);
-  console.log('[WordPress] Returning post:', postWithCategories.id);
 
   return postWithCategories;
 }
@@ -207,19 +205,20 @@ export async function getPostsGroupedByCategories(
 ): Promise<Record<string, WordPressPost[]>> {
   // Busca todos os posts de uma vez (1 requisição!)
   const allPosts = await getPosts(perPage, page);
-  
-  // Agrupa por categoria (um post pode estar em múltiplas)
+
+  // Agrupa por categoria usando slugs (já normalizados pelo WordPress)
   const grouped: Record<string, WordPressPost[]> = {};
-  
+
   for (const post of allPosts) {
-    if (post.categories_names && Array.isArray(post.categories_names)) {
-      for (const categoryName of post.categories_names) {
-        const key = normalizeCategoryName(categoryName);
-        
+    // Use slugs instead of names for consistent grouping
+    if (post.categories_slugs && Array.isArray(post.categories_slugs)) {
+      for (const categorySlug of post.categories_slugs) {
+        const key = categorySlug; // Already normalized by WordPress
+
         if (!grouped[key]) {
           grouped[key] = [];
         }
-        
+
         // Evita duplicatas no mesmo array
         if (!grouped[key].some(p => p.id === post.id)) {
           grouped[key].push(post);
@@ -227,6 +226,6 @@ export async function getPostsGroupedByCategories(
       }
     }
   }
-  
+
   return grouped;
 }

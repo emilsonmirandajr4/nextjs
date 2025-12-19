@@ -17,6 +17,7 @@ export interface WordPressPost {
   // Campos padrão do WP
   categories?: number[];
   categories_names?: string[];
+  categories_slugs?: string[];
   tags?: number[];
   // Campos customizados (ACF ou similares)
   acf?: {

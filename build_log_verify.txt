@@ -1,0 +1,54 @@
+
+> primeira-news@0.0.0 build
+> powershell -ExecutionPolicy Bypass -File ./build-clean.ps1
+
+
+> primeira-news@0.0.0 build-raw
+> next build
+
+Ôû▓ Next.js 16.1.0-canary.31 (Turbopack, Cache Components)
+- Environments: .env.local
+- Experiments (use with caution):
+  Ô£ô inlineCss
+  ┬À optimizePackageImports
+  ┬À staleTimes
+  Ô£ô turbopackFileSystemCacheForBuild
+  Ô£ô viewTransition
+
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 2.0s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/18) ...
+  Generating static pages using 15 workers (4/18) 
+  Generating static pages using 15 workers (8/18) 
+  Generating static pages using 15 workers (13/18) 
+Ô£ô Generating static pages using 15 workers (18/18) in 1856.6ms
+  Finalizing page optimization ...
+
+Route (app)                            Revalidate  Expire
+Ôöî ÔùÉ /                                          1s      1y
+Ôö£ Ôùï /_not-found
+Ôö£ ÔùÉ /[year]/[month]/[category]/[slug]
+Ôöé Ôöö /[year]/[month]/[category]/[slug]
+Ôö£ ãÆ /api/posts
+Ôö£ ãÆ /api/posts/[slug]
+Ôö£ ãÆ /api/revalidate
+Ôö£ ãÆ /api/twitter/trends
+Ôö£ ãÆ /api/youtube/metadata
+Ôö£ Ôùï /card-demo
+Ôö£ ÔùÉ /categoria/[slug]                          1s      1y
+Ôöé Ôö£ /categoria/[slug]                          1s      1y
+Ôöé Ôö£ /categoria/politica                        1s      1y
+Ôöé Ôö£ /categoria/judiciario                      1s      1y
+Ôöé Ôöö /categoria/economia                        1s      1y
+Ôö£ Ôùï /contato
+Ôö£ Ôùï /politica-de-privacidade
+Ôö£ ãÆ /sitemap.xml
+Ôöö Ôùï /videos
+
+
+Ôùï  (Static)             prerendered as static content
+ÔùÉ  (Partial Prerender)  prerendered as static HTML with dynamic server-streamed content
+ãÆ  (Dynamic)            server-rendered on demand
+

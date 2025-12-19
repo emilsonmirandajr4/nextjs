@@ -2,7 +2,7 @@ import Link from "next/link";
 import { WordPressPost } from "@/types/wordpress";
 import { getPostTitle } from "@/services/wordpress";
 import { getPostUrl } from "@/utils/navigation";
-import { BarChart3, Activity } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 
 interface SidebarServerProps {
   posts: WordPressPost[];
@@ -12,40 +12,27 @@ interface SidebarServerProps {
 export default function SidebarServer({ posts, title }: SidebarServerProps) {
   return (
     <aside>
-      <div 
+      <div
         className="relative rounded-2xl overflow-hidden"
         style={{
           boxShadow: `
-            rgba(6, 95, 212, 0.4) 3px 3px,
-            rgba(6, 95, 212, 0.25) 6px 6px,
-            rgba(6, 95, 212, 0.15) 9px 9px
+            hsla(0, 0%, 0%, 1.00) 3px 3px,
+            rgba(0, 0, 0, 1) 6px 6px,
+            rgba(0, 0, 0, 1) 9px 9px
           `
         }}
       >
         {/* Content card with backdrop */}
-        <div className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 border border-white/10">
+        <div className="relative bg-black border border-white/10">
           {/* Header */}
-          <div className="relative px-5 py-4 border-b border-sky-500/20 bg-gradient-to-r from-sky-950/50 to-blue-950/30">
+          <div className="relative px-5 py-4 border-b bg-black" style={{ borderColor: '#2f5ac5' }}>
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="relative w-9 h-9 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-xl flex items-center justify-center">
-                  <BarChart3
-                    className="w-5 h-5 text-white"
-                    strokeWidth={2.5}
-                  />
-                </div>
+                <BarChart3 className="w-4 h-4 text-white/80 border border-white/30 rounded p-0.5" strokeWidth={2} />
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-black text-white tracking-tight bg-gradient-to-r from-white via-sky-100 to-blue-100 bg-clip-text text-transparent">
-                  {title}
-                </h2>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <Activity className="w-3 h-3 text-sky-400" />
-                  <span className="text-xs text-sky-300 font-medium">
-                    Atualizando ao vivo
-                  </span>
-                </div>
-              </div>
+              <h2 className="text-xl font-black text-white tracking-tight">
+                {title}
+              </h2>
             </div>
           </div>
 
@@ -55,7 +42,7 @@ export default function SidebarServer({ posts, title }: SidebarServerProps) {
               <Link
                 key={`${post.id}-${index}`}
                 href={getPostUrl(post)}
-                className="group/item relative flex items-start gap-2.5 p-2.5 rounded-xl bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-sky-900/30 hover:to-blue-900/30 border border-slate-700/50 hover:border-sky-500/50"
+                className="group/item relative flex items-start gap-2.5 p-2.5 rounded-xl bg-black hover:from-sky-900/30 hover:to-blue-900/30 border border-slate-700/50 hover:border-sky-500/50"
               >
                 {/* Gradient glow on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 via-sky-500/10 to-blue-500/0 opacity-0 group-hover/item:opacity-100 rounded-xl transition-opacity duration-300"></div>

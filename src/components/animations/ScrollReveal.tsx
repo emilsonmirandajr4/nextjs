@@ -21,10 +21,10 @@ interface ScrollRevealProps {
 
 export default function ScrollReveal({
   children,
-  animation = 'fade',
+  animation = 'slide-up',
   delay = 0,
-  duration = 400,
-  threshold = 0.05,
+  duration = 800,
+  threshold = 0.01,
   rootMargin = '0px 0px 100px 0px',
   triggerOnce = true,
   className = '',

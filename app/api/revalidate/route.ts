@@ -188,8 +188,7 @@ const revalidationResults = {
 
 for (const t of tagsToRevalidate) {
   try {
-    // ✅ CORRETO - com await e o segundo argumento (profile)
-    await revalidateTag(t, 'max');
+    revalidateTag(t, 'default');
     
     revalidationResults.success.push(t);
     logEvent('info', `Cache revalidado com sucesso`, { tag: t });

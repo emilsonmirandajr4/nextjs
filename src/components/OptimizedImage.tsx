@@ -10,81 +10,68 @@ interface OptimizedImageProps {
   className?: string;
   style?: React.CSSProperties;
   focus?: "auto" | string;
-  // Prioridade: high = eager + fetchpriority high, normal = lazy loading
-  priority?: "high" | "normal";
-  // Se true, usa TwicPicture para melhor LCP (gera <picture> responsivo)
+  eager?: boolean;
   usePicture?: boolean;
-  // Props extras
   anchor?: string;
+  refit?: boolean | string;
   transition?: "fade" | "zoom" | "none";
   transitionDuration?: string;
-  // Largura máxima para otimização (opcional)
   maxWidth?: number;
-  // HTML fetchpriority para otimização de LCP
   fetchpriority?: "high" | "low" | "auto";
-  // sizes para responsive images (ex: "(max-width: 768px) 100vw, 50vw")
   sizes?: string;
 }
-
 export default function OptimizedImage({
   src,
   alt,
   ratio = "16/9",
   mode = "cover",
-  placeholder = "none",
-  className = "",
+  placeholder = "preview",
+  eager = false,
+  usePicture = false,
+  focus,
   style,
-  focus = "auto",
-  priority = "normal",
-  usePicture = true,
+  className,
   anchor,
-  transition = "fade",
-  transitionDuration = "300ms",
-  maxWidth,
-  fetchpriority,
+  transition,
+  transitionDuration,
+  fetchpriority, // Mantido como variável para o componente
   sizes = "auto, (max-width: 30em) 100vw, (max-width: 50em) 50vw, calc(33vw - 100px)",
 }: OptimizedImageProps) {
-  
-  // Remove domínio da URL se necessário para TwicPics
-  const imagePath = src.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
-  
-  // Props comuns para TwicPics
+  // Fallback para evitar src vazio
+  const imagePath = src || "/placeholder.png";
+
+  // Props comuns organizadas
   const commonProps = {
     src: imagePath,
     alt,
     ratio,
     mode,
     placeholder,
-    ...(focus && { focus }),
+    focus,
     style,
     className,
-    intrinsic: '1920x1080', 
-    ...(fetchpriority && { fetchpriority }), 
+    anchor,
+    // Em 2025, TwicPics aceita fetchpriority diretamente em certos componentes
+    fetchpriority: fetchpriority as any,
   };
 
-  const isEager = priority === "high";
-
-  // TwicPicture para hero images (melhor LCP)
+  // 3. Renderização Condicional
   if (usePicture) {
     return (
       <TwicPicture
         {...commonProps}
-        eager={isEager || undefined}
-        anchor={anchor}
         sizes={sizes}
+        eager={eager} // Importante para LCP
       />
     );
   }
 
-  // TwicImg para imagens normais
   return (
     <TwicImg
       {...commonProps}
-      eager={isEager}
+      eager={eager}
       transition={transition}
       transitionDuration={transitionDuration}
-      anchor={anchor}
-      className={className}
     />
   );
 }

@@ -13,8 +13,6 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  console.log('[API] Received request for slug:', slug);
-
   if (!slug) {
     return new Response(JSON.stringify({ error: 'Slug é obrigatório' }), {
       status: 400,
@@ -26,9 +24,7 @@ export async function GET(
   }
 
   try {
-    console.log('[API] Fetching post from WordPress...');
     const post = await getPostBySlug(slug);
-    console.log('[API] Post result:', post ? 'Found' : 'Not found');
 
     if (!post) {
       return new Response(
@@ -47,7 +43,7 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': getPostSingleCacheControl(),
+        'Cache-Control': 'private, no-store',
       },
     });
   } catch (error) {

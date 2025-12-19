@@ -16,7 +16,7 @@ function parseWordPressUrl(link: string): { year: string; month: string; categor
       postname: match[4]
     };
   }
-  
+
   // Fallback: tenta extrair apenas o último segmento como slug
   const simpleMatch = link.match(/\/([^/]+)\/?$/);
   if (simpleMatch && simpleMatch[1]) {
@@ -27,7 +27,7 @@ function parseWordPressUrl(link: string): { year: string; month: string; categor
       postname: simpleMatch[1]
     };
   }
-  
+
   return null;
 }
 
@@ -44,7 +44,7 @@ export function getPostUrl(post: WordPressPost | { id: number; slug?: string; li
       // Formato completo: /ano/mes/categoria/slug
       return `/${parsed.year}/${parsed.month}/${parsed.category}/${parsed.postname}`;
     }
-    
+
     // Se não conseguiu parsear tudo mas tem pelo menos o slug
     if (parsed && parsed.postname) {
       // Tenta extrair ano/mes da data se disponível
@@ -61,7 +61,7 @@ export function getPostUrl(post: WordPressPost | { id: number; slug?: string; li
         }
       }
     }
-    
+
     // Fallback: extrai última parte da URL
     try {
       const url = new URL(post.link);
@@ -70,20 +70,17 @@ export function getPostUrl(post: WordPressPost | { id: number; slug?: string; li
         // Assume formato: ano/mes/categoria/slug
         return `/${parts[parts.length - 4]}/${parts[parts.length - 3]}/${parts[parts.length - 2]}/${parts[parts.length - 1]}`;
       } else if (parts.length > 0) {
-        // Se tiver apenas o slug, usa data atual e categoria padrão
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        return `/${year}/${month}/noticias/${parts[parts.length - 1]}`;
+        // Se tiver apenas o slug, usa caminho genérico (sem data atual para evitar erro de static generation)
+        return `/post/${parts[parts.length - 1]}`;
       }
     } catch {
       console.error('Failed to parse post link:', post.link);
     }
   }
-  
+
   // Verifica se o slug é válido (não é um placeholder como %%drp:slug:...%%)
   const hasValidSlug = post.slug && !post.slug.startsWith('%%') && !post.slug.includes('%%');
-  
+
   if (hasValidSlug && 'date' in post && post.date) {
     try {
       const date = new Date(post.date);
@@ -94,7 +91,7 @@ export function getPostUrl(post: WordPressPost | { id: number; slug?: string; li
       console.error('Failed to parse date for slug:', post.slug);
     }
   }
-  
+
   // Último recurso: ID
   return `/post/${post.id}`;
 }

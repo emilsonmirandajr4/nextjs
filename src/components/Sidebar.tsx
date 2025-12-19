@@ -13,9 +13,9 @@ export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
     <aside>
       <div className="relative rounded-2xl overflow-hidden">
         {/* Content card with backdrop */}
-        <div className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 border border-white/10">
+        <div className="relative bg-black border border-white/10">
           {/* Header */}
-          <div className="relative px-5 py-4 border-b border-sky-500/20 bg-gradient-to-r from-sky-950/50 to-blue-950/30">
+          <div className="relative px-5 py-4 border-b bg-black" style={{ borderColor: '#2f5ac5' }}>
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="relative w-9 h-9 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-xl flex items-center justify-center">
@@ -40,7 +40,7 @@ export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
               <div
                 key={post.id}
                 onClick={() => onPostClick?.(post.id)}
-                className="group/item relative flex items-start gap-2.5 p-2.5 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-sky-900/30 hover:to-blue-900/30 border border-slate-700/50 hover:border-sky-500/50"
+                className="group/item relative flex items-start gap-2.5 p-2.5 rounded-xl cursor-pointer bg-black hover:from-sky-900/30 hover:to-blue-900/30 border border-slate-700/50 hover:border-sky-500/50"
               >
                 {/* Gradient glow on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 via-sky-500/10 to-blue-500/0 opacity-0 group-hover/item:opacity-100 rounded-xl transition-opacity duration-300"></div>

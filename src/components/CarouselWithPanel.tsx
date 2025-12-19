@@ -75,8 +75,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
     <div
       className="w-full"
       style={{
-        background:
-          "linear-gradient(135deg, #111827 0%, #000000 50%, #111827 100%)",
+        background: "#000000",
         borderRadius: "16px",
         padding: "16px",
         minHeight: "340px",
@@ -145,7 +144,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         }
 
         .summary-panel {
-          background: rgba(17, 24, 39, 0.85);
+          background: #000000;
           border-radius: 12px;
           padding: 20px;
           border: 1px solid rgba(255, 255, 255, 0.1);
@@ -345,10 +344,9 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                     <OptimizedImage
                       src={item.image}
                       alt={item.title}
-                      ratio="1/1"
+                      ratio="4/3"	
                       usePicture={false}
-                      priority="normal"
-                      // slide-size: 60% de 2/3 do container (~400px), mobile 85%
+                      eager={false}
                       sizes="(min-width: 1024px) 400px, (min-width: 768px) 350px, 280px"
                       className="embla__slide__img"
                     />

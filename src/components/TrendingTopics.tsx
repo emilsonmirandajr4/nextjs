@@ -43,7 +43,7 @@ export default function TrendingTopics({
           setTrends(data);
         }
       },
-      5 * 60 * 3000,
+      5 * 60 * 1000,
     );
 
     return () => {
@@ -55,9 +55,9 @@ export default function TrendingTopics({
   return (
     <div className="relative rounded-2xl overflow-hidden">
       {/* Content container */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 border border-white/10">
+      <div className="relative bg-black border border-white/10">
         {/* Header com gradiente */}
-        <div className="relative px-4 py-3 border-b border-blue-500/20 bg-gradient-to-r from-blue-950/50 to-indigo-950/30">
+        <div className="relative px-4 py-3 border-b border-blue-500/20 bg-black">
           <div className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-white/80" strokeWidth={2} />
             <h3 className="text-lg font-black text-white tracking-tight bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
@@ -80,7 +80,7 @@ export default function TrendingTopics({
             {trends.slice(0, 8).map((topic, index) => (
               <div
                 key={index}
-                className="group/trend relative flex items-center gap-2.5 p-2 rounded-xl cursor-pointer bg-gradient-to-br from-slate-800/40 to-gray-900/40 hover:from-blue-900/30 hover:to-indigo-900/30 border border-slate-700/50 hover:border-blue-500/50"
+                className="group/trend relative flex items-center gap-2.5 p-2 rounded-xl cursor-pointer bg-black hover:from-blue-900/30 hover:to-indigo-900/30 border border-slate-700/50 hover:border-blue-500/50"
               >
 
                 {/* Badge com número */}
@@ -122,7 +122,7 @@ export default function TrendingTopics({
         )}
 
         {/* Footer */}
-        <div className="relative px-4 py-2.5 border-t border-blue-500/20 bg-gradient-to-r from-indigo-950/50 to-blue-950/30">
+        <div className="relative px-4 py-2.5 border-t border-blue-500/20 bg-black">
           <a
             href="https://twitter.com/explore/tabs/trending"
             target="_blank"

@@ -112,7 +112,7 @@ function prepareCarouselData(enganadoresPosts: WordPressPost[]) {
       id: post.id,
       image:
         getPostImage(post).replace(/^https?:\/\/[^/]+/, "") ||
-        "/placeholder.jpg",
+        "/placeholder.png",
       title: getPostTitle(post),
       description:
         (post.excerpt?.rendered?.replace(/<[^>]+>/g, "").substring(0, 100) ||
@@ -176,39 +176,29 @@ function preparePostsData(
   const cleanPoliticsPosts = filterUnwantedCategories(politicsPosts);
   const cleanEconomyPosts = filterUnwantedCategories(economyPosts);
 
-  // SIDEBAR ESQUERDA: Pega mais posts para compensar duplicatas
-  let sidebarLeftPosts = removeDuplicates([
-    ...cleanNewsPosts.slice(0, 3),
-    ...judiciaryPosts.slice(0, 3), // SEM filtro - já vem da categoria específica
-    ...cleanPoliticsPosts.slice(0, 2),
-    ...cleanEconomyPosts.slice(0, 2),
+  // Combina todos os posts limpos disponíveis (sem duplicatas)
+  const allCleanPosts = removeDuplicates([
+    ...cleanNewsPosts,
+    ...judiciaryPosts,
+    ...cleanPoliticsPosts,
+    ...cleanEconomyPosts,
+    ...filterUnwantedCategories(posts), // Posts gerais como fallback
   ]);
-  
-  // Se não tiver 7, completa com posts gerais
-  if (sidebarLeftPosts.length < 7) {
-    const cleanGeneralPosts = filterUnwantedCategories(posts);
-    const usedIds = new Set(sidebarLeftPosts.map(p => p.id));
-    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 7 - sidebarLeftPosts.length);
-    sidebarLeftPosts = [...sidebarLeftPosts, ...extraPosts];
-  }
-  sidebarLeftPosts = sidebarLeftPosts.slice(0, 7);
 
-  // SIDEBAR DIREITA: Pega posts diferentes da esquerda
-  let sidebarRightPosts = removeDuplicates([
-    ...cleanNewsPosts.slice(3, 6),
-    ...judiciaryPosts.slice(3, 6), // SEM filtro - já vem da categoria específica
-    ...cleanPoliticsPosts.slice(2, 4),
-    ...cleanEconomyPosts.slice(2, 4),
-  ]);
+  // SIDEBAR ESQUERDA ("Mais Lidas"): Pega os primeiros 7 posts (índices 0-6)
+  const sidebarLeftPosts = allCleanPosts.slice(0, 7);
+
+  // SIDEBAR DIREITA ("Assuntos em Alta"): Pega os próximos 7 posts (índices 7-13)
+  // Posts diferentes da esquerda por definição (slice sequencial)
+  let sidebarRightPosts = allCleanPosts.slice(7, 14);
   
-  // Se não tiver 7, completa com posts gerais (diferentes da esquerda)
-  if (sidebarRightPosts.length < 7) {
-    const cleanGeneralPosts = filterUnwantedCategories(posts);
-    const usedIds = new Set([...sidebarLeftPosts, ...sidebarRightPosts].map(p => p.id));
-    const extraPosts = cleanGeneralPosts.filter(p => !usedIds.has(p.id)).slice(0, 7 - sidebarRightPosts.length);
-    sidebarRightPosts = [...sidebarRightPosts, ...extraPosts];
+  // Fallback: se não houver 7 posts diferentes, completa com posts do início
+  // (melhor repetir do que mostrar seção vazia ou incompleta)
+  if (sidebarRightPosts.length < 7 && allCleanPosts.length > 0) {
+    const remaining = 7 - sidebarRightPosts.length;
+    const fallbackPosts = allCleanPosts.slice(0, remaining);
+    sidebarRightPosts = [...sidebarRightPosts, ...fallbackPosts];
   }
-  sidebarRightPosts = sidebarRightPosts.slice(0, 7);
   
   // Últimas Notícias: usa posts da categoria "noticias"
   const latestNewsPosts = cleanNewsPosts.slice(0, 5);

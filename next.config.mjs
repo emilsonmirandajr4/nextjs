@@ -21,16 +21,16 @@ const nextConfig = {
     viewTransition: true,
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
-    
+
     // Client-side router cache - otimizado para portal de notícias
     staleTimes: {
       dynamic: 30,    // 30s para rotas dinâmicas (posts)
-      static: 300,   // 30min para rotas estáticas
+      static: 300,   // 5min para rotas estáticas
     },
-    
+
     // Otimiza renderização de Server Components
     optimizeServerReact: true,
-    
+
     optimizePackageImports: [
       "@radix-ui/react-navigation-menu",
       "lucide-react",
@@ -65,27 +65,25 @@ const nextConfig = {
     ],
     formats: ["image/avif"],
     deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [32, 48, 64, 96, 128, 256, 384],
+    imageSizes: [32, 48, 64, 96, 128, 256, 384, 512, 640, 768, 1024, 1280, 1920],
     qualities: [75],
-    minimumCacheTTL: 2678400, // 31 days
-   },
+  },
 
   // Remove console.log em produção
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
 
-  // Headers HTTP - Cache, Segurança e Early Hints
   async headers() {
     return [
-      // API Routes - Cache desabilitado (webhook revalida quando necessário)
       {
         source: "/api/posts/:path*",
         headers: [
-          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
-          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
+          { key: "Cache-Control", value: "max-age=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
         ],
       },
+
       {
         source: "/api/revalidate",
         headers: [
@@ -93,20 +91,20 @@ const nextConfig = {
           { key: "Vercel-CDN-Cache-Control", value: "no-store" },
         ],
       },
-      // Twitter API - Cache 5 minutos
+
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=120" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=120" },
+          { key: "Cache-Control", value: "public, max-age=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
         ],
       },
-      // YouTube Metadata - Cache 1 hora (CDN 24h)
+
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=60" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=600" },
+          { key: "Cache-Control", value: "public, max-age=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
         ],
       },
       // Assets estáticos Next.js - Cache imutável 1 ano
@@ -117,6 +115,7 @@ const nextConfig = {
           { key: "Vercel-CDN-Cache-Control", value: "max-age=31536000, immutable" },
         ],
       },
+
       {
         source: "/fonts/:path*",
         headers: [
@@ -125,7 +124,7 @@ const nextConfig = {
           { key: "Access-Control-Allow-Origin", value: "*" },
         ],
       },
-      // Headers de segurança globais e Early Hints para todas as rotas
+
       {
         source: "/:path*",
         headers: [
@@ -133,18 +132,12 @@ const nextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
-          {
-            key: "Link",
-            value: [
-              "<https://primeiranews.twic.pics>; rel=preconnect; crossorigin",
-              "<https://primeiranews.com.br>; rel=preconnect"
-            ].join(", "),
-          },
         ],
       },
     ];
   },
-          
+
+
   async redirects() {
     return [
       {
@@ -152,6 +145,7 @@ const nextConfig = {
         destination: "https://primeiranews.com.br/wp-admin/:path*",
         permanent: false,
       },
+
       {
         source: "/wp-json/:path*",
         destination: "https://primeiranews.com.br/wp-json/:path*",

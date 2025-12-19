@@ -15,21 +15,19 @@ export const Thumb: React.FC<PropType> = (props) => {
     <button
       onClick={onClick}
       type="button"
-      className={`relative flex-[0_0_16.666%] min-w-0 h-20 mx-1 overflow-hidden rounded-lg transition-opacity duration-300 ${
+      className={`relative flex-[0_0_90px] w-[90px] h-[90px] mx-1 overflow-hidden rounded-lg transition-opacity duration-200 ${
         selected 
-          ? 'opacity-100' 
-          : 'opacity-50 hover:opacity-90'
+          ? 'opacity-100 ring-2 ring-blue-500' 
+          : 'opacity-40 hover:opacity-100'
       }`}
     >
       <OptimizedImage
         src={imageSrc}
         alt={alt}
-        ratio="16/9"
-        priority="normal"
-        usePicture={true}
-        sizes="120px"
-        style={{ width: '100%', height: '100%' }}
+        ratio="1/1"
+        mode="cover"
         className="w-full h-full object-cover"
+        usePicture={false}
       />
     </button>
   )

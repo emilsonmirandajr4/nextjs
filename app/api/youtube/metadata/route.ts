@@ -66,12 +66,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const urls: string[] = Array.isArray(body?.urls) ? body.urls : [];
 
-    console.log("[YouTube API] Chamada recebida");
-    console.log("[YouTube API] Total de URLs recebidas:", urls.length);
-    console.log("[YouTube API] URLs:", urls);
-
     if (!urls.length) {
-      console.log("[YouTube API] Nenhuma URL fornecida, retornando vazio");
       return NextResponse.json(
         { items: {} },
         { status: 200, headers: YOUTUBE_METADATA_CACHE_HEADERS },
@@ -79,20 +74,9 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.YOUTUBE_API_KEY;
-    console.log("[YouTube API] API Key presente:", !!apiKey);
-    console.log(
-      "[YouTube API] API Key primeiros 10 chars:",
-      apiKey ? apiKey.substring(0, 10) + "..." : "NENHUMA",
-    );
 
     if (!apiKey) {
-      console.error(
-        "[YouTube API] ERRO CRÍTICO: YOUTUBE_API_KEY não está configurada!",
-      );
-      console.error(
-        "[YouTube API] Environment variables disponíveis:",
-        Object.keys(process.env).filter((k) => k.includes("YOUTUBE")),
-      );
+      console.error("[YouTube API] YOUTUBE_API_KEY não configurada");
       return NextResponse.json(
         { error: "YOUTUBE_API_KEY não configurada no ambiente" },
         { status: 500, headers: { "Cache-Control": "private, no-store" } },
@@ -107,11 +91,7 @@ export async function POST(req: NextRequest) {
       ),
     );
 
-    console.log("[YouTube API] IDs extraídos:", ids);
-    console.log("[YouTube API] Total de IDs únicos:", ids.length);
-
     if (!ids.length) {
-      console.log("[YouTube API] Nenhum ID válido extraído das URLs");
       return NextResponse.json(
         { items: {} },
         { status: 200, headers: YOUTUBE_METADATA_CACHE_HEADERS },
@@ -122,14 +102,10 @@ export async function POST(req: NextRequest) {
       ",",
     )}&key=${apiKey}`;
 
-    console.log("[YouTube API] Fazendo requisição para YouTube API...");
-    console.log(
-      "[YouTube API] URL (sem key):",
-      apiUrl.replace(/&key=.*$/, "&key=HIDDEN"),
-    );
-
-    const ytRes = await fetch(apiUrl, { cache: "no-store" });
-    console.log("[YouTube API] Status da resposta:", ytRes.status);
+    const ytRes = await fetch(apiUrl, { 
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
+    });
 
     if (!ytRes.ok) {
       const errorText = await ytRes.text();
@@ -143,11 +119,6 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await ytRes.json();
-    console.log("[YouTube API] Dados recebidos com sucesso");
-    console.log(
-      "[YouTube API] Total de vídeos retornados:",
-      data.items?.length || 0,
-    );
     const items: Record<string, YoutubeMetaItem> = {};
 
     for (const item of data.items || []) {
@@ -177,11 +148,6 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    console.log(
-      "[YouTube API] Retornando",
-      Object.keys(items).length,
-      "vídeos processados",
-    );
     return NextResponse.json(
       { items },
       { status: 200, headers: YOUTUBE_METADATA_CACHE_HEADERS },

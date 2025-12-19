@@ -188,7 +188,6 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                 src={getImagePath(getPostImage())}
                 alt={post.title.rendered}
                 ratio="16/9"
-                priority="normal"
                 usePicture={false}
                 sizes="(min-width: 1024px) 700px, 100vw"
               />
@@ -247,11 +246,8 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                       <OptimizedImage
                         src={getImagePath(relatedPost._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200&h=150&fit=crop')}
                         alt={relatedPost.title.rendered}
-                        ratio="1"
-                        placeholder="maincolor"
-                        transitionDuration="300ms"
-                        priority="normal"
-                        usePicture={true}
+                        ratio="4/3"
+                        usePicture={false}
                         sizes="96px"
                       />
                     </div>
@@ -307,7 +303,7 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
                         src={getImagePath(opinionPosts[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || '')}
                         alt={opinionPosts[0].title.rendered.replace(/<[^>]*>/g, '')}
                         ratio="16/9"
-                        usePicture={true}
+                        usePicture={false}
                         sizes="300px"
                         className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
                       />

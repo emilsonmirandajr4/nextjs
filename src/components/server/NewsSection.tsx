@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { WordPressPost } from '@/types/wordpress';
-import { getPostTitle, getPostImage } from '@/services/wordpress';
+import { getPostTitle, getPostImage, extractImagePath } from '@/services/wordpress';
 import { getPostUrl } from '@/utils/navigation';
 import OptimizedImage from '@/components/OptimizedImage';
 
@@ -28,20 +28,19 @@ function getExcerptWords(post: WordPressPost, wordCount: number = 24): string {
 }
 
 function getImagePath(post: WordPressPost): string {
-  const imageUrl = getPostImage(post);
-  return imageUrl.replace(/^https?:\/\/[^/]+/, '') || '/placeholder.jpg';
+  return extractImagePath(getPostImage(post));
 }
 
 export default function NewsSection({ posts, title, iconColor = 'sky' }: NewsSectionProps) {
   const colors = iconColor === 'red'
     ? {
-        hoverText: 'group-hover:text-red-700',
-        shadow: 'shadow-red-500/20'
-      }
+      hoverText: 'group-hover:text-red-700',
+      shadow: 'shadow-red-500/20'
+    }
     : {
-        hoverText: 'group-hover:text-sky-700',
-        shadow: 'shadow-sky-500/20'
-      };
+      hoverText: 'group-hover:text-sky-700',
+      shadow: 'shadow-sky-500/20'
+    };
 
   return (
     <div className={`bg-white rounded-[20px] overflow-hidden h-full border border-slate-200 shadow-lg ${colors.shadow}`}>
@@ -68,9 +67,9 @@ export default function NewsSection({ posts, title, iconColor = 'sky' }: NewsSec
                 <OptimizedImage
                   src={getImagePath(post)}
                   alt={getPostTitle(post)}
-                  ratio="16/9"
-                  usePicture={true}
-                  priority="normal"
+                  ratio="1/1"
+                  usePicture={false}
+                  eager={false}
                   sizes="112px"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />

@@ -27,6 +27,7 @@ async function fetchFromTwitterApi(): Promise<ApiTrendingTopic[] | null> {
         headers: {
           Authorization: `Bearer ${bearer}`,
         },
+        signal: AbortSignal.timeout(8000),
       },
     );
 
@@ -59,6 +60,7 @@ async function fetchFromGetDayTrends(): Promise<ApiTrendingTopic[] | null> {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36',
       },
+      signal: AbortSignal.timeout(8000),
     });
 
     if (!response.ok) {

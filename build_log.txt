@@ -1,0 +1,122 @@
+
+> primeira-news@0.0.0 build
+> powershell -ExecutionPolicy Bypass -File ./build-clean.ps1
+
+
+> primeira-news@0.0.0 build-raw
+> next build
+
+Ôû▓ Next.js 16.1.0-canary.31 (Turbopack, Cache Components)
+- Environments: .env.local
+- Experiments (use with caution):
+  Ô£ô inlineCss
+  ┬À optimizePackageImports
+  ┬À staleTimes
+  Ô£ô turbopackFileSystemCacheForBuild
+  Ô£ô viewTransition
+
+  Creating an optimized production build ...
+node.exe : 
+No C:\Users\jr\Desktop\nextjs\node_modules\.b
+in\npm.ps1:24 caractere:5
++     & "node$exe"  
+"$basedir/../npm/bin/npm-cli.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified:  
+   (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandE 
+   rror
+ 
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./src/components/OptimizedImage.tsx:79:5
+Parsing ecmascript source code failed
+  77 |   // 3. Renderiza├º├úo Condicional
+  78 |   if (usePicture) {
+> 79 |     return (
+     |     ^^^^^^^^
+> 80 |       <TwicPicture
+     | ^^^^^^^^^^^^^^^^^^
+> 81 |         {...commonProps}
+     | ^^^^^^^^^^^^^^^^^^
+> 82 |         sizes={sizes}
+     | ^^^^^^^^^^^^^^^^^^
+> 83 |         eager={eager} // Importante 
+para LCP
+     | ^^^^^^^^^^^^^^^^^^
+> 84 |       />
+     | ^^^^^^^^^^^^^^^^^^
+> 85 |     );
+     | ^^^^^^^
+  86 |   }
+  87 |
+  88 |   return (
+Return statement is not allowed here
+Import traces:
+  Client Component Browser:
+    ./src/components/OptimizedImage.tsx 
+[Client Component Browser]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Client Component Browser]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Server Component]
+  Client Component SSR:
+    ./src/components/OptimizedImage.tsx 
+[Client Component SSR]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Client Component SSR]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Server Component]
+  Server Component:
+    ./src/components/OptimizedImage.tsx
+    
+./src/components/server/OpinionSection.tsx
+    ./app/page.tsx
+./src/components/OptimizedImage.tsx:88:3
+Parsing ecmascript source code failed
+  86 |   }
+  87 |
+> 88 |   return (
+     |   ^^^^^^^^
+> 89 |     <TwicImg
+     | ^^^^^^^^^^^^
+> 90 |       {...commonProps}
+     | ^^^^^^^^^^^^
+> 91 |       eager={eager}
+     | ^^^^^^^^^^^^
+> 92 |       transition={transition}
+     | ^^^^^^^^^^^^
+> 93 |       
+transitionDuration={transitionDuration}
+     | ^^^^^^^^^^^^
+> 94 |     />
+     | ^^^^^^^^^^^^
+> 95 |   );
+     | ^^^^^
+  96 | }
+Return statement is not allowed here
+Import traces:
+  Client Component Browser:
+    ./src/components/OptimizedImage.tsx 
+[Client Component Browser]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Client Component Browser]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Server Component]
+  Client Component SSR:
+    ./src/components/OptimizedImage.tsx 
+[Client Component SSR]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Client Component SSR]
+    ./app/[year]/[month]/[category]/[slug]/pa
+ge.tsx [Server Component]
+  Server Component:
+    ./src/components/OptimizedImage.tsx
+    
+./src/components/server/OpinionSection.tsx
+    ./app/page.tsx
+    at <unknown> 
+(./src/components/OptimizedImage.tsx:79:5)
+    at <unknown> 
+(./src/components/OptimizedImage.tsx:88:3)

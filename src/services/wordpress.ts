@@ -58,6 +58,32 @@ export function getPostImage(post: WordPressPost): string {
   return fallback;
 }
 
+/**
+ * Extracts the relative path from a WordPress image URL for TwicPics.
+ * TwicPics domain will be prepended automatically by the component.
+ */
+export function extractImagePath(imageUrl: string): string {
+  if (!imageUrl) return '/placeholder.png';
+
+  try {
+    // Se já é um path relativo, retorna direto
+    if (imageUrl.startsWith('/')) {
+      return imageUrl;
+    }
+
+    // Remove o domínio mantendo apenas o path
+    if (imageUrl.startsWith('http')) {
+      const url = new URL(imageUrl);
+      return url.pathname;
+    }
+
+    return imageUrl;
+  } catch (e) {
+    console.warn('Failed to extract image path:', imageUrl, e);
+    return '/placeholder.png';
+  }
+}
+
 // Decodifica entidades HTML (ex: &#8220; -> ", &amp; -> &)
 export function decodeHtmlEntities(text: string): string {
   const entities: Record<string, string> = {
@@ -67,7 +93,7 @@ export function decodeHtmlEntities(text: string): string {
     '&amp;': '&', '&lt;': '<', '&gt;': '>',
     '&quot;': '"', '&apos;': "'", '&nbsp;': ' ',
   };
-  
+
   return text
     .replace(/&#?\w+;/g, match => entities[match] || match)
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
@@ -286,7 +312,7 @@ export async function fetchPostsByCategorySlugPaginated(
 ): Promise<WordPressPost[]> {
   const catId = await fetchCategoryIdBySlug(slug);
   if (!catId) return [];
-  
+
   return await fetchPostsByCategoryPaginated(catId, perPage, page);
 }
 
@@ -318,7 +344,7 @@ export async function fetchPostBySlug(slug: string): Promise<WordPressPost | nul
 
     const post = JSON.parse(text) as WordPressPost;
     const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat: any) => cat.name) || [];
-    
+
     return {
       ...post,
       categories_names,

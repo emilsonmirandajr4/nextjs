@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { WordPressPost } from "@/types/wordpress";
-import { getPostImage } from "@/services/wordpress";
+import { getPostImage, extractImagePath } from "@/services/wordpress";
 import { getPostUrl } from "@/utils/navigation";
 import OptimizedImage from "@/components/OptimizedImage";
 
@@ -9,8 +9,7 @@ interface OpinionSectionProps {
 }
 
 function getImagePath(post: WordPressPost): string {
-  const imageUrl = getPostImage(post);
-  return imageUrl.replace(/^https?:\/\/[^/]+/, "") || "/placeholder.jpg";
+  return extractImagePath(getPostImage(post));
 }
 
 export default function OpinionSection({ posts }: OpinionSectionProps) {
@@ -40,8 +39,9 @@ export default function OpinionSection({ posts }: OpinionSectionProps) {
             <OptimizedImage
               src={getImagePath(featuredPost)}
               alt={featuredPost.title.rendered.replace(/<[^>]*>/g, "")}
-              ratio="16/9"
-              usePicture={true}
+              ratio="4/3"
+              usePicture={false}
+              eager={false}
               sizes="(min-width: 1024px) 350px, (min-width: 768px) 300px, 100vw"
               className="w-full h-52 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
             />

@@ -12,7 +12,7 @@ export const WORDPRESS_CONFIG = {
     TAGS: 3600,          // 1 hora
     MEDIA: 31536000,     // 1 year (imagens não mudam)
   },
-  
+
   PAGINATION: {
     PER_PAGE: 10,
     MAX_PAGES: 50,

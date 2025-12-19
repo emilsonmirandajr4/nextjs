@@ -6,7 +6,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import Fade from "embla-carousel-fade";
 import { WordPressPost } from "../types/wordpress";
-import { getPostImage, getPostTitle } from "../services/wordpress";
+import { getPostImage, getPostTitle, extractImagePath } from "../services/wordpress";
 import { getPostUrl } from "../utils/navigation";
 import OptimizedImage from "./OptimizedImage";
 import {
@@ -28,7 +28,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     {
       loop: true,
       align: "start",
-      duration: 30,// Transição mais suave (padrão é 25)
+      duration: 35, // Transição mais suave (padrão é 25)
     },
     [
       Fade(),
@@ -69,16 +69,15 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     if (!emblaMainApi) return;
     onSelect();
     emblaMainApi.on("select", onSelect).on("reInit", onSelect);
-    
+
     return () => {
       emblaMainApi.off("select", onSelect).off("reInit", onSelect);
     };
   }, [emblaMainApi, onSelect]);
 
   // Extrai path da imagem para TwicPics
-  const getImagePath = (post: WordPressPost): string => {
-    const imageUrl = getPostImage(post);
-    return imageUrl.replace(/^https?:\/\/[^/]+/, "") || "/placeholder.jpg";
+  const getImagePath = (post: WordPressPost) => {
+    return extractImagePath(getPostImage(post));
   };
 
   // Early return apenas se não houver posts (dados do servidor)
@@ -102,6 +101,9 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
       >
         <div className="flex touch-pan-y">
           {posts.slice(0, 8).map((post, index) => {
+            // Verifica se é o primeiro slide (índice 0)
+            const isFirstSlide = index === 0;
+
             const categoryName =
               post.categories_names?.find(
                 (name) =>
@@ -115,15 +117,13 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
                   href={getPostUrl(post)}
                   className="relative h-[370px] w-full group cursor-pointer overflow-hidden block"
                 >
-                  {/* Image */}
                   <OptimizedImage
                     src={getImagePath(post)}
                     alt={getPostTitle(post)}
-                    ratio="16/9"
-                    priority={index === 0 ? "high" : "normal"}
-                    usePicture={true}
-                    fetchpriority={index === 0 ? "high" : "auto"}
-                    // sizes: mobile=100vw, lg+=50% de max-w-7xl (~640px)
+                    ratio="4/3"
+                    usePicture={isFirstSlide}
+                    eager={isFirstSlide}
+                    fetchpriority={isFirstSlide ? "high" : "auto"}
                     sizes="(min-width: 1024px) 640px, 100vw"
                     style={{
                       width: "100%",
@@ -132,17 +132,13 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-
-                  {/* Category Badge */}
+                  {/* ... resto do seu código (Category Badge e Content) ... */}
                   {categoryName && (
-                    <div className="absolute top-4 left-4 bg-blue-700 text-white px-2.5 py-1 text-xs font-semibold uppercase z-20">
+                    <div className="absolute top-4 left-4 bg-blue-600 text-white px-2.5 py-1 text-xs font-semibold uppercase z-20">
                       {categoryName}
                     </div>
                   )}
 
-                  {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                     <h2 className="text-2xl md:text-3xl font-bold text-white line-clamp-2">
                       {getPostTitle(post)}
@@ -156,15 +152,17 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
       </div>
 
       {/* Navigation Arrows */}
-      <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
-      <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
+      <div className="flex justify-between items-center mt-4">
+        <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+        <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
+      </div>
 
-      {/* Thumbnails */}
-      <div 
-        className="overflow-hidden h-[120px] rounded-lg" 
+      {/* Container dos Thumbnails */}
+      <div
+        className="overflow-hidden h-[120px] rounded-lg mt-4"
         ref={emblaThumbsRef}
       >
-        <div className="flex gap-0">
+        <div className="flex gap-2">
           {posts.slice(0, 8).map((post, index) => (
             <Thumb
               key={post.id}

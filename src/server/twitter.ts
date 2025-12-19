@@ -32,7 +32,7 @@ async function fetchFromTwitterApi(): Promise<TrendingTopic[] | null> {
   try {
     // Timeout protection: abort fetch after 1.1 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1100);
+    const timeoutId = setTimeout(() => controller.abort(), 1000);
 
     const response = await fetch(
       `https://api.twitter.com/1.1/trends/place.json?id=${BRAZIL_WOEID}`,
@@ -77,7 +77,7 @@ async function fetchFromGetDayTrends(): Promise<TrendingTopic[] | null> {
   try {
     // Timeout protection: abort fetch after 1.1 seconds
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1100);
+    const timeoutId = setTimeout(() => controller.abort(), 1000);
 
     const response = await fetch("https://getdaytrends.com/brazil/", {
       headers: {
