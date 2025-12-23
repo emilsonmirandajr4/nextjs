@@ -9,8 +9,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 60 * 2, // 2 minutos (reduzido - webhook limpa no servidor)
-        gcTime: 1000 * 60 * 5, // 5 minutos (reduzido)
+        staleTime: 1000 * 30,    // 30 segundos - atualização rápida
+        gcTime: 1000 * 60,       // 1 minuto - garbage collection
         retry: 1,
         retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
         refetchOnWindowFocus: true, // Atualiza quando usuário volta para aba

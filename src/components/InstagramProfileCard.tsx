@@ -44,9 +44,6 @@ export default function InstagramProfileCard({
                   alt={name}
                   ratio="1/1"
                   mode="cover"
-                  placeholder="none"
-                  eager={false}
-                  usePicture={false}
                   sizes="96px"
                   className="h-full w-full object-cover"
                 />

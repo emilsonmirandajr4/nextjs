@@ -5,13 +5,13 @@ interface LogoCompleteProps {
 
 export default function LogoComplete({ width = 200, className = "" }: LogoCompleteProps) {
   // Calcula altura proporcional (mantém aspect ratio)
-  const height = width * 0.4; // Proporção ajustada para o novo design
+  const height = width * 0.37; // Proporção ajustada para o novo design
 
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 600 180"
+      viewBox="160 0 230 200"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -20,7 +20,7 @@ export default function LogoComplete({ width = 200, className = "" }: LogoComple
         {/* Gradiente suave para o círculo do logo */}
         <linearGradient id="circleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#000000" />
-          <stop offset="100%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#000000" />
         </linearGradient>
 
         {/* Gradiente para o texto principal */}
@@ -34,7 +34,7 @@ export default function LogoComplete({ width = 200, className = "" }: LogoComple
           <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
           <feOffset dx="0" dy="2" result="offsetblur"/>
           <feComponentTransfer>
-            <feFuncA type="linear" slope="0.55"/>
+            <feFuncA type="linear" slope="0.7"/>
           </feComponentTransfer>
           <feMerge>
             <feMergeNode/>
@@ -52,7 +52,7 @@ export default function LogoComplete({ width = 200, className = "" }: LogoComple
           r="65"
           fill="url(#circleGradient)"
           stroke="#ffffff"
-          strokeWidth="7"
+          strokeWidth="5"
         />
 
         {/* Círculo interno (borda decorativa) */}
@@ -62,14 +62,14 @@ export default function LogoComplete({ width = 200, className = "" }: LogoComple
           r="62"
           fill="none"
           stroke="rgba(255, 255, 255, 0.7)"
-          strokeWidth="2"
+          strokeWidth="0"
         />
 
         {/* Letra P */}
         <path
           d="M 52 70 L 52 110 M 52 70 L 66 70 Q 73 70 73 79 Q 73 90 66 90 L 52 90"
           stroke="#ffffff"
-          strokeWidth="5"
+          strokeWidth="6"
           strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
@@ -100,27 +100,27 @@ export default function LogoComplete({ width = 200, className = "" }: LogoComple
 
       {/* Título "Primeira News" */}
       <text
-        x="170"
+        x="160"
         y="95"
         fontFamily="system-ui, -apple-system, 'Segoe UI', Arial, sans-serif"
         fontSize="40"
         fontWeight="700"
-        fill="url(#titleGradient)"
-        letterSpacing="-0.2"
+        fill="#000000"
+        letterSpacing="-0.5"
       >
         Primeira
-        <tspan fill="#112ccc" dx="8">News</tspan>
+        <tspan fill="#000000" dx="8">News</tspan>
       </text>
 
       {/* Subtítulo */}
       <text
-        x="170"
+        x="160"
         y="130"
         fontFamily="system-ui, -apple-system, 'Segoe UI', Arial, sans-serif"
-        fontSize="22"
+        fontSize="20"
         fontWeight="400"
-        fill="#6b7280"
-        letterSpacing="-1.2"
+        fill="#000000"
+        letterSpacing="-1.3"
       >
         Notícias imparciais de política, economia e mundo
       </text>

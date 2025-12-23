@@ -58,7 +58,7 @@ function formatYouTubeDuration(isoDuration?: string): string {
 }
 
 const YOUTUBE_METADATA_CACHE_HEADERS = {
-  "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+  "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
 };
 
 export async function POST(req: NextRequest) {
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     const ytRes = await fetch(apiUrl, { 
       cache: "no-store",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(4000),
     });
 
     if (!ytRes.ok) {

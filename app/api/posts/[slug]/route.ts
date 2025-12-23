@@ -4,9 +4,6 @@ import {
   getPostSingleCacheControl,
 } from '../../../../src/server/wordpress';
 
-// Nota: Edge Runtime removido devido a conflito com cacheComponents
-// O cache já está otimizado via cacheComponents no next.config.mjs
-
 export async function GET(
   _request: any,
   { params }: { params: Promise<{ slug: string }> },
@@ -18,7 +15,7 @@ export async function GET(
       status: 400,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'private, no-store',
+        'Cache-Control': 'public, max-age=60',
       },
     });
   }
@@ -43,7 +40,7 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'private, no-store',
+        'Cache-Control': 'public, max-age=60',
       },
     });
   } catch (error) {
@@ -54,7 +51,7 @@ export async function GET(
         status: 500,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'private, no-store',
+          'Cache-Control': 'public, max-age=60',
         },
       },
     );

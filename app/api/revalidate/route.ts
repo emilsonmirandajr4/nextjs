@@ -4,14 +4,10 @@ import { NextRequest, NextResponse } from 'next/server';
 const REVALIDATE_SECRET = process.env.WEBHOOK_SECRET;
 const MAX_TAGS_PER_REQUEST = 10; // Evita spam
 
-// Simples rate limiting em memória (funciona em serverless)
 const requestLog = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 60000; // 1 minuto
 const MAX_REQUESTS_PER_MINUTE = 100; // 100 requisições por minuto
 
-/**
- * Verifica rate limiting por IP
- */
 function checkRateLimit(ip: string | null): boolean {
   if (!ip) return true; // Se não conseguir IP, deixa passar
 
@@ -31,9 +27,6 @@ function checkRateLimit(ip: string | null): boolean {
   return true;
 }
 
-/**
- * Extrai IP do cliente
- */
 function getClientIP(request: NextRequest): string | null {
   return (
     request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
@@ -42,9 +35,6 @@ function getClientIP(request: NextRequest): string | null {
   );
 }
 
-/**
- * Log estruturado com timestamp
- */
 function logEvent(level: 'info' | 'warn' | 'error', message: string, data?: any) {
   const timestamp = new Date().toISOString();
   const logMessage = `[${timestamp}] [${level.toUpperCase()}] [Next.js Webhook] ${message}`;
@@ -89,9 +79,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ============================================
-    // 2. VALIDAR AUTENTICAÇÃO
-    // ============================================
     if (!REVALIDATE_SECRET) {
       logEvent('error', 'WEBHOOK_SECRET não configurada');
       return NextResponse.json(
@@ -126,9 +113,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ============================================
-    // 3. VALIDAR BODY
-    // ============================================
     const body = await request.json();
     let { tag, tags } = body;
 
@@ -141,7 +125,6 @@ export async function POST(request: NextRequest) {
       tagsToRevalidate.push(...tags.filter(t => typeof t === 'string'));
     }
 
-    // Validações
     if (tagsToRevalidate.length === 0) {
       logEvent('warn', 'Nenhuma tag válida fornecida', { body });
       return NextResponse.json(
@@ -178,9 +161,7 @@ export async function POST(request: NextRequest) {
         }
       );
     }
-// ============================================
-// 4. REVALIDAR TAGS
-// ============================================
+
 const revalidationResults = {
   success: [] as string[],
   failed: [] as string[]
@@ -199,9 +180,6 @@ for (const t of tagsToRevalidate) {
   }
 }
 
-// ============================================
-// 5. RESPOSTA FINAL
-// ============================================
 const processingTime = Date.now() - startTime;
 const allSuccess = revalidationResults.failed.length === 0;
 
@@ -229,7 +207,7 @@ return NextResponse.json(
     status: allSuccess ? 200 : 207, // 207 = Multi-Status
     headers: { 
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-store'
+      'Cache-Control': 'public, max-age=30'
     }
   }
 );
@@ -260,9 +238,6 @@ return NextResponse.json(
 }
 }
 
-/**
- * Health check endpoint
- */
 export async function GET(request: NextRequest) {
   const isConfigured = !!REVALIDATE_SECRET;
 
@@ -292,7 +267,7 @@ export async function GET(request: NextRequest) {
       status: isConfigured ? 200 : 500,
       headers: { 
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-store'
+        'Cache-Control': 'public, max-age=60'
       }
     }
   );

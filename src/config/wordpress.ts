@@ -3,13 +3,13 @@ export const WORDPRESS_CONFIG = {
   SITE_URL: 'https://primeiranews.com.br',
 
   // Cache TTL configuration (in seconds)
-  // Valores baixos para permitir revalidação rápida via webhook
+  // Valores reduzidos para 0s - atualização rápida
   CACHE_TTL: {
-    POSTS_LIST: 30,      // 1 minuto - revalidado via webhook ao publicar
-    POSTS_CATEGORY: 60, // 5 minutos - revalidado via webhook ao publicar
-    POST_SINGLE: 60,    // 5 minutos - revalidado via webhook ao editar
-    CATEGORIES: 3600,    // 1 hora (categorias mudam raramente)
-    TAGS: 3600,          // 1 hora
+    POSTS_LIST: 0,      // 0 segundos - atualização rápida
+    POSTS_CATEGORY: 0,  // 0 segundos - atualização rápida
+    POST_SINGLE: 0,     // 0 segundos - atualização rápida
+    CATEGORIES: 0,      // 0 segundos - atualização rápida
+    TAGS: 0,            // 0 segundos - atualização rápida
     MEDIA: 31536000,     // 1 year (imagens não mudam)
   },
 

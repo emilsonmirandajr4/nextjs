@@ -1,3 +1,5 @@
+"use client";
+
 import { TwicImg, TwicPicture } from "@twicpics/components/react";
 import React from "react";
 
@@ -6,62 +8,48 @@ interface OptimizedImageProps {
   alt: string;
   ratio?: string | "none";
   mode?: "contain" | "cover";
-  placeholder?: "preview" | "maincolor" | "meancolor" | "none";
   className?: string;
   style?: React.CSSProperties;
-  focus?: "auto" | string;
   eager?: boolean;
+  focus?: "auto" | string;
   usePicture?: boolean;
-  anchor?: string;
   refit?: boolean | string;
-  transition?: "fade" | "zoom" | "none";
-  transitionDuration?: string;
-  maxWidth?: number;
   fetchpriority?: "high" | "low" | "auto";
   sizes?: string;
 }
 export default function OptimizedImage({
   src,
   alt,
-  ratio = "16/9",
+  ratio = "4/3",
   mode = "cover",
-  placeholder = "preview",
   eager = false,
   usePicture = false,
-  focus,
+  focus = "auto",
   style,
   className,
-  anchor,
-  transition,
-  transitionDuration,
-  fetchpriority, // Mantido como variável para o componente
-  sizes = "auto, (max-width: 30em) 100vw, (max-width: 50em) 50vw, calc(33vw - 100px)",
+  fetchpriority = "auto",
+  sizes,
 }: OptimizedImageProps) {
-  // Fallback para evitar src vazio
-  const imagePath = src || "/placeholder.png";
 
-  // Props comuns organizadas
+  const imagePath = src?.trim() ? src : "placeholder.png";
+
   const commonProps = {
     src: imagePath,
     alt,
     ratio,
     mode,
-    placeholder,
     focus,
     style,
     className,
-    anchor,
-    // Em 2025, TwicPics aceita fetchpriority diretamente em certos componentes
-    fetchpriority: fetchpriority as any,
   };
 
-  // 3. Renderização Condicional
   if (usePicture) {
     return (
       <TwicPicture
         {...commonProps}
         sizes={sizes}
-        eager={eager} // Importante para LCP
+        eager={eager}
+        {...({ fetchpriority } as any)}
       />
     );
   }
@@ -70,8 +58,7 @@ export default function OptimizedImage({
     <TwicImg
       {...commonProps}
       eager={eager}
-      transition={transition}
-      transitionDuration={transitionDuration}
+      {...({ fetchpriority } as any)}
     />
   );
 }

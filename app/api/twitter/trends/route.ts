@@ -27,7 +27,7 @@ async function fetchFromTwitterApi(): Promise<ApiTrendingTopic[] | null> {
         headers: {
           Authorization: `Bearer ${bearer}`,
         },
-        signal: AbortSignal.timeout(8000),
+        signal: AbortSignal.timeout(4000),
       },
     );
 
@@ -41,7 +41,7 @@ async function fetchFromTwitterApi(): Promise<ApiTrendingTopic[] | null> {
       return null;
     }
 
-    const trends = data[0].trends.slice(0, 7).map((trend: any) => ({
+    const trends = data[0].trends.slice(0, 8).map((trend: any) => ({
       tag: trend.name as string,
       tweets: formatTweetCount(trend.tweet_volume ?? null),
       url: `https://twitter.com/search?q=${encodeURIComponent(trend.name as string)}`,
@@ -120,7 +120,7 @@ export async function GET(): Promise<Response> {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
       },
     });
   } catch {
@@ -129,7 +129,7 @@ export async function GET(): Promise<Response> {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
       },
     });
   }

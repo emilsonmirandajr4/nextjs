@@ -4,9 +4,6 @@ import {
   getPostsListCacheControl,
 } from '../../../src/server/wordpress';
 
-// Nota: Edge Runtime removido devido a conflito com cacheComponents
-// O cache já está otimizado via cacheComponents no next.config.mjs
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
@@ -29,7 +26,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'private, no-store',
+        'Cache-Control': 'public, max-age=60',
       },
     });
   } catch (error) {
@@ -40,7 +37,7 @@ export async function GET(request: Request) {
         status: 500,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'private, no-store',
+          'Cache-Control': 'public, max-age=60',
         },
       },
     );

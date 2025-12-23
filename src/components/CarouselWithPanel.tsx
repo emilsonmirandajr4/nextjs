@@ -345,8 +345,6 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                       src={item.image}
                       alt={item.title}
                       ratio="4/3"	
-                      usePicture={false}
-                      eager={false}
                       sizes="(min-width: 1024px) 400px, (min-width: 768px) 350px, 280px"
                       className="embla__slide__img"
                     />

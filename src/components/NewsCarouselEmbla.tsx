@@ -33,7 +33,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     [
       Fade(),
       Autoplay({
-        delay: 8000,
+        delay: 5000,
         stopOnInteraction: false,
         stopOnMouseEnter: true,
       }),
@@ -75,19 +75,32 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     };
   }, [emblaMainApi, onSelect]);
 
-  // Extrai path da imagem para TwicPics
-  const getImagePath = (post: WordPressPost) => {
-    return extractImagePath(getPostImage(post));
-  };
+const getImagePath = (post: any) => {
 
-  // Early return apenas se não houver posts (dados do servidor)
+  const fullUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url 
+                 || post.featured_media_src_url;
+
+  if (!fullUrl) return "";
+
+  try {
+
+    const url = new URL(fullUrl);
+    return url.pathname; 
+  } catch (e) {
+
+    return fullUrl
+      .replace("https://primeiranews.com.br", "")
+      .replace("https://primeiranews.twic.pics", "");
+  }
+};
+
   if (!posts || posts.length === 0) {
     return <div className="w-full h-[370px] bg-gray-900 animate-pulse rounded-xl" />;
   }
 
   return (
     <div className="relative w-full space-y-4">
-      {/* Main Carousel */}
+  
       <div
         className="overflow-hidden rounded-xl h-[370px]"
         style={{
@@ -101,13 +114,11 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
       >
         <div className="flex touch-pan-y">
           {posts.slice(0, 8).map((post, index) => {
-            // Verifica se é o primeiro slide (índice 0)
             const isFirstSlide = index === 0;
 
             const categoryName =
               post.categories_names?.find(
                 (name) =>
-                  name.toLowerCase() !== "notícias" &&
                   name.toLowerCase() !== "noticias",
               ) || post.categories_names?.[0];
 
@@ -132,15 +143,14 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
-                  {/* ... resto do seu código (Category Badge e Content) ... */}
                   {categoryName && (
                     <div className="absolute top-4 left-4 bg-blue-600 text-white px-2.5 py-1 text-xs font-semibold uppercase z-20">
                       {categoryName}
                     </div>
                   )}
 
-                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white line-clamp-2">
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-3 z-10">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white line-clamp-2 text-center">
                       {getPostTitle(post)}
                     </h2>
                   </div>

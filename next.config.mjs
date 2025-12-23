@@ -10,10 +10,7 @@ const withBundleAnalyzer = bundleAnalyzer({
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-  // Enable Cache Components (v16 feature - PPR alternative)
   cacheComponents: true,
-
-  // React Compiler (auto-memoization)
   reactCompiler: true,
 
   experimental: {
@@ -22,32 +19,26 @@ const nextConfig = {
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
 
-    // Client-side router cache - otimizado para portal de notícias
     staleTimes: {
-      dynamic: 30,    // 30s para rotas dinâmicas (posts)
-      static: 300,   // 5min para rotas estáticas
+      dynamic: 30,   
+      static: 60,     
     },
 
-    // Otimiza renderização de Server Components
     optimizeServerReact: true,
 
     optimizePackageImports: [
       "@radix-ui/react-navigation-menu",
-      "lucide-react",
       "embla-carousel",
       "@twicpics/components",
       "motion",
-      "react-hot-toast",
-      "@tanstack/react-query",
       "embla-carousel-react",
       "embla-carousel-autoplay",
       "embla-carousel-fade",
       "clsx",
-      "tailwind-merge",
+      "tailwindcss",
     ],
   },
 
-  // Define explicit root directory to avoid lockfile conflicts
   turbopack: {
     root: process.cwd(),
   },
@@ -63,13 +54,12 @@ const nextConfig = {
         hostname: "primeiranews.twic.pics",
       },
     ],
-    formats: ["image/avif"],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [32, 48, 64, 96, 128, 256, 384, 512, 640, 768, 1024, 1280, 1920],
+    imageSizes: [384, 512, 768, 1024, 1280, 1920, 2540],
     qualities: [75],
   },
 
-  // Remove console.log em produção
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
@@ -79,32 +69,32 @@ const nextConfig = {
       {
         source: "/api/posts/:path*",
         headers: [
-          { key: "Cache-Control", value: "max-age=300" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
+          { key: "Cache-Control", value: "public, max-age=120, must-revalidate" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=120, must-revalidate" },
         ],
       },
 
       {
         source: "/api/revalidate",
         headers: [
-          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
-          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
+          { key: "Cache-Control", value: "public, max-age=120, must-revalidate" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=120, must-revalidate" },
         ],
       },
 
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=300" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
+          { key: "Cache-Control", value: "publix,max-age=120, must-revalidate" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=120, must-revalidate" },
         ],
       },
 
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=300" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=300" },
+          { key: "Cache-Control", value: "public, max-age=180, must-revalidate" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=180" },
         ],
       },
       // Assets estáticos Next.js - Cache imutável 1 ano
@@ -112,7 +102,7 @@ const nextConfig = {
         source: "/_next/static/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=31536000, immutable" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
 
@@ -120,7 +110,7 @@ const nextConfig = {
         source: "/fonts/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-          { key: "Vercel-CDN-Cache-Control", value: "max-age=31536000, immutable" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=31536000, immutable" },
           { key: "Access-Control-Allow-Origin", value: "*" },
         ],
       },
@@ -128,28 +118,8 @@ const nextConfig = {
       {
         source: "/:path*",
         headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
-      },
-    ];
-  },
-
-
-  async redirects() {
-    return [
-      {
-        source: "/wp-admin/:path*",
-        destination: "https://primeiranews.com.br/wp-admin/:path*",
-        permanent: false,
-      },
-
-      {
-        source: "/wp-json/:path*",
-        destination: "https://primeiranews.com.br/wp-json/:path*",
-        permanent: false,
       },
     ];
   },

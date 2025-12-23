@@ -6,7 +6,6 @@ const WP_API_URL = WORDPRESS_CONFIG.API_BASE;
 export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]> {
   try {
     const url = `/api/posts?perPage=${perPage}&page=1`;
-    console.log('Fetching posts from API:', url);
 
     const response = await fetch(url, {
       method: 'GET',
@@ -23,12 +22,10 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
 
     const text = await response.text();
     if (!text) {
-      console.warn('Empty response from API - Nenhuma notícia encontrada.');
       return [];
     }
 
     const data = JSON.parse(text) as WordPressPost[];
-    console.log('Successfully fetched posts from API:', data.length);
 
     return data.map((post: WordPressPost) => {
       const categories_names = post._embedded?.['wp:term']?.[0]?.map((cat: any) => cat.name) || [];
@@ -49,7 +46,8 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
 }
 
 export function getPostImage(post: WordPressPost): string {
-  const fallback = 'https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&w=800';
+  // Placeholder relativo - TwicPics não funciona com URLs externas
+  const fallback = '/wp-content/uploads/placeholder-news.jpg';
 
   if (post._embedded?.['wp:featuredmedia']?.[0]?.source_url) {
     return post._embedded['wp:featuredmedia'][0].source_url;
@@ -61,9 +59,10 @@ export function getPostImage(post: WordPressPost): string {
 /**
  * Extracts the relative path from a WordPress image URL for TwicPics.
  * TwicPics domain will be prepended automatically by the component.
+ * Rejects external URLs (non-WordPress domains) to prevent TwicPics errors.
  */
 export function extractImagePath(imageUrl: string): string {
-  if (!imageUrl) return '/placeholder.png';
+  if (!imageUrl) return '/wp-content/uploads/placeholder-news.jpg';
 
   try {
     // Se já é um path relativo, retorna direto
@@ -74,13 +73,25 @@ export function extractImagePath(imageUrl: string): string {
     // Remove o domínio mantendo apenas o path
     if (imageUrl.startsWith('http')) {
       const url = new URL(imageUrl);
+
+      // ⚠️ IMPORTANTE: Aceitar apenas URLs do WordPress ou TwicPics
+      // WordPress API: primeiranews.com.br
+      // TwicPics CDN: primeiranews.twic.pics
+      const isWordPressDomain = url.hostname.includes('primeiranews.com.br') ||
+        url.hostname.includes('primeiranews.twic.pics');
+
+      if (!isWordPressDomain) {
+        console.warn('[TwicPics] External URL rejected:', url.hostname);
+        return '/wp-content/uploads/placeholder-news.jpg';
+      }
+
       return url.pathname;
     }
 
     return imageUrl;
   } catch (e) {
     console.warn('Failed to extract image path:', imageUrl, e);
-    return '/placeholder.png';
+    return '/wp-content/uploads/placeholder-news.jpg';
   }
 }
 
@@ -162,7 +173,6 @@ export async function fetchCategoryIdBySlug(slug: string): Promise<number | null
     if (!res.ok) return null;
     const cats = await res.json();
     if (!Array.isArray(cats) || cats.length === 0) {
-      console.warn(`Categoria "${slug}" não encontrada.`);
       return null;
     }
     const norm = normalizeText(slug);
@@ -182,7 +192,6 @@ export async function fetchPostsByCategorySlug(slug: string, perPage: number = 5
       categorySlug: slug,
     });
     const url = `/api/posts?${params.toString()}`;
-    console.log('Fetching category posts from API:', url);
 
     const response = await fetch(url, {
       method: 'GET',
@@ -222,7 +231,6 @@ export async function fetchPostsByCategorySlug(slug: string, perPage: number = 5
 export async function fetchPostsPaginated(perPage: number = 10, page: number = 1): Promise<WordPressPost[]> {
   try {
     const url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}&orderby=date&order=desc`;
-    console.log('Fetching paginated posts from:', url);
 
     const response = await fetch(url, {
       method: 'GET',
@@ -267,7 +275,6 @@ export async function fetchPostsByCategoryPaginated(
 ): Promise<WordPressPost[]> {
   try {
     const url = `${WP_API_URL}/posts?_embed&categories=${categoryId}&per_page=${perPage}&page=${page}&orderby=date&order=desc`;
-    console.log('Fetching paginated category posts from:', url);
 
     const response = await fetch(url, {
       method: 'GET',
@@ -320,7 +327,6 @@ export async function fetchPostsByCategorySlugPaginated(
 export async function fetchPostBySlug(slug: string): Promise<WordPressPost | null> {
   try {
     const url = `/api/posts/${encodeURIComponent(slug)}`;
-    console.log('Fetching post by slug from API:', url);
 
     const response = await fetch(url, {
       method: 'GET',

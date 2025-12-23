@@ -10,7 +10,6 @@ import NewsCarouselEmbla from "@/components/NewsCarouselEmbla";
 import { getPostUrl } from "@/utils/navigation";
 import dynamic from "next/dynamic";
 
-// Dynamic import para Instagram Section (below the fold)
 const InstagramSection = dynamic(
   () => import("@/components/InstagramSection"),
   { ssr: true }
@@ -21,9 +20,6 @@ import { getFeaturedVideos } from "@/data/videos";
 import { getPostImage, getPostTitle } from "@/services/wordpress";
 import type { WordPressPost } from "@/types/wordpress";
 import { ScrollReveal } from "@/components/animations";
-
-// NOTA: Revalidação via webhook - cacheComponents no next.config.mjs cuida do cache automaticamente
-// Não use 'export const revalidate' pois é incompatível com cacheComponents
 
 import ArticlesThree from "@/components/ArticlesThree";
 
@@ -185,17 +181,17 @@ function preparePostsData(
     ...filterUnwantedCategories(posts), // Posts gerais como fallback
   ]);
 
-  // SIDEBAR ESQUERDA ("Mais Lidas"): Pega os primeiros 7 posts (índices 0-6)
-  const sidebarLeftPosts = allCleanPosts.slice(0, 7);
+  // SIDEBAR ESQUERDA ("Mais Lidas"): Pega os primeiros 8 posts (índices 0-7)
+  const sidebarLeftPosts = allCleanPosts.slice(0, 8);
 
-  // SIDEBAR DIREITA ("Assuntos em Alta"): Pega os próximos 7 posts (índices 7-13)
+  // SIDEBAR DIREITA ("Assuntos em Alta"): Pega os próximos 8 posts (índices 8-15)
   // Posts diferentes da esquerda por definição (slice sequencial)
-  let sidebarRightPosts = allCleanPosts.slice(7, 14);
+  let sidebarRightPosts = allCleanPosts.slice(8, 16);
   
-  // Fallback: se não houver 7 posts diferentes, completa com posts do início
+  // Fallback: se não houver 8 posts diferentes, completa com posts do início
   // (melhor repetir do que mostrar seção vazia ou incompleta)
-  if (sidebarRightPosts.length < 7 && allCleanPosts.length > 0) {
-    const remaining = 7 - sidebarRightPosts.length;
+  if (sidebarRightPosts.length < 8 && allCleanPosts.length > 0) {
+    const remaining = 8 - sidebarRightPosts.length;
     const fallbackPosts = allCleanPosts.slice(0, remaining);
     sidebarRightPosts = [...sidebarRightPosts, ...fallbackPosts];
   }
