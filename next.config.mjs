@@ -20,8 +20,8 @@ const nextConfig = {
     turbopackFileSystemCacheForBuild: true,
 
     staleTimes: {
-      dynamic: 30,   
-      static: 60,     
+      dynamic: 180,   // 3 minutos para rotas dinâmicas
+      static: 3600,   // 1 hora para rotas estáticas
     },
 
     optimizeServerReact: true,
@@ -85,7 +85,7 @@ const nextConfig = {
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "publix,max-age=120, must-revalidate" },
+          { key: "Cache-Control", value: "public, max-age=120, must-revalidate" },
           { key: "Vercel-CDN-Cache-Control", value: "public, max-age=120, must-revalidate" },
         ],
       },

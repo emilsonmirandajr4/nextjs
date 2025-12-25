@@ -12,51 +12,41 @@ export const postsKeys = {
   all: ['posts'] as const,
   lists: () => [...postsKeys.all, 'list'] as const,
   list: (perPage: number) => [...postsKeys.lists(), perPage] as const,
-  category: (slug: string, perPage: number) => [...postsKeys.all, 'category', slug, perPage] as const,
+  categories: () => [...postsKeys.all, 'category'] as const,
+  category: (slug: string, perPage: number) => [...postsKeys.categories(), slug, perPage] as const,
+  infinite: (slug: string, perPage: number) => [...postsKeys.all, 'infinite', slug, perPage] as const,
 };
-
 /**
  * Hook para buscar posts gerais
  * @param perPage Número de posts por página (padrão: 30)
  */
-export function usePosts(perPage: number = 50) {
+export function usePosts(perPage: number = 30) {
   return useQuery({
     queryKey: postsKeys.list(perPage),
     queryFn: () => fetchPosts(perPage),
-    // Usa config global (staleTime: 0) para atualização em tempo real
+    staleTime: 1000 * 60 * 5, // 5 minutos: evita refetch desnecessário ao navegar
   });
 }
 
-/**
- * Hook para buscar posts por categoria (slug)
- * @param slug Slug da categoria (ex: 'noticias', 'enganadores')
- * @param perPage Número de posts (padrão: 100)
- * @param enabled Se a query deve rodar (padrão: true)
- */
-export function usePostsByCategory(slug: string, perPage: number = 100, enabled: boolean = true) {
+export function usePostsByCategory(slug: string, perPage: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: postsKeys.category(slug, perPage),
     queryFn: () => fetchPostsByCategorySlug(slug, perPage),
-    enabled: enabled && !!slug, // Só busca se slug existe e enabled=true
-    // Usa config global (staleTime: 0) para atualização em tempo real
+    enabled: enabled && !!slug,
   });
 }
 
-/**
- * Hook para prefetch (pré-carregar) posts
- * Útil para carregar dados antes do usuário navegar
- */
 export function usePrefetchPosts() {
   const queryClient = useQueryClient();
 
-  const prefetchPosts = (perPage: number = 50) => {
+  const prefetchPosts = (perPage: number = 30) => {
     queryClient.prefetchQuery({
       queryKey: postsKeys.list(perPage),
       queryFn: () => fetchPosts(perPage),
     });
   };
 
-  const prefetchCategory = (slug: string, perPage: number = 100) => {
+  const prefetchCategory = (slug: string, perPage: number = 30) => {
     queryClient.prefetchQuery({
       queryKey: postsKeys.category(slug, perPage),
       queryFn: () => fetchPostsByCategorySlug(slug, perPage),
@@ -109,10 +99,6 @@ export function useInfinitePostsByCategory(
   });
 }
 
-/**
- * Hook para invalidar (limpar) cache de posts
- * Força uma nova busca na próxima renderização
- */
 export function useInvalidatePosts() {
   const queryClient = useQueryClient();
 
@@ -121,7 +107,9 @@ export function useInvalidatePosts() {
   };
 
   const invalidateCategory = (slug: string) => {
-    queryClient.invalidateQueries({ queryKey: postsKeys.category(slug, 100) });
+    // Invalida tanto a lista simples quanto a infinita daquela categoria
+    queryClient.invalidateQueries({ queryKey: postsKeys.categories() });
+    queryClient.invalidateQueries({ queryKey: ['posts', 'infinite', slug] });
   };
 
   return { invalidateAllPosts, invalidateCategory };

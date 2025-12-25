@@ -49,7 +49,6 @@ export default function ArticleCard({ post, className }: ArticleCardProps) {
           alt={post.title}
           ratio="16/9"
           refit={true}
-          usePicture={false}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
           className="object-cover transition-transform duration-500 group-hover:scale-105 w-full h-full"
         />

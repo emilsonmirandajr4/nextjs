@@ -47,7 +47,7 @@ export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]>
 
 export function getPostImage(post: WordPressPost): string {
   // Placeholder relativo - TwicPics não funciona com URLs externas
-  const fallback = '/wp-content/uploads/placeholder-news.jpg';
+  const fallback = '/placeholder.png';
 
   if (post._embedded?.['wp:featuredmedia']?.[0]?.source_url) {
     return post._embedded['wp:featuredmedia'][0].source_url;
@@ -62,7 +62,7 @@ export function getPostImage(post: WordPressPost): string {
  * Rejects external URLs (non-WordPress domains) to prevent TwicPics errors.
  */
 export function extractImagePath(imageUrl: string): string {
-  if (!imageUrl) return '/wp-content/uploads/placeholder-news.jpg';
+  if (!imageUrl) return '/placeholder.png';
 
   try {
     // Se já é um path relativo, retorna direto
@@ -74,15 +74,12 @@ export function extractImagePath(imageUrl: string): string {
     if (imageUrl.startsWith('http')) {
       const url = new URL(imageUrl);
 
-      // ⚠️ IMPORTANTE: Aceitar apenas URLs do WordPress ou TwicPics
-      // WordPress API: primeiranews.com.br
-      // TwicPics CDN: primeiranews.twic.pics
       const isWordPressDomain = url.hostname.includes('primeiranews.com.br') ||
         url.hostname.includes('primeiranews.twic.pics');
 
       if (!isWordPressDomain) {
         console.warn('[TwicPics] External URL rejected:', url.hostname);
-        return '/wp-content/uploads/placeholder-news.jpg';
+        return '/placeholder.png';
       }
 
       return url.pathname;
@@ -91,7 +88,7 @@ export function extractImagePath(imageUrl: string): string {
     return imageUrl;
   } catch (e) {
     console.warn('Failed to extract image path:', imageUrl, e);
-    return '/wp-content/uploads/placeholder-news.jpg';
+    return '/placeholder.png';
   }
 }
 

@@ -68,8 +68,6 @@ export default function NewsSection({ posts, title, iconColor = 'sky' }: NewsSec
                   src={getImagePath(post)}
                   alt={getPostTitle(post)}
                   ratio="1/1"
-                  usePicture={false}
-                  eager={false}
                   sizes="112px"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />

@@ -22,8 +22,6 @@ const robotoCondensed = localFont({
   ],
   variable: '--font-roboto-condensed',
   display: 'swap',
-  preload: false,
-  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -88,7 +86,7 @@ export default function RootLayout({
         env="production"
         breakpoints={{ xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }}
       />
-      
+
       <body className={`${robotoCondensed.variable} font-sans bg-white text-gray-900 antialiased`} suppressHydrationWarning>
         <Providers>
           <Suspense fallback={

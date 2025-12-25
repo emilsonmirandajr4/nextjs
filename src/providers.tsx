@@ -9,13 +9,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 30,    // 30 segundos - atualização rápida
-        gcTime: 1000 * 60,       // 1 minuto - garbage collection
+        staleTime: 1000 * 60 * 5, // 5 minutos - dados considerados frescos
+
+        gcTime: 1000 * 60 * 30, // 30 minutos - mantém em cache por mais tempo
+
         retry: 1,
+
         retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
-        refetchOnWindowFocus: true, // Atualiza quando usuário volta para aba
-        refetchOnReconnect: true, // Revalidar ao reconectar
-        refetchOnMount: true, // Revalidar ao montar componente
+
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        refetchOnMount: false,
       },
     },
   }))
@@ -25,49 +29,25 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <Toaster
         position="top-right"
         toastOptions={{
-          // Estilo padrão
+
           style: {
             background: '#1f2937',
             color: '#fff',
-            borderRadius: '0.5rem',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            padding: '12px 16px',
+            borderRadius: '0.8rem',
+            fontSize: '14px'
           },
-          // Success
           success: {
-            style: {
-              background: '#10b981',
-            },
-            iconTheme: {
-              primary: '#fff',
-              secondary: '#10b981',
-            },
             duration: 3000,
+            style: { background: '#10b981' },
           },
-          // Error
           error: {
-            style: {
-              background: '#ef4444',
-            },
-            iconTheme: {
-              primary: '#fff',
-              secondary: '#ef4444',
-            },
-            duration: 4000,
-          },
-          // Loading
-          loading: {
-            style: {
-              background: '#0ea5e9',
-            },
-            iconTheme: {
-              primary: '#fff',
-              secondary: '#0ea5e9',
-            },
+            duration: 5000,
+            style: { background: '#ef4444' },
           },
         }}
       />
       {children}
+
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
