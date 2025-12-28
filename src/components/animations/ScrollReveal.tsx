@@ -24,7 +24,7 @@ export default function ScrollReveal({
   animation = 'slide-up',
   delay = 0,
   duration = 800,
-  threshold = 0.01,
+  threshold = 0.2,
   rootMargin = '0px 0px 100px 0px',
   triggerOnce = true,
   className = '',

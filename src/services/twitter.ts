@@ -8,7 +8,7 @@ interface TrendingTopic {
 export async function fetchBrazilTrends(): Promise<TrendingTopic[]> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000);
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
 
     const response = await fetch('/api/twitter/trends', {
       method: 'GET',

@@ -6,7 +6,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import Fade from "embla-carousel-fade";
 import { WordPressPost } from "../types/wordpress";
-import { getPostImage, getPostTitle, extractImagePath } from "../services/wordpress";
+import { getPostImage, getPostTitle, extractImagePath } from "@/lib/wordpress-utils";
 import { getPostUrl } from "../utils/navigation";
 import OptimizedImage from "./OptimizedImage";
 import {
@@ -75,24 +75,24 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     };
   }, [emblaMainApi, onSelect]);
 
-const getImagePath = (post: any) => {
+  const getImagePath = (post: any) => {
 
-  const fullUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url 
-                 || post.featured_media_src_url;
+    const fullUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
+      || post.featured_media_src_url;
 
-  if (!fullUrl) return "";
+    if (!fullUrl) return "";
 
-  try {
+    try {
 
-    const url = new URL(fullUrl);
-    return url.pathname; 
-  } catch (e) {
+      const url = new URL(fullUrl);
+      return url.pathname;
+    } catch (e) {
 
-    return fullUrl
-      .replace("https://primeiranews.com.br", "")
-      .replace("https://primeiranews.twic.pics", "");
-  }
-};
+      return fullUrl
+        .replace("https://primeiranews.com.br", "")
+        .replace("https://primeiranews.twic.pics", "");
+    }
+  };
 
   if (!posts || posts.length === 0) {
     return <div className="w-full h-[370px] bg-gray-900 animate-pulse rounded-xl" />;
@@ -100,14 +100,14 @@ const getImagePath = (post: any) => {
 
   return (
     <div className="relative w-full space-y-4">
-  
+
       <div
         className="overflow-hidden rounded-xl h-[370px]"
         style={{
           boxShadow: `
-            rgba(6, 95, 212, 0.4) 3px 3px,
-            rgba(6, 95, 212, 0.25) 6px 6px,
-            rgba(6, 95, 212, 0.15) 9px 9px
+            rgba(6, 95, 212, 0.6) 2px 2px,
+            rgba(6, 95, 212, 0.4) 5px 5px,
+            rgba(6, 95, 212, 0.2) 8px 8px
           `
         }}
         ref={emblaMainRef}
@@ -131,9 +131,9 @@ const getImagePath = (post: any) => {
                   <OptimizedImage
                     src={getImagePath(post)}
                     alt={getPostTitle(post)}
-                    ratio="4/3"
-                    usePicture={isFirstSlide}
+                    twicClass="twic-news-carousel"
                     eager={isFirstSlide}
+                    isLCP={isFirstSlide}
                     fetchpriority={isFirstSlide ? "high" : "auto"}
                     sizes="(min-width: 1024px) 640px, 100vw"
                     style={{
@@ -144,13 +144,13 @@ const getImagePath = (post: any) => {
                   />
 
                   {categoryName && (
-                    <div className="absolute top-4 left-4 bg-blue-600 text-white px-2.5 py-1 text-xs font-semibold uppercase z-20">
+                    <div className="absolute top-4 left-4 bg-blue-600 text-white text-shadow-lg px-2.5 py-1 text-xs font-semibold uppercase z-20">
                       {categoryName}
                     </div>
                   )}
 
                   <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-3 z-10">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white line-clamp-2 text-center">
+                    <h2 className="text-2xl text-shadow-lg md:text-3xl font-bold text-white line-clamp-2 text-center">
                       {getPostTitle(post)}
                     </h2>
                   </div>

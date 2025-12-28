@@ -69,32 +69,28 @@ const nextConfig = {
       {
         source: "/api/posts/:path*",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=120, must-revalidate" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=120, must-revalidate" },
+          { key: "Cache-Control", value: "public, s-maxage=1, stale-while-revalidate=59" },
         ],
       },
 
       {
         source: "/api/revalidate",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=120, must-revalidate" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=120, must-revalidate" },
+          { key: "Cache-Control", value: "no-cache, max-age=0, must-revalidate" },
         ],
       },
 
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=120, must-revalidate" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=120, must-revalidate" },
+          { key: "Cache-Control", value: "public, s-maxage=1, stale-while-revalidate=59" },
         ],
       },
 
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=180, must-revalidate" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, max-age=180" },
+          { key: "Cache-Control", value: "public, s-maxage=1, stale-while-revalidate=59" },
         ],
       },
       // Assets estáticos Next.js - Cache imutável 1 ano
@@ -119,6 +115,7 @@ const nextConfig = {
         source: "/:path*",
         headers: [
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
         ],
       },
     ];

@@ -1,5 +1,5 @@
 import { WordPressPost } from '../types/wordpress';
-import { getPostTitle } from '../services/wordpress';
+import { getPostTitle } from '@/lib/wordpress-utils';
 import { TrendingUp, Flame } from 'lucide-react';
 
 interface SidebarProps {
@@ -44,7 +44,7 @@ export default function Sidebar({ posts, title, onPostClick }: SidebarProps) {
               >
                 {/* Gradient glow on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500/0 via-sky-500/10 to-blue-500/0 opacity-0 group-hover/item:opacity-100 rounded-xl transition-opacity duration-300"></div>
-                
+
                 {/* Number badge */}
                 <div className="flex-shrink-0">
                   <div className="w-6 h-6 bg-slate-800/60 border border-slate-600/50 rounded flex items-center justify-center text-slate-300 text-xs font-semibold group-hover/item:border-sky-500/70 group-hover/item:text-sky-400 transition-colors">

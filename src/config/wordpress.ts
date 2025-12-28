@@ -5,8 +5,8 @@ export const WORDPRESS_CONFIG = {
   // Cache TTL configuration (in seconds)
   // Valores otimizados para balancear atualização com performance
   CACHE_TTL: {
-    POSTS_LIST: 60,      // 1 minuto - atualização rápida sem sobrecarregar servidor
-    POSTS_CATEGORY: 60,  // 1 minuto - atualização rápida sem sobrecarregar servidor
+    POSTS_LIST: 0,      // 1 minuto - atualização rápida sem sobrecarregar servidor
+    POSTS_CATEGORY: 30,  // 1 minuto - atualização rápida sem sobrecarregar servidor
     POST_SINGLE: 120,    // 2 minutos - posts individuais mudam menos
     CATEGORIES: 3600,    // 1 hora - categorias raramente mudam
     TAGS: 3600,          // 1 hora - tags raramente mudam

@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import OptimizedImage from './OptimizedImage';
 import { cn } from '@/lib/utils';
-import { decodeHtmlEntities } from '@/services/wordpress';
+import { decodeHtmlEntities } from '@/lib/wordpress-utils';
 
 export interface ArticlePost {
   id: number;

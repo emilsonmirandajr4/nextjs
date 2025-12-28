@@ -16,6 +16,8 @@ interface OptimizedImageProps {
   refit?: boolean | string;
   fetchpriority?: "high" | "low" | "auto";
   sizes?: string;
+  isLCP?: boolean; // Para imagem LCP, usa img nativo com fetchpriority
+  twicClass?: string; // Classe CSS style-driven (ex: "twic-news-carousel")
 }
 export default function OptimizedImage({
   src,
@@ -29,9 +31,33 @@ export default function OptimizedImage({
   className,
   fetchpriority = "auto",
   sizes,
+  isLCP = false,
+  twicClass,
 }: OptimizedImageProps) {
 
   const imagePath = src?.trim() ? src : "placeholder.png";
+  const twicDomain = "https://primeiranews.twic.pics";
+
+  // Combina className com twicClass se fornecido
+  const combinedClassName = twicClass ? `${className || ''} ${twicClass}`.trim() : className;
+
+  // Para imagem LCP, renderiza img nativo com fetchpriority para garantir prioridade máxima
+  if (isLCP) {
+    // Constrói URL otimizada do TwicPics para LCP
+    const lcpSrc = `${twicDomain}${imagePath}?twic=v1/cover=800x600`;
+
+    return (
+      <img
+        src={lcpSrc}
+        alt={alt}
+        style={style}
+        className={combinedClassName}
+        fetchPriority="high"
+        loading="eager"
+        decoding="sync"
+      />
+    );
+  }
 
   const commonProps = {
     src: imagePath,
@@ -40,7 +66,7 @@ export default function OptimizedImage({
     mode,
     focus,
     style,
-    className,
+    className: combinedClassName,
   };
 
   if (usePicture) {
@@ -56,7 +82,13 @@ export default function OptimizedImage({
 
   return (
     <TwicImg
-      {...commonProps}
+      src={imagePath}
+      alt={alt}
+      ratio={ratio}
+      mode={mode}
+      focus={focus}
+      style={style}
+      className={combinedClassName}
       eager={eager}
       {...({ fetchpriority } as any)}
     />

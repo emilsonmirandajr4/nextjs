@@ -150,3 +150,38 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* ===========================================
+   TwicPics Style-Driven Classes
+   =========================================== */
+
+/* News Carousel Principal (LCP) - Imagem grande com ratio responsivo */
+.twic-news-carousel {
+  --twic-ratio: calc(4/3);
+  --twic-mode: cover;
+}
+
+@media (min-width: 1024px) {
+  .twic-news-carousel {
+    --twic-ratio: calc(16/9);
+  }
+}
+
+/* Carousel Enganadores - Imagens menores, ratio fixo */
+.twic-enganadores {
+  --twic-ratio: calc(4/3);
+  --twic-mode: cover;
+}
+
+/* Avatar Instagram - Quadrado, tamanho fixo */
+.twic-avatar {
+  --twic-ratio: 1;
+  --twic-mode: cover;
+}
+
+/* Thumbnails do carousel - ratio fixo pequeno */
+.twic-thumbnail {
+  --twic-ratio: calc(16/9);
+  --twic-mode: cover;
+}
+

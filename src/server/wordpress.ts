@@ -12,7 +12,7 @@ const msToSeconds = (ms: number): number => {
 
 const createCacheControlHeader = (ttlMs: number): string => {
   if (ttlMs <= 0) {
-    return 'no-store';
+    return 'public, s-maxage=30, stale-while-revalidate=30';
   }
   const seconds = msToSeconds(ttlMs);
   return `public, s-maxage=${seconds}, stale-while-revalidate=${seconds}`;
@@ -25,11 +25,13 @@ async function wpFetchJson<T>(url: string, ttlMs: number, tag?: string): Promise
     headers: {
       Accept: 'application/json',
     },
-    signal: AbortSignal.timeout(10000),
+    signal: AbortSignal.timeout(5000),
   };
 
   if (ttlMs <= 0) {
-    init.cache = 'no-store';
+    init.next = {
+      revalidate: 30,
+    };
   } else {
     init.next = {
       revalidate: seconds,

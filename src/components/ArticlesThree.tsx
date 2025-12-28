@@ -3,7 +3,7 @@
 import React from 'react';
 import ArticleCard, { ArticlePost } from './ArticleCard';
 import { WordPressPost } from '@/types/wordpress';
-import { getPostImage, getPostTitle, extractImagePath } from '@/services/wordpress';
+import { getPostImage, getPostTitle, extractImagePath } from '@/lib/wordpress-utils';
 import { formatDate } from '@/utils/date';
 import { getPostUrl } from '@/utils/navigation';
 import { Newspaper } from 'lucide-react';

@@ -54,8 +54,8 @@ if (!REVALIDATE_SECRET) {
 }
 
 export async function POST(request: NextRequest) {
-  const startTime = Date.now();
-  const clientIP = getClientIP(request);
+    const clientIP = getClientIP(request);
+    const startTime = Date.now();
 
   try {
     // ============================================
@@ -204,10 +204,12 @@ return NextResponse.json(
     timestamp: new Date().toISOString()
   },
   { 
-    status: allSuccess ? 200 : 207, // 207 = Multi-Status
+    status: allSuccess ? 200 : 207, 
     headers: { 
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=30'
+      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
     }
   }
 );

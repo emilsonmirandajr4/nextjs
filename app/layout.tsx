@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import localFont from 'next/font/local';
 import { Suspense } from 'react';
@@ -22,6 +23,7 @@ const robotoCondensed = localFont({
   ],
   variable: '--font-roboto-condensed',
   display: 'swap',
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -82,7 +84,7 @@ export default function RootLayout({
         domain="https://primeiranews.twic.pics"
         anticipation={0.2}
         maxDPR={2}
-        step={10}
+        step={20}
         env="production"
         breakpoints={{ xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }}
       />
@@ -104,6 +106,7 @@ export default function RootLayout({
           }>
             {children}
             <SpeedInsights />
+            <GoogleAnalytics gaId="G-6L64WDYYKH" />
           </Suspense>
         </Providers>
       </body>

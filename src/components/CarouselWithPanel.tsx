@@ -41,7 +41,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 6000, stopOnInteraction: false }),
   ]);
- 
+
   const { selectedIndex, scrollSnaps, onDotButtonClick } =
     useDotButton(emblaApi);
 
@@ -332,8 +332,8 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
           <div className="embla__viewport" ref={emblaRef}>
             <div className="embla__container">
               {items.map((item, index) => (
-                <div 
-                  className={`embla__slide ${index === selectedIndex ? 'is-selected' : ''}`} 
+                <div
+                  className={`embla__slide ${index === selectedIndex ? 'is-selected' : ''}`}
                   key={item.id}
                 >
                   <div
@@ -344,7 +344,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                     <OptimizedImage
                       src={item.image}
                       alt={item.title}
-                      ratio="4/3"	
+                      twicClass="twic-enganadores"
                       sizes="(min-width: 1024px) 400px, (min-width: 768px) 350px, 280px"
                       className="embla__slide__img"
                     />

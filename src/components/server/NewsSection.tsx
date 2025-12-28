@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { WordPressPost } from '@/types/wordpress';
-import { getPostTitle, getPostImage, extractImagePath } from '@/services/wordpress';
+import { getPostTitle, getPostImage, extractImagePath } from '@/lib/wordpress-utils';
 import { getPostUrl } from '@/utils/navigation';
 import OptimizedImage from '@/components/OptimizedImage';
 

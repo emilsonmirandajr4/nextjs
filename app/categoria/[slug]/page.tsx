@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getPostsByCategorySlug } from "@/server/wordpress";
-import { getPostImage, getPostTitle } from "@/services/wordpress";
+import { getPostImage, getPostTitle } from "@/lib/wordpress-utils";
 import { getPostUrl } from "@/utils/navigation";
 
 // NOTA: Revalidação via webhook - cacheComponents no next.config.mjs cuida do cache automaticamente
@@ -87,15 +87,15 @@ export default async function CategoryPage({ params }: PageProps) {
               month: "long",
               year: "numeric",
             });
-            
+
             // Resumo limpo de HTML
             const excerpt = post.excerpt?.rendered
               ?.replace(/<[^>]*>/g, "")
               .substring(0, 120) + "...";
 
             return (
-              <article 
-                key={post.id} 
+              <article
+                key={post.id}
                 className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col"
               >
                 {/* Thumbnail Média */}
@@ -136,8 +136,8 @@ export default async function CategoryPage({ params }: PageProps) {
                   </p>
 
                   {/* Botão Ler Mais */}
-                  <Link 
-                    href={postUrl} 
+                  <Link
+                    href={postUrl}
                     className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 mt-auto group"
                   >
                     Ler matéria completa

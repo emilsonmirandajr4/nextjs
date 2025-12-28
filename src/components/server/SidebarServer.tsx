@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { WordPressPost } from "@/types/wordpress";
-import { getPostTitle } from "@/services/wordpress";
+import { getPostTitle } from "@/lib/wordpress-utils";
 import { getPostUrl } from "@/utils/navigation";
 import { BarChart3 } from "lucide-react";
 

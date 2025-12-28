@@ -48,7 +48,7 @@ export default function InstagramSection() {
       >
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Instagram className="w-4 h-4 text-white/80 border border-white/30 rounded p-0.5" strokeWidth={2} />
+            <Instagram className="w-4 h-4 text-white/100 border border-white/30 rounded p-0.5" strokeWidth={2} />
           </div>
           <h2 className="text-xl font-black text-white tracking-tight">
             Vale a Pena Seguir
