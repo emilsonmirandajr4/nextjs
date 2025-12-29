@@ -4,19 +4,11 @@ import { WORDPRESS_CONFIG } from '../config/wordpress';
 
 const WP_API_URL = WORDPRESS_CONFIG.API_BASE;
 
-// ============================================
-// Client-side fetch functions (exported for use in pages)
-// ============================================
-
 import {
   fetchPostsAction,
   fetchPostBySlugAction,
   fetchPostsByCategorySlugAction
 } from '../actions/wordpress';
-
-// ============================================
-// Client-side fetch functions (proxied via Server Actions)
-// ============================================
 
 export async function fetchPosts(perPage: number = 10): Promise<WordPressPost[]> {
   // Use Server Action directly
@@ -60,11 +52,6 @@ async function fetchPostsByCategorySlugPaginated(
   return await fetchPostsByCategorySlugAction(slug, perPage, page);
 }
 
-
-// ============================================
-// Query Keys
-// ============================================
-
 export const postsKeys = {
   all: ['posts'] as const,
   lists: () => [...postsKeys.all, 'list'] as const,
@@ -73,10 +60,6 @@ export const postsKeys = {
   category: (slug: string, perPage: number) => [...postsKeys.categories(), slug, perPage] as const,
   infinite: (slug: string, perPage: number) => [...postsKeys.all, 'infinite', slug, perPage] as const,
 };
-
-// ============================================
-// Hooks
-// ============================================
 
 export function usePosts(perPage: number = 30) {
   return useQuery({

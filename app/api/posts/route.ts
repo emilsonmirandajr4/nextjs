@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=10',
+        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=30',
       },
     });
   } catch (error) {
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
         status: 500,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=10',
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=30',
         },
       },
     );

@@ -12,16 +12,22 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig = {
   cacheComponents: true,
   reactCompiler: true,
+  reactStrictMode: true,
+  output: 'standalone',
 
   experimental: {
     inlineCss: true,
     viewTransition: true,
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
+    webpackBuildWorker: true,
+    parallelServerBuildTraces: true,
+    parallelServerCompiles: true,
+
 
     staleTimes: {
-      dynamic: 180,   // 3 minutos para rotas dinâmicas
-      static: 3600,   // 1 hora para rotas estáticas
+      dynamic: 30,
+      static: 180,
     },
 
     optimizeServerReact: true,
@@ -36,6 +42,7 @@ const nextConfig = {
       "embla-carousel-fade",
       "clsx",
       "tailwindcss",
+      "@vercel/speed-insights",
     ],
   },
 
@@ -57,7 +64,7 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [256, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [384, 512, 768, 1024, 1280, 1920, 2540],
-    qualities: [75],
+    qualities: [80],
   },
 
   compiler: {
@@ -69,31 +76,24 @@ const nextConfig = {
       {
         source: "/api/posts/:path*",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=1, stale-while-revalidate=59" },
-        ],
-      },
-
-      {
-        source: "/api/revalidate",
-        headers: [
-          { key: "Cache-Control", value: "no-cache, max-age=0, must-revalidate" },
+          { key: "Cache-Control", value: "public, s-maxage=30, stale-while-revalidate=30" },
         ],
       },
 
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=1, stale-while-revalidate=59" },
+          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
         ],
       },
 
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=1, stale-while-revalidate=59" },
+          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
         ],
       },
-      // Assets estáticos Next.js - Cache imutável 1 ano
+
       {
         source: "/_next/static/:path*",
         headers: [
@@ -122,4 +122,4 @@ const nextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+export default withBundleAnalyzer(nextConfig, { devBundleServerPackages: false });

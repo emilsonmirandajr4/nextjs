@@ -28,10 +28,9 @@ async function wpFetchJson<T>(url: string, ttlMs: number, tag?: string): Promise
     signal: AbortSignal.timeout(5000),
   };
 
+  // Se TTL é 0 ou menor, desabilita cache completamente (sempre busca dados frescos)
   if (ttlMs <= 0) {
-    init.next = {
-      revalidate: 30,
-    };
+    init.cache = 'no-store';
   } else {
     init.next = {
       revalidate: seconds,

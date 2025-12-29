@@ -17,7 +17,7 @@ export const Thumb: React.FC<PropType> = (props) => {
       type="button"
       className={`relative flex-[0_0_90px] w-[90px] h-[90px] mx-1 overflow-hidden rounded-lg transition-opacity duration-200 ${
         selected 
-          ? 'opacity-100 ring-2 ring-blue-500' 
+          ? 'opacity-100' 
           : 'opacity-40 hover:opacity-100'
       }`}
     >

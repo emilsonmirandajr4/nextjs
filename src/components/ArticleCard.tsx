@@ -37,8 +37,8 @@ export default function ArticleCard({ post, className }: ArticleCardProps) {
       )}
       style={{
         boxShadow: `
-          rgba(59, 130, 246, 0.65) 0px 7px 13px,
-          rgba(59, 130, 246, 0.65) 0px 9px 13px
+          rgba(59, 130, 246, 0.45) 0px 5px 11px,
+          rgba(59, 130, 246, 0.25) 0px 7px 11px
         `,
       }}
     >
@@ -47,7 +47,7 @@ export default function ArticleCard({ post, className }: ArticleCardProps) {
         <OptimizedImage
           src={post.imageUrl}
           alt={post.title}
-          ratio="16/9"
+          ratio="4/3"
           refit={true}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
           className="object-cover transition-transform duration-500 group-hover:scale-105 w-full h-full"

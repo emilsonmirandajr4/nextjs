@@ -44,7 +44,7 @@ export default function OptimizedImage({
   // Para imagem LCP, renderiza img nativo com fetchpriority para garantir prioridade máxima
   if (isLCP) {
     // Constrói URL otimizada do TwicPics para LCP
-    const lcpSrc = `${twicDomain}${imagePath}?twic=v1/cover=800x600`;
+    const lcpSrc = `${twicDomain}${imagePath}?twic=v1/cover=4:3/resize=640x480`;
 
     return (
       <img
