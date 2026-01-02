@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { cacheLife } from "next/cache";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -68,6 +69,9 @@ const LazyVideoCarousel = dynamic(
 );
 
 async function fetchHomeData() {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
+
   const [postsByCategory, artigosPosts] = await Promise.all([
     getPostsGroupedByCategories(50, 1),
     getPostsByCategorySlug('artigos', 3, 1),

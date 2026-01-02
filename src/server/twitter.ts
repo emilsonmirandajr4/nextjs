@@ -1,3 +1,5 @@
+import 'server-only';
+
 // Server-side function to fetch Twitter trends
 // This runs on the server and can be called from Server Components
 //

@@ -125,7 +125,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
             title: resolvedTitle,
             thumbnail:
               meta?.thumbnail ||
-              "https://primeiranews.com/thumbvideo.webp",
+              "/thumbvideo.webp",
             duration: meta?.duration || "0:00",
             views: meta?.views ?? 0,
             channelTitle: meta?.channelTitle || "",
@@ -140,7 +140,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
           const fallback: EnrichedVideo[] = videos.map((video) => ({
             ...video,
             title: video.title ?? "",
-            thumbnail: "https://primeiranews.com/thumbvideo.webp",
+            thumbnail: "/thumbvideo.webp",
             duration: "0:00",
             views: 0,
             channelTitle: "",
@@ -168,7 +168,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
       <div className="relative mb-6">
         <div className="h-24 bg-gray-200 rounded-2xl" />
       </div>
-      
+
       {/* Video cards grid skeleton */}
       <div className="px-2 sm:px-4 lg:px-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -201,7 +201,7 @@ export default function LazyVideoCarousel({ videos }: LazyVideoCarouselProps) {
           )}
         </div>
       </div>
-      
+
       {/* Botão Ver Todos */}
       {!loadingMeta && enrichedVideos.length > 0 && (
         <div className="flex justify-center mt-6">

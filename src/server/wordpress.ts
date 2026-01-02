@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { cacheLife } from 'next/cache';
 import { WORDPRESS_CONFIG } from '../config/wordpress';
 import { WordPressPost } from '../types/wordpress';
 
@@ -73,11 +74,14 @@ export async function getPosts(
   perPage: number,
   page: number,
 ): Promise<WordPressPost[]> {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
+
   const url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}&orderby=date&order=desc`;
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POSTS_LIST,
-    'posts-list', // Cache tag for on-demand revalidation
+    'posts-list',
   );
   return withCategoryNames(data);
 }
@@ -125,12 +129,15 @@ export async function getPostsByCategoryId(
   perPage: number,
   page: number,
 ): Promise<WordPressPost[]> {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
+
   const url = `${WP_API_URL}/posts?_embed&categories=${categoryId}&per_page=${perPage}&page=${page}&orderby=date&order=desc`;
 
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POSTS_LIST,
-    'posts-list', // Cache tag
+    'posts-list',
   );
 
   return withCategoryNames(data);
@@ -151,12 +158,15 @@ export async function getPostsByCategorySlug(
 export async function getPostBySlug(
   slug: string,
 ): Promise<WordPressPost | null> {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
+
   const url = `${WP_API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`;
 
   const data = await wpFetchJson<WordPressPost[]>(
     url,
     WORDPRESS_CONFIG.CACHE_TTL.POST_SINGLE,
-    `post-${slug}`, // Cache tag with slug
+    `post-${slug}`,
   );
 
   if (!Array.isArray(data) || data.length === 0) {
@@ -191,15 +201,6 @@ function normalizeCategoryName(name: string): string {
     .replace(/[^a-z0-9-]/g, ''); // Remove caracteres especiais
 }
 
-/**
- * Otimização: Busca posts uma vez e filtra por múltiplas categorias localmente
- * Evita requisições duplicadas quando posts estão em múltiplas categorias
- * 
- * @example
- * const grouped = await getPostsGroupedByCategories(50);
- * const noticias = grouped['noticias'] || [];
- * const politica = grouped['politica'] || [];
- */
 export async function getPostsGroupedByCategories(
   perPage: number = 50,
   page: number = 1

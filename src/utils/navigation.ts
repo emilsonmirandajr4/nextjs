@@ -5,8 +5,7 @@ import { WordPressPost } from '../types/wordpress';
  * Formato: /%year%/%monthnum%/%category%/%postname%/
  */
 function parseWordPressUrl(link: string): { year: string; month: string; category: string; postname: string } | null {
-  // Exemplo: https://primeiranews.com.br/2024/11/politica/bolsonaro-sofre-derrota/
-  // Aceita tanto .com quanto .com.br
+
   const match = link.match(/\/(\d{4})\/(\d{2})\/([^/]+)\/([^/]+)\/?$/);
   if (match) {
     return {
@@ -31,11 +30,6 @@ function parseWordPressUrl(link: string): { year: string; month: string; categor
   return null;
 }
 
-/**
- * Retorna a URL amigável para um post no formato WordPress
- * Formato: /ano/mes/categoria/slug
- * Se não for possível extrair todos os dados, usa fallbacks
- */
 export function getPostUrl(post: WordPressPost | { id: number; slug?: string; link?: string; date?: string }): string {
   // Tenta extrair dados do link do WordPress
   if ('link' in post && post.link) {

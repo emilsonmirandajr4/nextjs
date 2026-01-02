@@ -15,7 +15,7 @@ export async function GET(
       status: 400,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=120',
+        'Cache-Control': getPostSingleCacheControl(),
       },
     });
   }
@@ -30,7 +30,7 @@ export async function GET(
           status: 404,
           headers: {
             'Content-Type': 'application/json',
-            'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=120',
+            'Cache-Control': getPostSingleCacheControl(),
           },
         },
       );
@@ -40,7 +40,7 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=120',
+        'Cache-Control': getPostSingleCacheControl(),
       },
     });
   } catch (error) {
@@ -51,7 +51,7 @@ export async function GET(
         status: 500,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=120',
+          'Cache-Control': getPostSingleCacheControl(),
         },
       },
     );

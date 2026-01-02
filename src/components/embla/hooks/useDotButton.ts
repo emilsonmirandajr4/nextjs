@@ -1,3 +1,5 @@
+"use client";
+
 // React 19: useCallback removido - React Compiler faz memoização automática
 import { useEffect, useState } from 'react'
 import { EmblaCarouselType } from 'embla-carousel'

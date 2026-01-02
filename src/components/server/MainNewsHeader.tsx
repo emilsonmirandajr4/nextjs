@@ -4,7 +4,7 @@ export default function MainNewsHeader() {
   return (
     <div className="relative mb-3">
       <div
-        className="relative bg-black rounded-xl px-4 py-3 border border-white/10"
+        className="relative bg-black rounded-2xl px-4 py-3 border border-white/10 overflow-hidden"
         style={{
           boxShadow: `
             rgba(255, 255, 255, 0.15) 2px 2px,

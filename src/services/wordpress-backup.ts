@@ -1,3 +1,5 @@
+'use client';
+
 import { WordPressPost } from '../types/wordpress';
 import { WORDPRESS_CONFIG } from '../config/wordpress';
 

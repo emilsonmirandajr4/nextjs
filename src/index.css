@@ -1,13 +1,29 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --font-primary: var(--font-roboto-condensed), 'Helvetica Neue', Arial, sans-serif;
+/* Importar fonte Roboto Condensed via @font-face */
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/roboto-condensed/RobotoCondensed-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/roboto-condensed/RobotoCondensed-Bold.woff2') format('woff2');
+}
+
+/* Tailwind v4: Registrar fonte customizada */
+@theme {
+  --font-roboto: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
 }
 
 body {
-  font-family: var(--font-primary);
+  font-family: var(--font-roboto);
   color: #111827;
   background-size: 400% 400%;
   -webkit-font-smoothing: antialiased;
@@ -21,40 +37,7 @@ body {
   box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
 }
 
-.logo-icon-pn {
-  position: relative;
-  width: 88px;
-  height: 88px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 38px;
-  font-weight: bold;
-  color: white;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-  flex-shrink: 0;
-  font-family: var(--font-primary);
-  overflow: hidden;
-}
 
-.logo-icon-pn::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
-@keyframes shine {
-  0%, 100% { box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 15px 4px rgba(59, 130, 246, 0.6); }
-}
 
 
 /* Fundo com padrão de pontos da página inicial */
@@ -67,17 +50,13 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: 
-    repeating-radial-gradient(
-      circle at 0 0,
-      rgba(0,0,0,0.06) 0 0.7px,
-      transparent 0.7px 6px
-    ),
-    repeating-radial-gradient(
-      circle at 100% 100%,
-      rgba(0,0,0,0.03) 0 0.6px,
-      transparent 0.6px 5px
-    );
+  background-image:
+    repeating-radial-gradient(circle at 0 0,
+      rgba(0, 0, 0, 0.06) 0 0.7px,
+      transparent 0.7px 6px),
+    repeating-radial-gradient(circle at 100% 100%,
+      rgba(0, 0, 0, 0.03) 0 0.6px,
+      transparent 0.6px 5px);
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -112,6 +91,7 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -144,10 +124,12 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -184,4 +166,3 @@ body {
   --twic-ratio: calc(16/9);
   --twic-mode: cover;
 }
-

@@ -2,15 +2,19 @@ export const WORDPRESS_CONFIG = {
   API_BASE: 'https://primeiranews.com.br/wp-json/wp/v2',
   SITE_URL: 'https://primeiranews.com.br',
 
-  // Cache TTL configuration (in seconds)
-  // Valores otimizados para balancear atualização com performance
+  // Estrutura de URL do WordPress: /%year%/%monthnum%/%category%/%postname%/
+  URL_STRUCTURE: {
+    PATTERN: '/:year/:month/:category/:slug',
+    PARTS: ['year', 'month', 'category', 'slug'],
+  },
+
   CACHE_TTL: {
-    POSTS_LIST: 30,     // 30 segundos - equilíbrio entre atualização e performance
-    POSTS_CATEGORY: 30,  // 1 minuto - atualização rápida sem sobrecarregar servidor
-    POST_SINGLE: 120,    // 2 minutos - posts individuais mudam menos
-    CATEGORIES: 3600,    // 1 hora - categorias raramente mudam
-    TAGS: 3600,          // 1 hora - tags raramente mudam
-    MEDIA: 31536000,     // 1 year (imagens não mudam)
+    POSTS_LIST: 1,      // 10 minutos
+    POSTS_CATEGORY: 1,  // 10 minutos
+    POST_SINGLE: 1,     // 10 minutos
+    CATEGORIES: 1,      // 10 minutos
+    TAGS: 1,           // 1 hora
+    MEDIA: 31536000,      // 1 ano (imutável)
   },
 
   PAGINATION: {

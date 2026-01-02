@@ -3,10 +3,10 @@ import { AlertTriangle } from "lucide-react";
 export default function EnganadoresHeader() {
   return (
     <div className="relative mb-8">
-      <div 
-        className="relative flex items-center justify-between gap-4 rounded-[20px] bg-zinc-900 px-4 py-3.5"
+      <div
+        className="relative flex items-center justify-between gap-4 rounded-[20px] bg-black px-4 py-3.5 overflow-hidden"
         style={{
-          boxShadow: 'rgba(255, 140, 0, 0.5) 5px 5px, rgba(255, 120, 0, 0.4) 10px 10px, rgba(255, 100, 0, 0.3) 15px 15px'
+          boxShadow: 'rgba(255, 140, 0, 0.45) 4px 4px, rgba(255, 120, 0, 0.3) 8px 8px, rgba(255, 100, 0, 0.15) 12px 12px'
         }}
       >
         <div className="flex items-center gap-3">

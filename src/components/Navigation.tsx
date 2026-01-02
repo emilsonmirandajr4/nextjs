@@ -23,8 +23,9 @@ export default function Navigation() {
             {/* Início - Link simples */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link 
-                  href="https://primeiranews.com" 
+                <Link
+                  href="https://primeiranews.com"
+                  prefetch={false}
                   className={cn(navigationMenuTriggerStyle(), "bg-black text-white hover:bg-zinc-900 hover:text-white focus:bg-zinc-900 focus:text-white")}
                 >
                   Início
@@ -35,8 +36,9 @@ export default function Navigation() {
             {/* Política de Privacidade - Link simples */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link 
-                  href="/politica-de-privacidade" 
+                <Link
+                  href="/politica-de-privacidade"
+                  prefetch={false}
                   className={cn(navigationMenuTriggerStyle(), "bg-black text-white hover:bg-zinc-900 hover:text-white focus:bg-zinc-900 focus:text-white")}
                 >
                   Política de Privacidade
@@ -47,8 +49,9 @@ export default function Navigation() {
             {/* Fale Conosco - Link simples */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <Link 
-                  href="/contato" 
+                <Link
+                  href="/contato"
+                  prefetch={false}
                   className={cn(navigationMenuTriggerStyle(), "bg-black text-white hover:bg-zinc-900 hover:text-white focus:bg-zinc-900 focus:text-white")}
                 >
                   Fale Conosco
@@ -65,8 +68,9 @@ export default function Navigation() {
                 <ul className="grid w-[300px] gap-2 p-4 bg-zinc-900">
                   <li>
                     <NavigationMenuLink asChild>
-                      <Link 
-                        href="/categoria/politica" 
+                      <Link
+                        href="/categoria/politica"
+                        prefetch={false}
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800 hover:text-white focus:bg-zinc-800 focus:text-white"
                       >
                         <div className="text-sm font-medium leading-none text-white">Política</div>
@@ -78,8 +82,9 @@ export default function Navigation() {
                   </li>
                   <li>
                     <NavigationMenuLink asChild>
-                      <Link 
-                        href="/categoria/judiciario" 
+                      <Link
+                        href="/categoria/judiciario"
+                        prefetch={false}
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800 hover:text-white focus:bg-zinc-800 focus:text-white"
                       >
                         <div className="text-sm font-medium leading-none text-white">Judiciário</div>
@@ -91,8 +96,9 @@ export default function Navigation() {
                   </li>
                   <li>
                     <NavigationMenuLink asChild>
-                      <Link 
-                        href="/categoria/economia" 
+                      <Link
+                        href="/categoria/economia"
+                        prefetch={false}
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800 hover:text-white focus:bg-zinc-800 focus:text-white"
                       >
                         <div className="text-sm font-medium leading-none text-white">Economia</div>
@@ -113,13 +119,13 @@ export default function Navigation() {
 }
 
 // React 19: ref agora é uma prop direta, não precisa mais de forwardRef
-function ListItem({ 
-  className, 
-  title, 
-  children, 
+function ListItem({
+  className,
+  title,
+  children,
   ref,
-  ...props 
-}: React.ComponentPropsWithoutRef<"a"> & { 
+  ...props
+}: React.ComponentPropsWithoutRef<"a"> & {
   title: string;
   ref?: React.Ref<HTMLAnchorElement>;
 }) {

@@ -1,3 +1,5 @@
+'use client';
+
 interface TrendingTopic {
   tag: string;
   tweets: string;

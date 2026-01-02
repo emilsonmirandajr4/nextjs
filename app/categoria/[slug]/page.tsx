@@ -11,9 +11,6 @@ import { getPostsByCategorySlug } from "@/server/wordpress";
 import { getPostImage, getPostTitle } from "@/lib/wordpress-utils";
 import { getPostUrl } from "@/utils/navigation";
 
-// NOTA: Revalidação via webhook - cacheComponents no next.config.mjs cuida do cache automaticamente
-// Não use 'export const revalidate' pois é incompatível com cacheComponents
-
 interface PageProps {
   params: {
     slug: string;
@@ -99,7 +96,7 @@ export default async function CategoryPage({ params }: PageProps) {
                 className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col"
               >
                 {/* Thumbnail Média */}
-                <Link href={postUrl} className="block relative aspect-video overflow-hidden group">
+                <Link href={postUrl} prefetch={false} className="block relative aspect-video overflow-hidden group">
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
@@ -124,7 +121,7 @@ export default async function CategoryPage({ params }: PageProps) {
                   </div>
 
                   {/* Título */}
-                  <Link href={postUrl} className="block mb-3">
+                  <Link href={postUrl} prefetch={false} className="block mb-3">
                     <h2 className="text-xl font-bold text-gray-900 leading-tight hover:text-blue-600 transition-colors line-clamp-3">
                       {postTitle}
                     </h2>
@@ -138,6 +135,7 @@ export default async function CategoryPage({ params }: PageProps) {
                   {/* Botão Ler Mais */}
                   <Link
                     href={postUrl}
+                    prefetch={false}
                     className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 mt-auto group"
                   >
                     Ler matéria completa

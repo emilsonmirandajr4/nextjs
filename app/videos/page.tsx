@@ -38,7 +38,7 @@ export default function VideosPage() {
       try {
         // Busca vídeos do arquivo local
         const localVideos = getFeaturedVideos();
-        
+
         if (localVideos.length === 0) {
           setVideos([]);
           setLoading(false);
@@ -71,7 +71,7 @@ export default function VideosPage() {
           return {
             ...video,
             title: meta?.title || video.title || "Vídeo sem título",
-            thumbnail: meta?.thumbnail || "https://primeiranews.com/thumbvideo.webp",
+            thumbnail: meta?.thumbnail || "/thumbvideo.webp",
             views: meta?.views ?? 0,
             duration: meta?.duration || "0:00",
             channelTitle: meta?.channelTitle || "",
@@ -98,7 +98,7 @@ export default function VideosPage() {
         <main className="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
           <div className="flex items-center justify-between mb-8 border-b pb-4">
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-red-600 text-4xl">▶</span> 
+              <span className="text-red-600 text-4xl">▶</span>
               <span>Vídeos</span>
             </h1>
           </div>
@@ -123,11 +123,11 @@ export default function VideosPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <Navigation />
-      
+
       <main className="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
         <div className="flex items-center justify-between mb-8 border-b pb-4">
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <span className="text-red-600 text-4xl">▶</span> 
+            <span className="text-red-600 text-4xl">▶</span>
             <span>Vídeos</span>
           </h1>
         </div>
@@ -145,8 +145,8 @@ export default function VideosPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {videos.map((video) => (
-              <a 
-                key={video.id} 
+              <a
+                key={video.id}
                 href={video.videoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -159,17 +159,17 @@ export default function VideosPage() {
                     alt={video.title}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
-                  
+
                   {/* Duração */}
                   {video.duration && (
-                    <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                    <div className="absolute top-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
                       {video.duration}
                     </div>
                   )}
-                  
+
                   {/* Play Button Overlay */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                    <div className="bg-white bg-opacity-90 rounded-full p-3 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
+                    <div className="bg-white/90 rounded-full p-3 transform scale-0 group-hover:scale-100 transition-transform duration-300">
                       <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                       </svg>
@@ -187,12 +187,12 @@ export default function VideosPage() {
                       {video.channelTitle}
                     </p>
                   )}
-                  
+
                   {/* Título do vídeo - SEM line-clamp para mostrar título completo */}
                   <h3 className="font-semibold text-gray-800 text-sm mb-3 min-h-[4.5rem] leading-relaxed">
                     {video.title}
                   </h3>
-                  
+
                   {/* Views */}
                   <div className="flex items-center text-xs text-gray-500">
                     <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -206,7 +206,7 @@ export default function VideosPage() {
             ))}
           </div>
         )}
-        
+
         {/* Rodapé da listagem */}
         {videos.length > 0 && (
           <div className="mt-12 flex justify-center items-center gap-2 text-gray-400 text-sm">

@@ -32,7 +32,7 @@ export default function ArticleCard({ post, className }: ArticleCardProps) {
   const CardContent = (
     <div
       className={cn(
-        "group relative flex flex-col h-full overflow-hidden rounded-xl bg-zinc-900 transition-all duration-300",
+        "group relative flex flex-col h-full overflow-hidden rounded-xl bg-black transition-all duration-300",
         className,
       )}
       style={{
@@ -87,7 +87,7 @@ export default function ArticleCard({ post, className }: ArticleCardProps) {
   }
 
   return (
-    <Link href={post.url || `/post/${post.slug}`} className="block h-full">
+    <Link href={post.url || `/post/${post.slug}`} prefetch={false} className="block h-full">
       {CardContent}
     </Link>
   );

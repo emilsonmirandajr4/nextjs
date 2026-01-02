@@ -144,7 +144,7 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
         }
 
         .summary-panel {
-          background: #000000;
+          background: #04061aa6;
           border-radius: 12px;
           padding: 20px;
           border: 1px solid rgba(255, 255, 255, 0.1);

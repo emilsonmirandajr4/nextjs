@@ -33,6 +33,7 @@ export default function OpinionSection({ posts }: OpinionSectionProps) {
       <div className="px-4 pb-4 pt-2">
         <Link
           href={getPostUrl(featuredPost)}
+          prefetch={false}
           className="group cursor-pointer rounded-xl overflow-hidden border border-slate-200 bg-slate-50/60 hover:bg-slate-100 transition-colors duration-200 shadow-sm block"
         >
           <div className="relative">

@@ -1,30 +1,13 @@
 import type { Metadata } from 'next';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import GoogleAnalyticsPartytown from '@/components/GoogleAnalyticsPartytown';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import localFont from 'next/font/local';
 import { Suspense } from 'react';
 import { Providers } from '../src/providers';
 import { TwicInstall } from '@twicpics/components/react';
 import '../src/index.css';
 import "@twicpics/components/style.css";
 
-const robotoCondensed = localFont({
-  src: [
-    {
-      path: '../public/fonts/roboto-condensed/RobotoCondensed-Regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/roboto-condensed/RobotoCondensed-Bold.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-roboto-condensed',
-  display: 'swap',
-  preload: false,
-});
+
 
 export const metadata: Metadata = {
   title: {
@@ -89,7 +72,7 @@ export default function RootLayout({
         breakpoints={{ xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }}
       />
 
-      <body className={`${robotoCondensed.variable} font-sans bg-white text-gray-900 antialiased`} suppressHydrationWarning>
+      <body className="font-roboto bg-white text-gray-900 antialiased" suppressHydrationWarning>
         <Providers>
           <Suspense fallback={
             <div className="min-h-screen bg-gray-50 animate-pulse">
@@ -106,7 +89,7 @@ export default function RootLayout({
           }>
             {children}
             <SpeedInsights />
-            <GoogleAnalytics gaId="G-6L64WDYYKH" />
+            <GoogleAnalyticsPartytown />
           </Suspense>
         </Providers>
       </body>

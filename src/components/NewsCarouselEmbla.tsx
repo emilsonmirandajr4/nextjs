@@ -102,7 +102,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
     <div className="relative w-full space-y-4">
 
       <div
-        className="overflow-hidden rounded-xl h-[370px]"
+        className="overflow-hidden rounded-2xl h-[370px]"
         style={{
           boxShadow: `
             rgba(6, 95, 212, 0.6) 2px 2px,
@@ -126,6 +126,7 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
               <div key={post.id} className="flex-[0_0_100%] min-w-0">
                 <Link
                   href={getPostUrl(post)}
+                  prefetch={false}
                   className="relative h-[370px] w-full group cursor-pointer overflow-hidden block"
                 >
                   <OptimizedImage

@@ -9,7 +9,6 @@ node_modules
 dist
 dist-ssr
 .next/
-*.local
 
 .vscode/*
 !.vscode/extensions.json
@@ -20,7 +19,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.env
 .vercel
 
 # PWA
@@ -28,4 +26,4 @@ public/sw.js
 public/sw.js.map
 public/workbox-*.js
 public/worker-*.js
-.env*.local
+.env.local*

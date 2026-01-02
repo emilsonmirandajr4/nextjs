@@ -28,15 +28,6 @@ function normalizeText(s: string): string {
   return s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 }
 
-// Client-side helper that still needs API or logic to find ID?
-// Actually, we can move this logic to the server too, but let's keep it simple for now.
-// However, since we are removing API dependence, we should probably check if categories 
-// can be fetched via action too. For now let's simplify paginated fetchers 
-// by using the underlying server actions if capable, or keep them if they rely on specific logic not yet ported.
-
-// NOTE: The paginated fetchers below (fetchPostsPaginated, etc) were constructing URLs manually.
-// To fully remove API dependency, we should expose paginated actions.
-// For now, let's update them to use the action with page param.
 
 async function fetchPostsPaginated(perPage: number = 10, page: number = 1): Promise<WordPressPost[]> {
   // Use Server Action
@@ -65,7 +56,7 @@ export function usePosts(perPage: number = 30) {
   return useQuery({
     queryKey: postsKeys.list(perPage),
     queryFn: () => fetchPosts(perPage),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 1,
   });
 }
 

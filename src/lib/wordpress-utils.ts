@@ -1,8 +1,5 @@
 import { WordPressPost } from '@/types/wordpress';
 
-/**
- * Extrai URL da imagem destacada do post
- */
 export function getPostImage(post: WordPressPost): string {
     const fallback = '/placeholder.png';
 
@@ -13,10 +10,6 @@ export function getPostImage(post: WordPressPost): string {
     return fallback;
 }
 
-/**
- * Extrai o path relativo de uma URL WordPress para TwicPics
- * Rejeita URLs externas para evitar erros do TwicPics
- */
 export function extractImagePath(imageUrl: string): string {
     if (!imageUrl) return '/placeholder.png';
 

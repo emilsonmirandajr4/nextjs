@@ -60,6 +60,7 @@ export default function NewsSection({ posts, title, iconColor = 'sky' }: NewsSec
           <Link
             key={post.id}
             href={getPostUrl(post)}
+            prefetch={false}
             className="group cursor-pointer rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-slate-100 transition-colors duration-200 shadow-sm block"
           >
             <div className="flex gap-3 p-3">

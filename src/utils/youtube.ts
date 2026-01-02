@@ -1,13 +1,8 @@
-/**
- * Utilitários para manipulação de URLs e dados do YouTube
- */
-
 export function extractVideoId(url: string): string | null {
   if (!url) return null;
   
   try {
-    // Tenta usar regex primeiro, que é mais robusto para strings sujas (como texto misturado)
-    // Procura por padrões comuns de YouTube, incluindo embed, watch, short urls
+    
     const regex = /(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/user\/\S+|\/ytscreeningroom\?v=))([\w\-]{10,12})\b/;
     const match = url.match(regex);
     if (match) return match[1];

@@ -13,7 +13,6 @@ const nextConfig = {
   cacheComponents: true,
   reactCompiler: true,
   reactStrictMode: true,
-  output: 'standalone',
 
   experimental: {
     inlineCss: true,
@@ -21,14 +20,6 @@ const nextConfig = {
     turbopackFileSystemCacheForDev: true,
     turbopackFileSystemCacheForBuild: true,
     webpackBuildWorker: true,
-    parallelServerBuildTraces: true,
-    parallelServerCompiles: true,
-
-
-    staleTimes: {
-      dynamic: 30,
-      static: 180,
-    },
 
     optimizeServerReact: true,
 
@@ -43,6 +34,9 @@ const nextConfig = {
       "clsx",
       "tailwindcss",
       "@vercel/speed-insights",
+      "@qwik.dev/partytown",
+      "postcss",
+      "vercel",
     ],
   },
 
@@ -76,21 +70,21 @@ const nextConfig = {
       {
         source: "/api/posts/:path*",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=30, stale-while-revalidate=30" },
+          { key: "Cache-Control", value: "public, s-maxage=5, stale-while-revalidate=5" },
         ],
       },
 
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
+          { key: "Cache-Control", value: "public, s-maxage=5, stale-while-revalidate=5" },
         ],
       },
 
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
+          { key: "Cache-Control", value: "public, s-maxage=5, stale-while-revalidate=5" },
         ],
       },
 

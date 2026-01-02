@@ -9,9 +9,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 60 * 2, // 2 minutos - dados considerados frescos
+        staleTime: 1000 * 60 * 1,
 
-        gcTime: 1000 * 60 * 10, // 10 minutos - mantém em cache por mais tempo
+        gcTime: 1000 * 60 * 1,
 
         retry: 1,
 
