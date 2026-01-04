@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import LogoComplete from "@/components/LogoComplete";
 // SVG icons inline para reduzir bundle (evita carregar lucide-react)
 const SearchIcon = ({ className }: { className?: string }) => (
@@ -32,14 +33,16 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 import { useState } from "react";
 
 export default function Header() {
+  const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Implementar busca aqui
-      console.log("Buscando:", searchQuery);
+      router.push(`/busca?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setSearchQuery("");
     }
   };
 

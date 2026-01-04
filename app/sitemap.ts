@@ -1,7 +1,5 @@
 import { MetadataRoute } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
@@ -14,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: 'https://primeiranews.com/noticias',
       lastModified: new Date(),
       changeFrequency: 'hourly',
-      priority: 0.9,
+      priority: 0.8,
     },
     {
       url: 'https://primeiranews.com/politica',
@@ -26,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: 'https://primeiranews.com/economia',
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 0.8,
+      priority: 0.7,
     },
   ];
 }

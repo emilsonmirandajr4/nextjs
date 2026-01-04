@@ -11,7 +11,7 @@ export const WORDPRESS_CONFIG = {
   CACHE_TTL: {
     POSTS_LIST: 1,      // 10 minutos
     POSTS_CATEGORY: 1,  // 10 minutos
-    POST_SINGLE: 1,     // 10 minutos
+    POST_SINGLE: 30,     // 10 minutos
     CATEGORIES: 1,      // 10 minutos
     TAGS: 1,           // 1 hora
     MEDIA: 31536000,      // 1 ano (imutável)
@@ -23,10 +23,10 @@ export const WORDPRESS_CONFIG = {
   },
 
   FIELDS: {
-    POSTS: 'id,title,excerpt,content,date,link,categories,featured_media,author',
-    CATEGORIES: 'id,name,slug,count,description',
-    TAGS: 'id,name,slug,count',
-    MEDIA: 'id,title,media_details,source_url',
+    POSTS: 'title,excerpt,content,date,link,categories,featured_media,author',
+    CATEGORIES: 'name,slug,count,description',
+    TAGS: 'name,slug,count',
+    MEDIA: 'title,media_details,source_url',
   },
 };
 

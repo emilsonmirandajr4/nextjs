@@ -109,7 +109,7 @@ function PostContent({ params }: { params: Promise<{ year: string; month: string
   };
 
   const getImagePath = (imageUrl: string): string => {
-    return imageUrl.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.jpg';
+    return imageUrl.replace(/^https?:\/\/[^\/]+/, '') || '/placeholder.png';
   };
 
   return (

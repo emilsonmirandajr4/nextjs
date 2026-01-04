@@ -45,7 +45,7 @@ export default function OpinionSection({ posts }: OpinionSectionProps) {
               className="w-full h-52 md:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <div className="px-3 pb-4 pt-3">
+          <div className="px-4 pb-4 pt-2">
             <h3 className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors leading-snug line-clamp-3">
               {featuredPost.title.rendered.replace(/<[^>]*>/g, "")}
             </h3>

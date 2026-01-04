@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import GoogleAnalyticsPartytown from '@/components/GoogleAnalyticsPartytown';
+import { Analytics } from '@vercel/analytics/next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Suspense } from 'react';
 import { Providers } from '../src/providers';
@@ -62,12 +63,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+
       {/* TwicPics Components configuration */}
       <TwicInstall
         domain="https://primeiranews.twic.pics"
-        anticipation={0.2}
+        anticipation={0.5}
         maxDPR={2}
-        step={20}
+        step={100}
         env="production"
         breakpoints={{ xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }}
       />
@@ -89,7 +91,8 @@ export default function RootLayout({
           }>
             {children}
             <SpeedInsights />
-            <GoogleAnalyticsPartytown />
+            <Analytics mode="production" />;
+            <GoogleAnalytics gaId="G-6L64WDYYKH" />
           </Suspense>
         </Providers>
       </body>

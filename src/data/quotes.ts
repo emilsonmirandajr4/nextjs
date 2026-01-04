@@ -192,18 +192,22 @@ export const quotes: Quote[] = [
 ];
 
 /**
- * Retorna a frase do dia baseada na data atual
- * Cada dia terá uma frase diferente, rotacionando pelo banco
+ * Retorna a frase do dia baseada em períodos de 6 horas
+ * A frase muda 4x por dia (00h, 06h, 12h, 18h), rotacionando pelo banco
+ * Usa timestamp opcional para compatibilidade com static generation
  */
-export function getQuoteOfDay(): Quote {
-    const today = new Date();
-    const dayOfYear = Math.floor(
-        (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) /
-        (1000 * 60 * 60 * 24)
-    );
+export function getQuoteOfDay(timestamp?: number): Quote {
+    // Usa timestamp fornecido ou Date.now() para client-side
+    const now = timestamp ?? Date.now();
+    const year = new Date(now).getFullYear();
+    const yearStart = new Date(year, 0, 0).getTime();
+    
+    // Calcula períodos de 6 horas desde o início do ano
+    const msFromYearStart = now - yearStart;
+    const sixHourPeriods = Math.floor(msFromYearStart / (1000 * 60 * 60 * 6));
 
-    // Usa o dia do ano para selecionar a frase (rotaciona quando acaba)
-    const index = dayOfYear % quotes.length;
+    // Usa o período de 6h para selecionar a frase (rotaciona quando acaba)
+    const index = sixHourPeriods % quotes.length;
     return quotes[index];
 }
 

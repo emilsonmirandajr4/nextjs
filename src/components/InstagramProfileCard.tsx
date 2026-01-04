@@ -42,7 +42,6 @@ export default function InstagramProfileCard({
                 <OptimizedImage
                   src={avatarUrl}
                   alt={name}
-                  twicClass="twic-avatar"
                   ratio="1/1"
                   sizes="96px"
                   className="h-full w-full object-cover"

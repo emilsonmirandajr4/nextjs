@@ -36,6 +36,7 @@ const nextConfig = {
       "@vercel/speed-insights",
       "@qwik.dev/partytown",
       "postcss",
+      "@vercel/analytics",
       "vercel",
     ],
   },
@@ -70,21 +71,24 @@ const nextConfig = {
       {
         source: "/api/posts/:path*",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=5, stale-while-revalidate=5" },
+          { key: "Cache-Control", value: "public, s-maxage=10" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=300" },
         ],
       },
 
       {
         source: "/api/twitter/trends",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=5, stale-while-revalidate=5" },
+          { key: "Cache-Control", value: "public, s-maxage=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=360" },
         ],
       },
 
       {
         source: "/api/youtube/metadata",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=5, stale-while-revalidate=5" },
+          { key: "Cache-Control", value: "public, s-maxage=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=600" },
         ],
       },
 
@@ -93,6 +97,15 @@ const nextConfig = {
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
           { key: "Vercel-CDN-Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+
+      {
+        source: "/~partytown/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Service-Worker-Allowed", value: "/" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
         ],
       },
 
@@ -110,6 +123,7 @@ const nextConfig = {
         headers: [
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=300" },
         ],
       },
     ];

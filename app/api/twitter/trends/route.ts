@@ -60,7 +60,7 @@ async function fetchFromGetDayTrends(): Promise<ApiTrendingTopic[] | null> {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36',
       },
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(4000),
     });
 
     if (!response.ok) {
@@ -120,7 +120,7 @@ export async function GET(): Promise<Response> {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=300',
       },
     });
   } catch {
@@ -129,7 +129,7 @@ export async function GET(): Promise<Response> {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, s-maxage=360',
       },
     });
   }

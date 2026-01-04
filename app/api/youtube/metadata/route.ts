@@ -58,7 +58,7 @@ function formatYouTubeDuration(isoDuration?: string): string {
 }
 
 const YOUTUBE_METADATA_CACHE_HEADERS = {
-  "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+  "Cache-Control": "public, s-maxage=360",
 };
 
 export async function POST(req: NextRequest) {

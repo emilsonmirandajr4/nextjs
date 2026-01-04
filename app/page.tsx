@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { cacheLife } from "next/cache";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -8,11 +7,13 @@ import NewsSection from "@/components/server/NewsSection";
 import OpinionSection from "@/components/server/OpinionSection";
 import MainNewsHeader from "@/components/server/MainNewsHeader";
 import EnganadoresHeader from "@/components/server/EnganadoresHeader";
+import QuoteOfDayServer from "@/components/server/QuoteOfDayServer";
 import NewsCarouselEmbla from "@/components/NewsCarouselEmbla";
 import { getPostUrl } from "@/utils/navigation";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 
-const InstagramSection = dynamic(
+
+const InstagramSection = nextDynamic(
   () => import("@/components/InstagramSection"),
   { ssr: true }
 );
@@ -26,7 +27,7 @@ import { ScrollReveal } from "@/components/animations";
 import ArticlesThree from "@/components/ArticlesThree";
 
 // Dynamic imports para componentes abaixo da dobra ou pesados
-const CarouselWithPanelWrapper = dynamic(
+const CarouselWithPanelWrapper = nextDynamic(
   () => import("@/components/client/CarouselWithPanelWrapper"),
   {
     loading: () => (
@@ -38,7 +39,7 @@ const CarouselWithPanelWrapper = dynamic(
 // Container de servidor para streaming SSR dos dados do Twitter
 import TrendingTopicsContainer from "@/components/server/TrendingTopicsContainer";
 
-const LazyVideoCarousel = dynamic(
+const LazyVideoCarousel = nextDynamic(
   () => import("@/components/client/LazyVideoCarousel"),
   {
     loading: () => (
@@ -69,9 +70,6 @@ const LazyVideoCarousel = dynamic(
 );
 
 async function fetchHomeData() {
-  'use cache';
-  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
-
   const [postsByCategory, artigosPosts] = await Promise.all([
     getPostsGroupedByCategories(50, 1),
     getPostsByCategorySlug('artigos', 3, 1),
@@ -317,6 +315,13 @@ export default async function HomePage() {
         <ScrollReveal animation="slide-up" duration={1000} delay={200}>
           <div className="mt-4">
             <InstagramSection />
+          </div>
+        </ScrollReveal>
+
+        {/* Frase do Dia */}
+        <ScrollReveal animation="slide-up" duration={1000} delay={200}>
+          <div className="mt-8">
+            <QuoteOfDayServer />
           </div>
         </ScrollReveal>
 

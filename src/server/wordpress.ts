@@ -13,32 +13,27 @@ const msToSeconds = (ms: number): number => {
 
 const createCacheControlHeader = (ttlMs: number): string => {
   if (ttlMs <= 0) {
-    return 'public, s-maxage=30, stale-while-revalidate=30';
+    return 'public, s-maxage=300';
   }
   const seconds = msToSeconds(ttlMs);
-  return `public, s-maxage=${seconds}, stale-while-revalidate=${seconds}`;
+  return `public, s-maxage=${seconds}`;
 };
 
 async function wpFetchJson<T>(url: string, ttlMs: number, tag?: string): Promise<T> {
-  const seconds = msToSeconds(ttlMs);
+  const seconds = Math.max(30, msToSeconds(ttlMs));
 
   const init: RequestInit & { next?: { revalidate?: number; tags?: string[] } } = {
     headers: {
       Accept: 'application/json',
     },
     signal: AbortSignal.timeout(5000),
+    next: {
+      revalidate: seconds,
+    },
   };
 
-  // Se TTL é 0 ou menor, desabilita cache completamente (sempre busca dados frescos)
-  if (ttlMs <= 0) {
-    init.cache = 'no-store';
-  } else {
-    init.next = {
-      revalidate: seconds,
-    };
-    if (tag) {
-      init.next.tags = [tag];
-    }
+  if (tag) {
+    init.next!.tags = [tag];
   }
 
   const response = await fetch(url, init);
@@ -74,9 +69,6 @@ export async function getPosts(
   perPage: number,
   page: number,
 ): Promise<WordPressPost[]> {
-  'use cache';
-  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
-
   const url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}&orderby=date&order=desc`;
   const data = await wpFetchJson<WordPressPost[]>(
     url,
@@ -129,9 +121,6 @@ export async function getPostsByCategoryId(
   perPage: number,
   page: number,
 ): Promise<WordPressPost[]> {
-  'use cache';
-  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
-
   const url = `${WP_API_URL}/posts?_embed&categories=${categoryId}&per_page=${perPage}&page=${page}&orderby=date&order=desc`;
 
   const data = await wpFetchJson<WordPressPost[]>(
@@ -158,9 +147,6 @@ export async function getPostsByCategorySlug(
 export async function getPostBySlug(
   slug: string,
 ): Promise<WordPressPost | null> {
-  'use cache';
-  cacheLife({ stale: 300, revalidate: 600, expire: 3600 }); // 10min cache
-
   const url = `${WP_API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`;
 
   const data = await wpFetchJson<WordPressPost[]>(
@@ -199,6 +185,42 @@ function normalizeCategoryName(name: string): string {
     .replace(/[\u0300-\u036f]/g, '') // Remove acentos
     .replace(/\s+/g, '-') // Espaços → hífens
     .replace(/[^a-z0-9-]/g, ''); // Remove caracteres especiais
+}
+
+export async function searchPosts(
+  query: string,
+  perPage: number = 10,
+  page: number = 1
+): Promise<{ posts: WordPressPost[]; total: number; totalPages: number }> {
+  if (!query.trim()) {
+    return { posts: [], total: 0, totalPages: 0 };
+  }
+
+  const url = `${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=${perPage}&page=${page}&orderby=relevance&order=desc`;
+
+  try {
+    const response = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(5000),
+      next: { revalidate: 60 },
+    });
+
+    if (!response.ok) {
+      return { posts: [], total: 0, totalPages: 0 };
+    }
+
+    const total = parseInt(response.headers.get('X-WP-Total') || '0', 10);
+    const totalPages = parseInt(response.headers.get('X-WP-TotalPages') || '0', 10);
+    const data = await response.json() as WordPressPost[];
+
+    return {
+      posts: withCategoryNames(data),
+      total,
+      totalPages,
+    };
+  } catch {
+    return { posts: [], total: 0, totalPages: 0 };
+  }
 }
 
 export async function getPostsGroupedByCategories(

@@ -344,7 +344,6 @@ const CarouselWithPanel: React.FC<CarouselWithPanelProps> = ({
                     <OptimizedImage
                       src={item.image}
                       alt={item.title}
-                      twicClass="twic-enganadores"
                       sizes="(min-width: 1024px) 400px, (min-width: 768px) 350px, 280px"
                       className="embla__slide__img"
                     />
