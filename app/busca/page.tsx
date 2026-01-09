@@ -60,7 +60,7 @@ async function SearchResults({ query, page }: { query: string; page: number }) {
                 <OptimizedImage
                   src={imagePath}
                   alt={getPostTitle(post)}
-                  ratio="16/9"
+                  ratio="4/3"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded">

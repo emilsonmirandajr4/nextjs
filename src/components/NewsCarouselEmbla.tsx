@@ -133,9 +133,9 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
                     src={getImagePath(post)}
                     alt={getPostTitle(post)}
                     twicClass="twic-news-carousel"
-                    eager={isFirstSlide}
-                    isLCP={isFirstSlide}
-                    fetchpriority={isFirstSlide ? "high" : "auto"}
+                    isLCP={index === 0} 
+                    fetchpriority={index === 0 ? "high" : "low"}
+                    eager={index === 0}
                     sizes="(min-width: 1024px) 640px, 100vw"
                     style={{
                       width: "100%",
@@ -143,12 +143,6 @@ export default function NewsCarouselEmbla({ posts }: NewsCarouselEmblaProps) {
                     }}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-
-                  {categoryName && (
-                    <div className="absolute top-4 left-4 bg-blue-600 text-white text-shadow-lg px-2.5 py-1 text-xs font-semibold uppercase z-20">
-                      {categoryName}
-                    </div>
-                  )}
 
                   <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-3 z-10">
                     <h2 className="text-2xl text-shadow-lg md:text-3xl font-bold text-white line-clamp-2 text-center">

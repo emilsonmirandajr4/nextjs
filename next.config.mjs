@@ -72,7 +72,7 @@ const nextConfig = {
         source: "/api/posts/:path*",
         headers: [
           { key: "Cache-Control", value: "public, s-maxage=10" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=300" },
+          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=10" },
         ],
       },
 
@@ -101,15 +101,6 @@ const nextConfig = {
       },
 
       {
-        source: "/~partytown/:path*",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-          { key: "Service-Worker-Allowed", value: "/" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-        ],
-      },
-
-      {
         source: "/fonts/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
@@ -123,7 +114,6 @@ const nextConfig = {
         headers: [
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=300" },
         ],
       },
     ];

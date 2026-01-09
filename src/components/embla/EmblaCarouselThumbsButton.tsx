@@ -29,7 +29,6 @@ export const Thumb: React.FC<PropType> = (props) => {
         ratio="1/1"
         mode="cover"
         className="w-full h-full object-cover"
-        usePicture={false}
       />
     </button>
   )

@@ -7,9 +7,9 @@ export default function MainNewsHeader() {
         className="relative bg-black rounded-2xl px-4 py-3 border border-white/10 overflow-hidden"
         style={{
           boxShadow: `
-            rgba(255, 255, 255, 0.15) 2px 2px,
-            rgba(255, 255, 255, 0.1) 4px 4px,
-            rgba(255, 255, 255, 0.05) 6px 6px
+            rgba(255, 255, 255, 0.35) 2px 2px,
+            rgba(255, 255, 255, 0.2) 4px 4px,
+            rgba(255, 255, 255, 0.1) 6px 6px
           `
         }}
       >

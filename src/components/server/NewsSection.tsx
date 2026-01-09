@@ -26,27 +26,27 @@ function getImagePath(post: WordPressPost): string {
 export default function NewsSection({ posts, title, iconColor = 'sky' }: NewsSectionProps) {
   const colors = iconColor === 'red'
     ? {
-      gradient: 'from-red-600 via-rose-500 to-red-700',
+      gradient: 'from-red-700 via-rose-800 to-red-600',
       hoverBg: 'hover:bg-red-50',
       hoverText: 'group-hover:text-red-700',
       hoverBorder: 'hover:border-red-300',
       iconColor: 'text-red-600',
-      shadow: 'shadow-red-500/30'
+      shadow: 'shadow-red-700/40'
     }
     : {
-      gradient: 'from-sky-500 via-blue-600 to-sky-700',
+      gradient: 'from-sky-600 via-blue-700 to-sky-800',
       hoverBg: 'hover:bg-sky-50',
       hoverText: 'group-hover:text-sky-700',
-      hoverBorder: 'hover:border-sky-300',
+      hoverBorder: 'hover:border-sky-400',
       iconColor: 'text-sky-600',
-      shadow: 'shadow-sky-500/30'
+      shadow: 'shadow-sky-600/40'
     };
 
   return (
-    <div className={`bg-white rounded-2xl overflow-hidden h-full border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] ${colors.shadow}`}>
+    <div className={`bg-white rounded-2xl overflow-hidden h-full border border-slate-200 shadow-[0_8px_px_rgb(0,0,0,0.12)] ${colors.shadow}`}>
       {/* Enhanced Header */}
       <div className="relative border-b-2 border-slate-200 bg-gradient-to-r from-slate-50 to-white">
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase text-center bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text">
             {title}
           </h2>
@@ -75,15 +75,14 @@ export default function NewsSection({ posts, title, iconColor = 'sky' }: NewsSec
                 />
               </div>
               
-              {/* Conteúdo à direita centralizado */}
+              {/* Conteúdo à direita */}
               <div className="flex-1 flex flex-col justify-center gap-2">
-                {/* Título maior e centralizado */}
-                <h3 className={`text-[17px] font-bold text-gray-900 ${colors.hoverText} transition-colors text-center leading-snug line-clamp-2`}>
+                <h3 className={`text-[17px] font-bold text-gray-900 ${colors.hoverText} transition-colors leading-snug line-clamp-3`}>
                   {getPostTitle(post)}
                 </h3>
                 
-                {/* Tempo de leitura centralizado */}
-                <div className="flex items-center justify-center gap-2 text-slate-500">
+                {/* Tempo de leitura */}
+                <div className="flex items-center gap-2 text-slate-500">
                   <Clock className={`w-4 h-4 ${colors.iconColor}`} />
                   <span className="text-sm font-medium">{calculateReadingTime(post)} de leitura</span>
                 </div>
